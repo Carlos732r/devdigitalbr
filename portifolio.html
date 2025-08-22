@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Portfólio - DevDigital</title>
+
+     <meta name="description" content="Especialistas na criação de sites, landing pages e logos em Presidente Prudente, Teodoro Sampaio e região. Transforme sua presença digital. Orçamento rápido!">
+
+    <meta name="keywords" content="criação de sites presidente prudente, desenvolver site teodoro sampaio, agência digital pirapozinho, site para empresas rosana, landing page euclides da cunha, marketing digital oeste paulista,portfolio">
+
+    <meta name="robots" content="index, follow">
+
+    <meta name="author" content="DevDigital">
+
+
+
+    <meta property="og:title" content="Criação de Sites em Presidente Prudente | DevDigital Soluções">
+
+    <meta property="og:description" content="Transforme sua presença online com sites profissionais, landing pages e logos criadas pela DevDigital. Atendemos toda a região do Oeste Paulista.">
+
+    <meta property="og:image" content="https://www.seusite.com.br/imagens/fototech.jpg"> <meta property="og:url" content="https://www.seusite.com.br"> <meta property="og:type" content="website">
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+    <style>
+
+        :root {
+
+            --primary-color: #00d4ff;
+
+            --primary-dark: #0099cc;
+
+            --secondary-color: #0a0a0a;
+
+            --accent-color: #1a1a1a;
+
+            --text-light: #ffffff;
+
+            --text-gray: #a0a0a0;
+
+            --gradient-1: linear-gradient(135deg, #00d4ff 0%, #0099cc 50%, #0066aa 100%);
+
+            --gradient-2: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+
+        }
+
+
+
+        * {
+
+            margin: 0;
+
+            padding: 0;
+
+            box-sizing: border-box;
+
+        }
+
+
+
+        body {
+
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+            background-color: var(--secondary-color); /* Cor de base sólida */
+
+            color: var(--text-light);
+
+            overflow-x: hidden;
+
+            position: relative; /* Necessário para o pseudo-elemento */
+
+        }
+
+
+
+        /* --- IMAGEM DE FUNDO ADICIONADA AQUI --- */
+
+        body::before {
+
+            content: '';
+
+            position: fixed; /* Fixo para cobrir toda a tela */
+
+            top: 0;
+
+            left: 0;
+
+            width: 100%;
+
+            height: 100vh; /* Altura total da tela */
+
+            background: url('imagens/cod.jpg') center center / cover no-repeat;
+
+            background-attachment: fixed; /* Efeito parallax */
+
+            opacity: 0.1; /* Opacidade para não atrapalhar a leitura */
+
+            z-index: -1; /* Coloca a imagem atrás de todo o conteúdo */
+
+        }
+
+
+
+        /* Header */
+
+        header {
+
+            position: fixed;
+
+            top: 0;
+
+            width: 100%;
+
+            background: rgba(10, 10, 10, 0.95);
+
+            backdrop-filter: blur(10px);
+
+            padding: 1rem 5%;
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            z-index: 1000;
+
+            transition: all 0.3s ease;
+
+        }
+
+
+
+        .logo-container {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 1rem;
+
+        }
+
+
+
+        .logo-image {
+
+            width: 75px;
+
+            height: 75px;
+
+            border-radius: 12px;
+
+            background: var(--gradient-1);
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
+
+        }
+
+
+
+        .logo-image img {
+
+            width: 100%;
+
+            height: 100%;
+
+            object-fit: contain;
+
+            border-radius: 10px;
+
+        }
+
+
+
+        .logo {
+
+            font-size: 2rem;
+
+            font-weight: bold;
+
+            background: var(--gradient-1);
+
+            -webkit-background-clip: text;
+
+            -webkit-text-fill-color: transparent;
+
+            background-clip: text;
+
+        }
+
+
+
+        nav {
+
+            display: flex;
+
+            gap: 2rem;
+
+        }
+
+
+
+        nav a {
+
+            color: var(--text-light);
+
+            text-decoration: none;
+
+            font-weight: 500;
+
+            transition: all 0.3s ease;
+
+            position: relative;
+
+        }
+
+
+
+        nav a::after {
+
+            content: '';
+
+            position: absolute;
+
+            bottom: -5px;
+
+            left: 0;
+
+            width: 0;
+
+            height: 2px;
+
+            background: var(--gradient-1);
+
+            transition: width 0.3s ease;
+
+        }
+
+
+
+        nav a:hover::after {
+
+            width: 100%;
+
+        }
+
+
+
+        .menu-toggle {
+
+            display: none;
+
+            font-size: 1.5rem;
+
+            color: var(--primary-color);
+
+            cursor: pointer;
+
+        }
+
+
+
+        /* Main Content */
+
+        main {
+
+            padding-top: 100px;
+
+            background-color: rgba(10, 10, 10, 0.7); /* Sobreposição escura para legibilidade */
+
+        }
+
+       
+
+        .section {
+
+            padding: 4rem 5%;
+
+            max-width: 1200px;
+
+            margin: 0 auto;
+
+        }
+
+
+
+        .section-title {
+
+            text-align: center;
+
+            font-size: 2.5rem;
+
+            font-weight: 700;
+
+            margin-bottom: 1rem;
+
+        }
+
+       
+
+        .section-title .highlight {
+
+            background: var(--gradient-1);
+
+            -webkit-background-clip: text;
+
+            -webkit-text-fill-color: transparent;
+
+            background-clip: text;
+
+        }
+
+
+
+        .section-subtitle {
+
+            text-align: center;
+
+            color: var(--text-gray);
+
+            font-size: 1.1rem;
+
+            margin-bottom: 3rem;
+
+        }
+
+
+
+        /* Portfolio Filters */
+
+        .portfolio-filters {
+
+            display: flex;
+
+            justify-content: center;
+
+            gap: 1rem;
+
+            margin-bottom: 3rem;
+
+            flex-wrap: wrap;
+
+        }
+
+
+
+        .filter-btn {
+
+            background: var(--gradient-2);
+
+            border: 1px solid rgba(255, 255, 255, 0.1);
+
+            color: var(--text-light);
+
+            padding: 0.8rem 1.5rem;
+
+            border-radius: 50px;
+
+            cursor: pointer;
+
+            transition: all 0.3s ease;
+
+            font-weight: 500;
+
+        }
+
+
+
+        .filter-btn:hover, .filter-btn.active {
+
+            background: var(--gradient-1);
+
+            color: var(--secondary-color);
+
+            box-shadow: 0 5px 15px rgba(0, 212, 255, 0.2);
+
+        }
+
+
+
+        /* Portfolio Grid */
+
+        .portfolio-grid {
+
+            display: grid;
+
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+
+            gap: 2rem;
+
+            justify-items: center;
+
+        }
+
+
+
+        .portfolio-card {
+
+            background: var(--gradient-2);
+
+            border-radius: 15px;
+
+            overflow: hidden;
+
+            border: 1px solid rgba(255, 255, 255, 0.1);
+
+            transition: opacity 0.4s ease, transform 0.4s ease;
+
+            display: flex;
+
+            flex-direction: column;
+
+            width: 100%;
+
+            max-width: 380px;
+
+        }
+
+
+
+        .portfolio-card:hover {
+
+            transform: translateY(-8px);
+
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+
+        }
+
+
+
+        .portfolio-image {
+
+            height: 220px;
+
+            position: relative;
+
+            overflow: hidden;
+
+        }
+
+
+
+        .portfolio-image img {
+
+            width: 100%;
+
+            height: 100%;
+
+            object-fit: cover;
+
+            transition: transform 0.4s ease;
+
+        }
+
+
+
+        .portfolio-card:hover .portfolio-image img {
+
+            transform: scale(1.05);
+
+        }
+
+       
+
+        .portfolio-tags-top {
+
+            position: absolute;
+
+            top: 1rem;
+
+            left: 1rem;
+
+            display: flex;
+
+            gap: 0.5rem;
+
+        }
+
+       
+
+        .tag {
+
+            background: rgba(10, 10, 10, 0.8);
+
+            backdrop-filter: blur(5px);
+
+            color: var(--text-light);
+
+            padding: 0.3rem 0.8rem;
+
+            border-radius: 20px;
+
+            font-size: 0.8rem;
+
+            font-weight: 500;
+
+        }
+
+
+
+        .portfolio-info {
+
+            padding: 1.5rem;
+
+            display: flex;
+
+            flex-direction: column;
+
+            flex-grow: 1;
+
+        }
+
+
+
+        .portfolio-info h3 {
+
+            font-size: 1.4rem;
+
+            margin-bottom: 0.5rem;
+
+        }
+
+
+
+        .portfolio-meta {
+
+            color: var(--text-gray);
+
+            font-size: 0.9rem;
+
+            margin-bottom: 1.5rem;
+
+        }
+
+
+
+        .portfolio-card-buttons {
+
+            display: flex;
+
+            gap: 0.75rem;
+
+            margin-bottom: 1.5rem;
+
+        }
+
+
+
+        .btn {
+
+            padding: 0.7rem 1.2rem;
+
+            border: none;
+
+            border-radius: 50px;
+
+            font-size: 0.9rem;
+
+            font-weight: 600;
+
+            text-decoration: none;
+
+            cursor: pointer;
+
+            transition: all 0.3s ease;
+
+            text-align: center;
+
+            flex-grow: 1;
+
+        }
+
+
+
+        .btn-primary {
+
+            background: var(--gradient-1);
+
+            color: var(--secondary-color);
+
+        }
+
+
+
+        .btn-secondary {
+
+            background: transparent;
+
+            color: var(--primary-color);
+
+            border: 2px solid var(--primary-color);
+
+        }
+
+
+
+        .btn:hover {
+
+            transform: translateY(-2px);
+
+            box-shadow: 0 5px 15px rgba(0, 212, 255, 0.2);
+
+        }
+
+
+
+        .portfolio-tags-bottom {
+
+            display: flex;
+
+            flex-wrap: wrap;
+
+            gap: 0.5rem;
+
+            margin-top: auto;
+
+            padding-top: 1rem;
+
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+
+        }
+
+
+
+        .tag-bottom {
+
+            background: var(--accent-color);
+
+            color: var(--text-gray);
+
+            padding: 0.4rem 0.9rem;
+
+            border-radius: 8px;
+
+            font-size: 0.8rem;
+
+        }
+
+
+
+        /* Footer */
+
+        footer {
+
+            background: var(--secondary-color);
+
+            padding: 2rem 5%;
+
+            text-align: center;
+
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+
+            margin-top: 4rem;
+
+        }
+
+
+
+        .social-links {
+
+            display: flex;
+
+            justify-content: center;
+
+            gap: 1rem;
+
+            margin-bottom: 1rem;
+
+        }
+
+
+
+        .social-links a {
+
+            width: 40px;
+
+            height: 40px;
+
+            background: var(--gradient-2);
+
+            border-radius: 50%;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            color: var(--primary-color);
+
+            text-decoration: none;
+
+            transition: all 0.3s ease;
+
+        }
+
+
+
+        .social-links a:hover {
+
+            background: var(--primary-color);
+
+            color: var(--secondary-color);
+
+            transform: translateY(-3px);
+
+        }
+
+
+
+        /* Responsive */
+
+        @media (max-width: 768px) {
+
+            .menu-toggle {
+
+                display: block;
+
+            }
+
+
+
+            nav {
+
+                position: fixed;
+
+                top: 100%;
+
+                left: 0;
+
+                width: 100%;
+
+                background: rgba(10, 10, 10, 0.98);
+
+                flex-direction: column;
+
+                padding: 2rem 5%;
+
+                transition: all 0.3s ease;
+
+            }
+
+
+
+            nav.active {
+
+                top: 85px;
+
+            }
+
+
+
+            .logo-image {
+
+                width: 65px;
+
+                height: 65px;
+
+            }
+
+
+
+            .logo {
+
+                font-size: 1.8rem;
+
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+    <div class="menu-overlay" id="menu-overlay"></div>
+
+    <header>
+
+        <div class="logo-container">
+
+            <div class="logo-image">
+
+                <img src="logo_nome.png" alt="DevDigital Logo">
+
+            </div>
+
+            <a href="index.html" class="logo" style="text-decoration:none;">DevDigital</a>
+
+        </div>
+
+        <nav id="nav">
+
+            <a href="index.html">Início</a>
+
+            <a href="index.html#servicos">Serviços</a>
+
+            <a href="portfolio.html">Portfólio</a>
+
+            <a href="index.html#sobre">Sobre</a>
+
+            <a href="index.html#contato">Contato</a>
+
+        </nav>
+
+        <div class="menu-toggle" id="menu-toggle">
+
+            <i class="fas fa-bars"></i>
+
+        </div>
+
+    </header>
+
+
+
+    <main>
+
+        <section id="portfolio" class="section">
+
+            <h2 class="section-title">Portfólio de <span class="highlight">Projetos</span></h2>
+
+            <p class="section-subtitle">Exemplos reais. Clique para ver os detalhes de cada projeto.</p>
+
+           
+
+            <div class="portfolio-filters">
+
+                <button class="filter-btn active" data-filter="all">Todos os Nichos</button>
+
+                <button class="filter-btn" data-filter="institucional">Institucional</button>
+
+                <button class="filter-btn" data-filter="landing-page">Landing Page</button>
+
+            </div>
+
+
+
+            <div class="portfolio-grid">
+
+               
+
+                <div class="portfolio-card" data-category="deposito-gas landing-page">
+
+                    <div class="portfolio-image">
+
+                        <img src="imagens/fotogas.png" alt="Projeto Piauí Gás">
+
+                        <div class="portfolio-tags-top">
+
+                            <span class="tag">Depósito de gás</span>
+
+                            <span class="tag">Landing Page</span>
+
+                        </div>
+
+                    </div>
+
+                    <div class="portfolio-info">
+
+                        <h3>Piauí Gás</h3>
+
+                        <p class="portfolio-meta">Teodoro Sampaio- SP - 2025</p>
+
+                        <div class="portfolio-card-buttons">
+
+                            <a href="http://www.piauigas.com.br" target="_blank" class="btn btn-secondary">Ver site</a>
+
+                            <a href="https://wa.me/5515992710295?text=Olá! Vi o projeto do Piauí Gás e gostaria de um site parecido." target="_blank" class="btn btn-primary">Quero um</a>
+
+                        </div>
+
+                        <div class="portfolio-tags-bottom">
+
+                            <span class="tag-bottom">Whatsapp Fixo</span>
+
+                            <span class="tag-bottom">SEO Local</span>
+
+                            <span class="tag-bottom">Alta Performance</span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="portfolio-card" data-category="institucional">
+
+                    <div class="portfolio-image">
+
+                        <img src="imagens/segunda.png" alt="Segunda Landing Page">
+
+                        <div class="portfolio-tags-top">
+
+                            <span class="tag">Divulgação</span>
+
+                            <span class="tag">Institucional</span>
+
+                        </div>
+
+                    </div>
+
+                    <div class="portfolio-info">
+
+                        <h3>InovaTech</h3>
+
+                        <p class="portfolio-meta">São Paulo - 2025</p>
+
+                         <div class="portfolio-card-buttons">
+
+                            <a href="landing/segundalanding/index.html" target="_blank" class="btn btn-secondary">Ver site</a>
+
+                            <a href="https://wa.me/5515992710295?text=Olá! Vi a Segunda Landing Page e gostaria de um site parecido." target="_blank" class="btn btn-primary">Quero um</a>
+
+                        </div>
+
+                        <div class="portfolio-tags-bottom">
+
+                            <span class="tag-bottom">Responsivo</span>
+
+                            <span class="tag-bottom">Design Moderno</span>
+
+                            <span class="tag-bottom">Alta Performance</span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="portfolio-card" data-category="servico landing-page">
+
+                    <div class="portfolio-image">
+
+                        <img src="imagens/devin.png" alt="Projeto Devin">
+
+                        <div class="portfolio-tags-top">
+
+                            <span class="tag">Serviço</span>
+
+                            <span class="tag">Landing Page</span>
+
+                        </div>
+
+                    </div>
+
+                    <div class="portfolio-info">
+
+                        <h3>Devin</h3>
+
+                        <p class="portfolio-meta">Brasil - 2025</p>
+
+                        <div class="portfolio-card-buttons">
+
+                            <a href="landing/Devin/index.html" target="_blank" class="btn btn-secondary">Ver site</a>
+
+                            <a href="https://wa.me/5515992710295?text=Olá! Vi o projeto Devin e gostaria de um site parecido." target="_blank" class="btn btn-primary">Quero um</a>
+
+                        </div>
+
+                        <div class="portfolio-tags-bottom">
+
+                            <span class="tag-bottom">Foco em Divulgação</span>
+
+                            <span class="tag-bottom">Design Moderno</span>
+
+                            <span class="tag-bottom">Mobile-First</span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+               
+
+                <div class="portfolio-card" data-category="noticias institucional">
+
+                    <div class="portfolio-image">
+
+                        <img src="imagens/venha.png" alt="Venha Concursar">
+
+                        <div class="portfolio-tags-top">
+
+                            <span class="tag">Notícias</span>
+
+                            <span class="tag">Institucional</span>
+
+                        </div>
+
+                    </div>
+
+                    <div class="portfolio-info">
+
+                        <h3>Venha Concursar</h3>
+
+                        <p class="portfolio-meta">Brasil - 2025</p>
+
+                        <div class="portfolio-card-buttons">
+
+                            <a href="https://venhaconcursar.com.br" target="_blank" class="btn btn-secondary">Ver site</a>
+
+                            <a href="https://wa.me/5515992710295?text=Olá! Vi o projeto Venha Concursar e gostaria de um site parecido." target="_blank" class="btn btn-primary">Quero um</a>
+
+                        </div>
+
+                        <div class="portfolio-tags-bottom">
+
+                            <span class="tag-bottom">Responsivo</span>
+
+                            <span class="tag-bottom">Design Moderno</span>
+
+                            <span class="tag-bottom">SEO Otimizado</span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+               
+
+                <div class="portfolio-card" data-category="negocios landing-page">
+
+                    <div class="portfolio-image">
+
+                        <img src="imagens/fotopredio.png" alt="Projeto Passion">
+
+                        <div class="portfolio-tags-top">
+
+                            <span class="tag">Negócios</span>
+
+                            <span class="tag">Landing Page</span>
+
+                        </div>
+
+                    </div>
+
+                    <div class="portfolio-info">
+
+                        <h3>Passion</h3>
+
+                        <p class="portfolio-meta">Brasil - 2025</p>
+
+                        <div class="portfolio-card-buttons">
+
+                            <a href="landing/Passion/index.html" target="_blank" class="btn btn-secondary">Ver site</a>
+
+                            <a href="https://wa.me/5515992710295?text=Olá! Vi o projeto Passion e gostaria de um site parecido." target="_blank" class="btn btn-primary">Quero um</a>
+
+                        </div>
+
+                        <div class="portfolio-tags-bottom">
+
+                            <span class="tag-bottom">Responsivo</span>
+
+                            <span class="tag-bottom">Design Moderno</span>
+
+                            <span class="tag-bottom">Alta Performance</span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+               
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+
+    <footer>
+
+        <div class="social-links">
+
+            <a href="https://www.instagram.com/oficial_dev_digital/"><i class="fab fa-instagram"></i></a>
+
+            <a href="#"><i class="fab fa-facebook"></i></a>
+
+           
+
+        </div>
+
+        <p>&copy; 2025 DevDigital - Todos os direitos reservados.</p>
+
+    </footer>
+
+
+
+    <script>
+
+        // Menu toggle
+
+        const menuToggle = document.getElementById('menu-toggle');
+
+        const nav = document.getElementById('nav');
+
+
+
+        if (menuToggle) {
+
+            menuToggle.addEventListener('click', () => {
+
+                nav.classList.toggle('active');
+
+                const icon = menuToggle.querySelector('i');
+
+                icon.classList.toggle('fa-bars');
+
+                icon.classList.toggle('fa-times');
+
+            });
+
+        }
+
+
+
+        // Lógica do Filtro do Portfólio
+
+        document.addEventListener('DOMContentLoaded', () => {
+
+            const filterButtons = document.querySelectorAll('.portfolio-filters .filter-btn');
+
+            const portfolioCards = document.querySelectorAll('.portfolio-grid .portfolio-card');
+
+
+
+            if (filterButtons.length > 0 && portfolioCards.length > 0) {
+
+                filterButtons.forEach(button => {
+
+                    button.addEventListener('click', () => {
+
+                        filterButtons.forEach(btn => btn.classList.remove('active'));
+
+                        button.classList.add('active');
+
+
+
+                        const filter = button.getAttribute('data-filter');
+
+
+
+                        portfolioCards.forEach(card => {
+
+                            const categories = card.getAttribute('data-category');
+
+                            if (filter === 'all' || (categories && categories.includes(filter))) {
+
+                                card.style.display = 'flex';
+
+                            } else {
+
+                                card.style.display = 'none';
+
+                            }
+
+                        });
+
+                    });
+
+                });
+
+            }
+
+        });
+
+    </script>
+
+</body>
+
+</html>

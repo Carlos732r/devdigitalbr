@@ -1,0 +1,1317 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>DevDigital Soluções Digitais | Criação de Sites em Presidente Prudente </title>
+
+    <meta name="description" content="Especialistas na criação de sites, landing pages e logos em Presidente Prudente, Teodoro Sampaio e região. Transforme sua presença digital. Orçamento rápido!">
+    <meta name="keywords" content="criação de sites presidente prudente, desenvolver site teodoro sampaio, agência digital pirapozinho, site para empresas rosana, landing page euclides da cunha, marketing digital oeste paulista">
+    <meta name="robots" content="index, follow">
+    <meta name="author" content="DevDigital">
+
+    <meta property="og:title" content="Criação de Sites em Presidente Prudente | DevDigital Soluções">
+    <meta property="og:description" content="Transforme sua presença online com sites profissionais, landing pages e logos criadas pela DevDigital. Atendemos toda a região do Oeste Paulista.">
+    <meta property="og:image" content="https://www.seusite.com.br/imagens/fototech.jpg"> <meta property="og:url" content="https://www.seusite.com.br"> <meta property="og:type" content="website">
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #00d4ff;
+            --primary-dark: #0099cc;
+            --secondary-color: #0a0a0a;
+            --accent-color: #1a1a1a;
+            --text-light: #ffffff;
+            --text-gray: #a0a0a0;
+            --gradient-1: linear-gradient(135deg, #00d4ff 0%, #0099cc 50%, #0066aa 100%);
+            --gradient-2: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+            --gradient-bg: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--gradient-bg);
+            color: var(--text-light);
+            overflow-x: hidden;
+        }
+
+        /* Header com altura fixa definida */
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            height: 120px; /* Altura fixa para o header */
+        }
+        
+        /* Adicionado para o logo como link */
+        .logo-link {
+            text-decoration: none;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .logo-image {
+            width: 80px;
+            height: 80px;
+            border-radius: 15px;
+            background: var(--gradient-1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .logo-image::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: var(--gradient-1);
+            border-radius: 17px;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .logo-image:hover::before {
+            opacity: 1;
+        }
+
+        .logo-image:hover {
+            transform: scale(1.05) rotate(5deg);
+            box-shadow: 0 6px 25px rgba(0, 212, 255, 0.4);
+        }
+
+        .logo-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 13px;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .logo-container:hover .logo {
+            transform: translateX(3px);
+        }
+
+        /* Navigation */
+        nav {
+            display: flex;
+            gap: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        nav a {
+            color: var(--text-light);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 0.5rem 0;
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--gradient-1);
+            transition: width 0.3s ease;
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        .menu-toggle {
+            display: none;
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            cursor: pointer;
+            z-index: 1002;
+            transition: all 0.3s ease;
+            padding: 0.5rem;
+            position: relative;
+        }
+
+        .menu-toggle:hover {
+            color: var(--text-light);
+            transform: scale(1.1);
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 0 5%; /* Padding-top é 0, o conteúdo deve se ajustar */
+            background: 
+                var(--gradient-bg),
+                url('imagens/fototech.jpg') center/cover no-repeat;
+            background-blend-mode: overlay;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 10, 10, 0.7);
+            z-index: 1;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 50%;
+            height: 100%;
+            background: radial-gradient(circle at center, rgba(0, 212, 255, 0.15) 0%, rgba(0, 212, 255, 0.05) 30%, transparent 70%);
+            z-index: 1;
+        }
+
+        .hero-content {
+            flex: 1;
+            max-width: 600px;
+            z-index: 2;
+            position: relative;
+            padding-top: 120px; /* Adiciona espaço para o header fixo */
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+        }
+
+        .hero h1 .highlight {
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-gray);
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 3rem;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-primary {
+            background: var(--gradient-1);
+            color: var(--secondary-color);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.3);
+        }
+
+        .stats {
+            display: flex;
+            gap: 3rem;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            display: block;
+        }
+
+        .stat-label {
+            color: var(--text-gray);
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+
+        /* Sections */
+        .section {
+            padding: 6rem 5% 3rem 5%;
+            max-width: 1200px;
+            margin: 0 auto;
+            scroll-margin-top: 140px; 
+        }
+
+        #servicos {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .section-title .highlight {
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: var(--text-gray);
+            font-size: 1.1rem;
+            margin-bottom: 3rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .service-card {
+            background: var(--gradient-2);
+            padding: 2rem;
+            border-radius: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-1);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .service-card:hover::before {
+            opacity: 0.05;
+        }
+
+        .service-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 212, 255, 0.2);
+        }
+
+        .service-icon {
+            font-size: 3rem;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+        }
+
+        .service-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .service-card p {
+            color: var(--text-gray);
+            line-height: 1.6;
+            position: relative;
+            z-index: 2;
+            margin-bottom: 1.5rem;
+        }
+
+        .service-btn {
+            background: var(--gradient-1);
+            color: var(--secondary-color);
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 2;
+            display: inline-block;
+        }
+
+        .service-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 212, 255, 0.4);
+            color: var(--secondary-color);
+        }
+
+        /* Portfolio Section */
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+            justify-items: center;
+        }
+
+        .portfolio-item {
+            background: var(--gradient-2);
+            border-radius: 15px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .portfolio-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .portfolio-image {
+            height: 200px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .portfolio-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .portfolio-item:hover .portfolio-image img {
+            transform: scale(1.05);
+        }
+
+        .portfolio-content {
+            padding: 1.5rem;
+        }
+
+        .portfolio-content h3 {
+            margin-bottom: 0.5rem;
+        }
+
+        .portfolio-content p {
+            margin-bottom: 1rem;
+            color: var(--text-gray);
+        }
+
+        .portfolio-btn {
+            background: var(--gradient-1);
+            color: var(--secondary-color);
+            padding: 0.6rem 1.2rem;
+            border-radius: 20px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .portfolio-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 212, 255, 0.4);
+            color: var(--secondary-color);
+        }
+
+        /* About Section */
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+            margin-top: 3rem;
+        }
+
+        .about-text {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: var(--text-gray);
+        }
+
+        .about-features {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: var(--gradient-2);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .feature-icon {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+        }
+
+        /* Process Section */
+        .process-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .process-step {
+            background: var(--gradient-2);
+            padding: 2rem;
+            border-radius: 20px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .process-step:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 212, 255, 0.2);
+        }
+
+        .process-icon {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .process-step h4 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--text-light);
+        }
+
+        .process-step p {
+            color: var(--text-gray);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        /* Contact Section */
+        .contact-content {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 3rem;
+            margin-top: 3rem;
+        }
+
+        .contact-form-container {
+            display: flex;
+            justify-content: center;
+        }
+
+        .contact-form-card {
+            background: var(--gradient-2);
+            padding: 2.5rem;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .form-title {
+            text-align: center;
+            color: var(--text-light);
+            margin-bottom: 2rem;
+            font-size: 1.4rem;
+            font-weight: 600;
+        }
+
+        .contact-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group label {
+            color: var(--text-light);
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            padding: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-light);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: var(--text-gray);
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(0, 212, 255, 0.2);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-submit-btn {
+            background: var(--gradient-1);
+            color: var(--secondary-color);
+            padding: 1.2rem 2rem;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
+            margin-top: 1rem;
+        }
+
+        .form-submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.4);
+        }
+
+        .form-submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .form-submit-btn i {
+            font-size: 1.3rem;
+        }
+
+        .contact-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .contact-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--gradient-1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--secondary-color);
+            font-size: 1.2rem;
+        }
+
+        .whatsapp-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #25D366;
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .whatsapp-btn:hover {
+            background: #128C7E;
+            transform: translateY(-2px);
+            color: white;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--secondary-color);
+            padding: 2rem 5%;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .social-links a {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .social-links a:hover {
+            background: var(--primary-color);
+            color: var(--secondary-color);
+            transform: translateY(-3px);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: block;
+            }
+
+            nav {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100vh;
+                background: rgba(10, 10, 10, 0.98);
+                backdrop-filter: blur(20px);
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                gap: 2rem;
+                transition: all 0.4s ease;
+                z-index: 1001;
+                opacity: 0;
+                visibility: hidden;
+                transform: translateY(-20px);
+            }
+
+            nav.active {
+                opacity: 1;
+                visibility: visible;
+                transform: translateY(0);
+            }
+
+            nav a {
+                font-size: 1.2rem;
+                padding: 1rem;
+                width: 200px;
+                text-align: center;
+                border-radius: 10px;
+                transition: all 0.3s ease;
+            }
+
+            nav a:hover {
+                background: rgba(0, 212, 255, 0.1);
+                transform: scale(1.05);
+            }
+
+            .logo-image {
+                width: 70px;
+                height: 70px;
+            }
+
+            .logo {
+                font-size: 1.8rem;
+            }
+
+            .hero {
+                text-align: center;
+            }
+            
+            .hero-content {
+                max-width: 100%;
+                padding-top: 120px; /* Garante espaço no mobile também */
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .stats {
+                justify-content: center;
+                gap: 1.5rem;
+                flex-wrap: wrap;
+            }
+
+            .about-content,
+            .contact-content {
+                grid-template-columns: 1fr;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .section {
+                scroll-margin-top: 130px; /* Ajuste para mobile */
+            }
+
+            .services-grid,
+            .portfolio-grid,
+            .process-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .stats {
+                gap: 1rem;
+            }
+
+            .stat-item {
+                min-width: 80px;
+            }
+        }
+
+        /* Overlay para menu mobile */
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .menu-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+    </style>
+</head>
+<body>
+    <div class="menu-overlay" id="menu-overlay"></div>
+
+    <header>
+        <a href="#home" class="logo-link">
+            <div class="logo-container">
+                <div class="logo-image">
+                    <img src="logo_nome.png" alt="DevDigital Logo">
+                </div>
+                <div class="logo">DevDigital</div>
+            </div>
+        </a>
+        <nav id="nav">
+            <a href="#home">Início</a>
+            <a href="#servicos">Serviços</a>
+            <a href="portifolio.html" onclick="closeMenu()">Portfólio</a>
+            <a href="#sobre">Sobre</a>
+            <a href="#contato">Contato</a>
+        </nav>
+        <div class="menu-toggle" id="menu-toggle">
+            <i class="fas fa-bars"></i>
+        </div>
+    </header>
+
+    <main>
+        <section id="home" class="hero">
+            <div class="hero-content">
+                <h1>Transformando <span class="highlight">ideias</span> em soluções digitais</h1>
+                <p>Especialistas em criação de logos marcantes, desenvolvimento de sites modernos, prompts otimizados para IA, manutenção profissional e posts promocionais estratégicos que transformam sua presença digital e impulsionam o crescimento exponencial do seu negócio no mundo digital.</p>
+                
+                <div class="hero-buttons">
+                    <a href="https://wa.me/5515992710295?text=Olá! Gostaria de começar um projeto com a DevDigital." class="btn btn-primary" target="_blank">Começar Projeto</a>
+                    <a href="portfolio.html" class="btn btn-secondary">Ver Portfólio</a>
+                </div>
+
+                <div class="stats">
+                    <div class="stat-item">
+                        <span class="stat-number">100+</span>
+                        <span class="stat-label">Projetos Entregues</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">1+</span>
+                        <span class="stat-label">Ano de Experiência</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">98%</span>
+                        <span class="stat-label">Satisfação dos Clientes</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="servicos" class="section">
+            <h2 class="section-title">Nossos <span class="highlight">Serviços</span></h2>
+            <p class="section-subtitle">Soluções digitais completas para impulsionar seu negócio</p>
+            
+            <div class="services-grid">
+                <div class="service-card" onclick="window.open('https://wa.me/5515992710295?text=Olá! Gostaria de solicitar a criação de uma logo profissional.', '_blank')">
+                    <div class="service-icon"><i class="fas fa-palette"></i></div>
+                    <h3>Criação de Logos</h3>
+                    <p>Identidade visual profissional e marcante para sua marca se destacar no mercado.</p>
+                    <a href="https://wa.me/5515992710295?text=Olá! Gostaria de solicitar a criação de uma logo profissional." class="service-btn" target="_blank">Solicitar Orçamento</a>
+                </div>
+                
+                <div class="service-card" onclick="window.open('https://wa.me/5515992710295?text=Olá! Preciso de prompts otimizados para IA.', '_blank')">
+                    <div class="service-icon"><i class="fas fa-robot"></i></div>
+                    <h3>Prompts para IA</h3>
+                    <p>Prompts otimizados para ChatGPT, Midjourney e outras ferramentas de inteligência artificial.</p>
+                    <a href="https://wa.me/5515992710295?text=Olá! Preciso de prompts otimizados para IA." class="service-btn" target="_blank">Solicitar Orçamento</a>
+                </div>
+                
+                <div class="service-card" onclick="window.open('https://wa.me/5515992710295?text=Olá! Gostaria de desenvolver um site profissional.', '_blank')">
+                    <div class="service-icon"><i class="fas fa-code"></i></div>
+                    <h3>Desenvolvimento Web</h3>
+                    <p>Sites responsivos, landing pages e plataformas digitais modernas e funcionais.</p>
+                    <a href="https://wa.me/5515992710295?text=Olá! Gostaria de desenvolver um site profissional." class="service-btn" target="_blank">Solicitar Orçamento</a>
+                </div>
+                
+                <div class="service-card" onclick="window.open('https://wa.me/5515992710295?text=Olá! Preciso de manutenção para meu site.', '_blank')">
+                    <div class="service-icon"><i class="fas fa-wrench"></i></div>
+                    <h3>Manutenção de Sites</h3>
+                    <p>Atualizações, correções de bugs e otimizações para manter seu site sempre funcionando perfeitamente.</p>
+                    <a href="https://wa.me/5515992710295?text=Olá! Preciso de manutenção para meu site." class="service-btn" target="_blank">Solicitar Orçamento</a>
+                </div>
+
+                <div class="service-card" onclick="window.open('https://wa.me/5515992710295?text=Olá! Gostaria de posts promocionais para Instagram.', '_blank')">
+                    <div class="service-icon"><i class="fab fa-instagram"></i></div>
+                    <h3>Posts Promocionais</h3>
+                    <p>Conteúdo visual criativo e estratégico para Instagram que engaja e converte seguidores em clientes.</p>
+                    <a href="https://wa.me/5515992710295?text=Olá! Gostaria de posts promocionais para Instagram." class="service-btn" target="_blank">Solicitar Orçamento</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="portfolio" class="section">
+            <h2 class="section-title">Nosso <span class="highlight">Portfólio</span></h2>
+            <p class="section-subtitle">Alguns dos projetos que desenvolvemos</p>
+            
+            <div class="portfolio-grid">
+                <div class="portfolio-item">
+                    <div class="portfolio-image">
+                        <img src="imagens/fotogas.png" alt="Prévia da Landing Page Corporativa">
+                    </div>
+                    <div class="portfolio-content">
+                        <h3>Landing Page Corporativa</h3>
+                        <p>Site institucional com foco em conversão e otimizado para motores de busca.</p>
+                        <a href="portifolio.html" class="portfolio-btn">Ver Portfólio</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="sobre" class="section">
+            <h2 class="section-title">Sobre a <span class="highlight">DevDigital</span></h2>
+            <p class="section-subtitle">Especialistas em transformação digital</p>
+            
+            <div class="about-content">
+                <div class="about-text">
+                    <p>Na <strong>DevDigital</strong>, somos especialistas em criar soluções digitais que fazem a diferença. Com 1 ano de experiência no mercado, desenvolvemos projetos que combinam criatividade, funcionalidade e resultados.</p>
+                    
+                    <p>Nossa missão é transformar sua presença online em um diferencial competitivo, oferecendo serviços personalizados que atendem às necessidades específicas do seu negócio.</p>
+                </div>
+                
+                <div class="about-features">
+                    <div class="feature-item">
+                        <div class="feature-icon"><i class="fas fa-rocket"></i></div>
+                        <div>
+                            <h4>Inovação Constante</h4>
+                            <p>Sempre atualizados com as últimas tecnologias</p>
+                        </div>
+                    </div>
+                    
+                    <div class="feature-item">
+                        <div class="feature-icon"><i class="fas fa-users"></i></div>
+                        <div>
+                            <h4>Foco no Cliente</h4>
+                            <p>Cada projeto é único e personalizado</p>
+                        </div>
+                    </div>
+                    
+                    <div class="feature-item">
+                        <div class="feature-icon"><i class="fas fa-clock"></i></div>
+                        <div>
+                            <h4>Prazos Cumpridos</h4>
+                            <p>Entregamos sempre dentro do prazo acordado</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="processo" class="section">
+            <h2 class="section-title">Como <span class="highlight">Funciona?</span></h2>
+            <p class="section-subtitle">Um processo sem burocracia, focado no que realmente importa: colocar sua página no ar o mais rápido possível.</p>
+
+            <div class="process-grid">
+                <div class="process-step">
+                    <div class="process-icon"><i class="fas fa-lightbulb"></i></div>
+                    <h4>Etapa 1: Briefing & Estratégia</h4>
+                    <p>Conversamos sobre suas ideias e objetivos para entender exatamente o que você precisa e traçar a melhor estratégia.</p>
+                </div>
+                <div class="process-step">
+                    <div class="process-icon"><i class="fas fa-file-signature"></i></div>
+                    <h4>Etapa 2: Proposta & Aprovação</h4>
+                    <p>Enviamos uma proposta detalhada com tudo incluso. Após a sua aprovação iniciamos o projeto.</p>
+                </div>
+                <div class="process-step">
+                    <div class="process-icon"><i class="fas fa-pencil-ruler"></i></div>
+                    <h4>Etapa 3: Criação & Design</h4>
+                    <p>Nossa equipe entra em ação para criar um design incrível e desenvolver seu site com as melhores tecnologias.</p>
+                </div>
+                <div class="process-step">
+                    <div class="process-icon"><i class="fas fa-check-double"></i></div>
+                    <h4>Etapa 4: Revisão & Ajustes</h4>
+                    <p>Apresentamos o site para você. Nesta fase, realizamos os ajustes finos para garantir que tudo esteja perfeito.</p>
+                </div>
+                <div class="process-step">
+                    <div class="process-icon"><i class="fas fa-rocket"></i></div>
+                    <h4>Etapa 5: Lançamento & Entrega</h4>
+                    <p>Com tudo aprovado, publicamos seu site no seu domínio e entregamos todos os acessos. Seu projeto está no ar!</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="contato" class="section">
+            <h2 class="section-title">Criação de <span class="highlight">Landing Pages em Presidente Prudente</span> e Região</h2>
+            <p class="section-subtitle">Atendemos Teodoro Sampaio, Pirapozinho, Rosana e todo Oeste Paulista. Preencha o formulário e receba sua proposta!</p>
+            
+            <div class="contact-content">
+                <div class="contact-form-container">
+                    <div class="contact-form-card">
+                        <h3 class="form-title">Garantir Minha Landing Page de poucos dias</h3>
+                        
+                        <form id="contactForm" class="contact-form">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="nome">Nome Completo *</label>
+                                    <input type="text" id="nome" name="nome" placeholder="Seu nome completo" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="email">Email *</label>
+                                    <input type="email" id="email" name="email" placeholder="seu@email.com" required>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="whatsapp">WhatsApp</label>
+                                    <input type="tel" id="whatsapp" name="whatsapp" placeholder="(15) 9 9271-0295">
+                                </div>
+                                <div class="form-group">
+                                    <label for="empresa">Empresa</label>
+                                    <input type="text" id="empresa" name="empresa" placeholder="Nome da sua empresa">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="projeto">Conte sobre seu projeto *</label>
+                                <textarea id="projeto" name="projeto" placeholder="Descreva brevemente o que você precisa..." required></textarea>
+                            </div>
+                            
+                            <button type="submit" class="form-submit-btn">
+                                <i class="fab fa-whatsapp"></i>
+                                Enviar e Ir para WhatsApp
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fas fa-phone"></i>
+                        </div>
+                        <div>
+                            <h4>Telefone</h4>
+                            <p>(15) 9 9271-0295</p>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div>
+                            <h4>E-mail</h4>
+                            <p>borgescarlos030@gmail.com</p>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div>
+                            <h4>Localização</h4>
+                            <p>Teodoro Sampaio - São Paulo, SP</p>
+                        </div>
+                    </div>
+                    
+                    <a href="https://wa.me/5515992710295" class="whatsapp-btn" target="_blank">
+                        <i class="fab fa-whatsapp"></i>
+                        Chamar no WhatsApp
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="social-links">
+            <a href="https://www.instagram.com/oficial_dev_digital/" target="_blank"><i class="fab fa-instagram"></i></a>
+            <a href="#" target="_blank"><i class="fab fa-facebook"></i></a>
+        </div>
+        <p>&copy; 2025 DevDigital - Todos os direitos reservados.</p>
+    </footer>
+
+    <script>
+        // Variáveis globais
+        const menuToggle = document.getElementById('menu-toggle');
+        const nav = document.getElementById('nav');
+        const menuOverlay = document.getElementById('menu-overlay');
+        const body = document.body;
+
+        // Função para alternar o menu
+        function toggleMenu() {
+            nav.classList.toggle('active');
+            menuOverlay.classList.toggle('active');
+            const icon = menuToggle.querySelector('i');
+            
+            if (nav.classList.contains('active')) {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+                body.style.overflow = 'hidden'; // Impede scroll quando menu aberto
+            } else {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+                body.style.overflow = 'auto'; // Permite scroll quando menu fechado
+            }
+        }
+
+        // Função para fechar o menu
+        function closeMenu() {
+            nav.classList.remove('active');
+            menuOverlay.classList.remove('active');
+            const icon = menuToggle.querySelector('i');
+            icon.classList.remove('fa-times');
+            icon.classList.add('fa-bars');
+            body.style.overflow = 'auto';
+        }
+
+        // Event listeners
+        if (menuToggle) {
+            menuToggle.addEventListener('click', toggleMenu);
+        }
+
+        // Fechar menu ao clicar no overlay
+        if (menuOverlay) {
+            menuOverlay.addEventListener('click', closeMenu);
+        }
+
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function () {
+                if (nav.classList.contains('active')) {
+                    closeMenu();
+                }
+            });
+        });
+
+        // Fechar menu ao pressionar ESC
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && nav.classList.contains('active')) {
+                closeMenu();
+            }
+        });
+
+        // Header scroll effect
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            if (window.scrollY > 50) {
+                header.style.background = 'rgba(10, 10, 10, 0.98)';
+                header.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.3)';
+            } else {
+                header.style.background = 'rgba(10, 10, 10, 0.95)';
+                header.style.boxShadow = 'none';
+            }
+        });
+
+        // Contact form submission
+        const contactForm = document.getElementById('contactForm');
+        if (contactForm) {
+            contactForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const nome = document.getElementById('nome').value;
+                const email = document.getElementById('email').value;
+                const whatsapp = document.getElementById('whatsapp').value;
+                const empresa = document.getElementById('empresa').value;
+                const projeto = document.getElementById('projeto').value;
+                
+                let message = `🚀 *NOVA SOLICITAÇÃO - LANDING PAGE*\n\n`;
+                message += `👤 *Nome:* ${nome}\n`;
+                message += `📧 *Email:* ${email}\n`;
+                if (whatsapp) message += `📱 *WhatsApp:* ${whatsapp}\n`;
+                if (empresa) message += `🏢 *Empresa:* ${empresa}\n`;
+                message += `\n💼 *Projeto:*\n${projeto}\n\n`;
+                message += `_Enviado através do site DevDigital_`;
+                
+                const encodedMessage = encodeURIComponent(message);
+                const whatsappUrl = `https://wa.me/5515992710295?text=${encodedMessage}`;
+                window.open(whatsappUrl, '_blank');
+                
+                this.reset();
+                
+                const submitBtn = document.querySelector('.form-submit-btn');
+                const originalText = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<i class="fas fa-check"></i> Enviado com Sucesso!';
+                submitBtn.style.background = '#25D366';
+                
+                setTimeout(() => {
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.style.background = 'var(--gradient-1)';
+                }, 3000);
+            });
+        }
+
+        // Animação suave ao carregar a página
+        window.addEventListener('load', function() {
+            document.body.style.opacity = '0';
+            document.body.style.transition = 'opacity 0.3s ease';
+            
+            setTimeout(() => {
+                document.body.style.opacity = '1';
+            }, 100);
+        });
+
+        // Otimização para dispositivos móveis
+        let resizeTimer;
+        window.addEventListener('resize', function() {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => {
+                if (window.innerWidth > 768 && nav.classList.contains('active')) {
+                    closeMenu();
+                }
+            }, 250);
+        });
+    </script>
+</body>
+</html>
