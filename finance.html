@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dev Digital BR - Painel Financeiro</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/10.22.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.22.0/firebase-firestore.js"></script>
+  <script type="module" src="financeiro.js" defer></script>
+
+  <script>
+   
+
+   // Configuração do Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyBvos9nCRithcUX768xuwQZ70p1_xgmKOg",
+      authDomain: "gestao-financeira-9e033.firebaseapp.com",
+      projectId: "gestao-financeira-9e033",
+      storageBucket: "gestao-financeira-9e033.appspot.com",
+      messagingSenderId: "694364024644",
+      appId: "1:694364024644:web:1758bd0d4a47b71b93b111",
+      measurementId: "G-PNL027GT4B"
+    };
+
+    const app = firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+  </script>
+
+  <style>
+    :root {
+      --primary-color: #00d4ff;
+      --primary-dark: #0099cc;
+      --secondary-color: #0a0a0a;
+      --accent-color: #1a1a1a;
+      --text-light: #ffffff;
+      --text-gray: #a0a0a0;
+      --gradient-1: linear-gradient(135deg, #00d4ff 0%, #0099cc 50%, #0066aa 100%);
+      --gradient-2: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+      --gradient-bg: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%);
+      --border-radius: 15px;
+      --box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      --transition: all 0.3s ease;
+      --success-color: #25d366;
+      --danger-color: #dc3545;
+      --warning-color: #ffc107;
+      --info-color: #17a2b8;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--gradient-bg);
+      color: var(--text-light);
+      overflow-x: hidden;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    .hidden { display: none !important; }
+
+    /* TOAST NOTIFICATIONS */
+    .toast-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .toast {
+      min-width: 300px;
+      padding: 15px 20px;
+      border-radius: 12px;
+      color: white;
+      font-weight: 600;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+      backdrop-filter: blur(10px);
+      transform: translateX(400px);
+      opacity: 0;
+      transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-left: 4px solid;
+    }
+
+    .toast.show {
+      transform: translateX(0);
+      opacity: 1;
+    }
+
+    .toast.success {
+      background: linear-gradient(135deg, rgba(37, 211, 102, 0.95), rgba(25, 135, 84, 0.95));
+      border-left-color: var(--success-color);
+    }
+
+    .toast.error {
+      background: linear-gradient(135deg, rgba(220, 53, 69, 0.95), rgba(176, 42, 55, 0.95));
+      border-left-color: var(--danger-color);
+    }
+
+    .toast.warning {
+      background: linear-gradient(135deg, rgba(255, 193, 7, 0.95), rgba(255, 143, 0, 0.95));
+      border-left-color: var(--warning-color);
+      color: var(--secondary-color);
+    }
+
+    .toast .toast-icon {
+      font-size: 1.2rem;
+    }
+
+    .toast .toast-close {
+      margin-left: auto;
+      background: none;
+      border: none;
+      color: inherit;
+      font-size: 1.1rem;
+      cursor: pointer;
+      opacity: 0.7;
+      padding: 0;
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.2s;
+    }
+
+    .toast .toast-close:hover {
+      opacity: 1;
+    }
+
+    .loading {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem;
+      color: var(--text-gray);
+    }
+
+    .loading i { animation: spin 1s linear infinite; margin-right: 0.5rem; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+    .header {
+      background: rgba(10,10,10,0.95);
+      backdrop-filter: blur(10px);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      box-shadow: 0 2px 20px rgba(0,0,0,0.3);
+    }
+
+    .logo-container { display: flex; align-items: center; gap: 1rem; }
+    .logo-image {
+      width: 80px; 
+      height: 80px; 
+      border-radius: var(--border-radius);
+      background: var(--gradient-1);
+      display: flex; 
+      align-items: center; 
+      justify-content: center;
+      box-shadow: 0 4px 15px rgba(0,212,255,0.3);
+      font-size: 1.8rem; 
+      font-weight: 700; 
+      color: var(--secondary-color);
+      background-image: url('logo_nome.png');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      text-decoration: none;
+      transition: var(--transition);
+    }
+    
+    .logo-image:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0,212,255,0.4);
+    }
+    
+    .logo-text {
+      font-size: 1.8rem; 
+      font-weight: 700;
+      background: var(--gradient-1);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-decoration: none;
+      transition: var(--transition);
+    }
+    
+    .logo-text:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.2);
+    }
+
+    .container { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; }
+    .card {
+      background: var(--gradient-2);
+      border-radius: 20px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      border: 1px solid rgba(255,255,255,0.1);
+      box-shadow: var(--box-shadow);
+      backdrop-filter: blur(10px);
+    }
+
+    .login-container { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem; }
+    .login-card {
+      background: var(--gradient-2);
+      padding: 3rem;
+      border-radius: 25px;
+      border: 1px solid rgba(255,255,255,0.1);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+      backdrop-filter: blur(20px);
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+    }
+
+    .login-title {
+      font-size: 2rem; font-weight: 700; margin-bottom: 2rem;
+      background: var(--gradient-1);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+    }
+
+    .form-group { margin-bottom: 1.5rem; text-align: left; }
+    .form-group label { display: block; margin-bottom: 0.5rem; color: var(--text-light); font-weight: 600; }
+    .form-group label .optional { color: var(--text-gray); font-weight: 400; font-size: 0.9rem; }
+    .form-control {
+      width: 100%; padding: 1rem;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 12px;
+      background: rgba(255,255,255,0.05);
+      color: var(--text-light);
+      font-size: 1rem;
+      transition: var(--transition);
+      backdrop-filter: blur(10px);
+    }
+    .form-control:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 2px rgba(0,212,255,0.2);
+      background: rgba(255,255,255,0.08);
+    }
+    .form-control::placeholder { color: var(--text-gray); }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; }
+    .form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; }
+
+    /* FILTERS SECTION */
+    .filters-section {
+      background: var(--gradient-2);
+      padding: 1.5rem;
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.1);
+      margin-bottom: 2rem;
+      display: flex;
+      gap: 1rem;
+      align-items: end;
+      flex-wrap: wrap;
+    }
+
+    .filter-group {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .filter-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: var(--text-light);
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .clear-filters {
+      background: rgba(220, 53, 69, 0.2);
+      border: 1px solid rgba(220, 53, 69, 0.3);
+      color: var(--danger-color);
+      padding: 0.8rem 1.5rem;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 600;
+      height: fit-content;
+    }
+
+    .clear-filters:hover {
+      background: rgba(220, 53, 69, 0.3);
+      transform: translateY(-2px);
+    }
+
+    .btn {
+      padding: 1rem 2rem;
+      border: none;
+      border-radius: 50px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      text-decoration: none;
+    }
+
+    .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .btn-primary { background: var(--gradient-1); color: var(--secondary-color); }
+    .btn-danger { background: var(--danger-color); color: var(--text-light); }
+    .btn-success { background: var(--success-color); color: var(--text-light); }
+    .btn-small { padding: 0.5rem 1rem; font-size: 0.9rem; border-radius: 20px; }
+    .btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+    .btn-primary:hover:not(:disabled) { box-shadow: 0 10px 30px rgba(0,212,255,0.4); }
+    .btn-danger:hover:not(:disabled) { background: #a71d2a; }
+
+    .page-title { text-align:center; font-size:2.5rem; font-weight:700; margin-bottom:1rem; display:flex; align-items:center; justify-content:center; gap:1rem; }
+    .page-title .highlight { background: var(--gradient-1); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+    .page-subtitle { text-align:center; color: var(--text-gray); font-size:1.1rem; margin-bottom:3rem; }
+
+    .table-container { overflow-x:auto; border-radius: var(--border-radius); }
+    .table { width:100%; border-collapse:collapse; background: rgba(255,255,255,0.02); border-radius: var(--border-radius); overflow:hidden; }
+    .table thead { background: var(--gradient-1); }
+    .table th { padding:1rem; text-align:center; font-weight:600; color: var(--secondary-color); font-size:0.95rem; }
+    .table td { padding:1rem; text-align:center; border-bottom:1px solid rgba(255,255,255,0.1); color: var(--text-light); }
+    
+    /* ENHANCED TABLE ROW ANIMATIONS */
+    .table tbody tr {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .table tbody tr::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(0,212,255,0.1), transparent);
+      transition: left 0.5s;
+    }
+    
+    .table tbody tr:hover {
+      background: rgba(0,212,255,0.08);
+      transform: translateX(5px) scale(1.02);
+      box-shadow: 0 8px 25px rgba(0,212,255,0.15);
+    }
+    
+    .table tbody tr:hover::before {
+      left: 100%;
+    }
+    
+    .table tbody tr:last-child td { border-bottom: none; }
+
+    /* ROW ENTRY ANIMATION */
+    @keyframes slideInFromRight {
+      from {
+        opacity: 0;
+        transform: translateX(50px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .table tbody tr.new-row {
+      animation: slideInFromRight 0.5s ease-out;
+    }
+
+    .summary-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(250px,1fr)); gap:1.5rem; margin-bottom:2rem; }
+    .summary-card {
+      background: var(--gradient-2);
+      padding:2rem;
+      border-radius:20px;
+      text-align:center;
+      border:1px solid rgba(255,255,255,0.1);
+      position: relative;
+      overflow:hidden;
+      transition: var(--transition);
+    }
+    .summary-card::before {
+      content:'';
+      position:absolute;
+      top:0; left:0; right:0;
+      height:4px;
+      background: var(--gradient-1);
+    }
+    .summary-card:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+    .summary-card.receitas::before { background: var(--success-color); }
+    .summary-card.despesas::before { background: var(--danger-color); }
+
+    .summary-icon { font-size:2.5rem; margin-bottom:1rem; color: var(--primary-color); }
+    .summary-card.receitas .summary-icon { color: var(--success-color); }
+    .summary-card.despesas .summary-icon { color: var(--danger-color); }
+    .summary-label { font-size:1rem; color: var(--text-gray); margin-bottom:0.5rem; font-weight:600; }
+    .summary-value { font-size:2rem; font-weight:700; color: var(--text-light); }
+    .summary-card.receitas .summary-value { color: var(--success-color); }
+    .summary-card.despesas .summary-value { color: var(--danger-color); }
+
+    .transaction-form { background: var(--gradient-2); padding:2rem; border-radius:20px; border:1px solid rgba(255,255,255,0.1); margin-bottom:2rem; }
+    .form-title { font-size:1.5rem; font-weight:600; margin-bottom:1.5rem; color: var(--text-light); display:flex; align-items:center; gap:0.5rem; }
+    .type-badge { padding:0.3rem 0.8rem; border-radius:20px; font-size:0.8rem; font-weight:600; text-transform:uppercase; }
+    .type-badge.receita { background: rgba(37,211,102,0.2); color: var(--success-color); border:1px solid rgba(37,211,102,0.3); }
+    .type-badge.despesa { background: rgba(220,53,69,0.2); color: var(--danger-color); border:1px solid rgba(220,53,69,0.3); }
+
+    .empty-state { text-align:center; padding:3rem; color: var(--text-gray); }
+    .empty-state i { font-size:4rem; margin-bottom:1rem; color: var(--primary-color); opacity:0.5; }
+    .reason-text { font-size:0.9em; color: var(--text-gray); font-style:italic; }
+
+    /* ENHANCED MOBILE EXPERIENCE */
+    @media (max-width:768px){
+      .container { padding:0 1rem; margin:1rem auto; }
+      .header { padding:1rem; flex-direction: column; gap: 1rem; }
+      .logo-container { justify-content: center; }
+      .logo-text { font-size:1.5rem; }
+      .logo-image { width:70px; height:70px; font-size:1.5rem; }
+      .card { padding:1.5rem; }
+      .page-title { font-size:2rem; flex-direction: column; gap: 0.5rem; }
+      .form-row, .form-row-3 { grid-template-columns:1fr; }
+      .summary-grid { grid-template-columns:1fr; }
+      .table th, .table td { padding:0.5rem; font-size:0.9rem; }
+      .btn { padding:0.8rem 1.5rem; }
+      
+      /* MOBILE FILTERS */
+      .filters-section {
+        flex-direction: column;
+        gap: 1rem;
+      }
+      
+      .filter-group {
+        min-width: 100%;
+      }
+      
+      .clear-filters {
+        align-self: center;
+        width: 100%;
+        justify-content: center;
+      }
+      
+      /* MOBILE TABLE */
+      .table-container {
+        font-size: 0.85rem;
+      }
+      
+      .table th:nth-child(2),
+      .table td:nth-child(2) {
+        display: none; /* Hide reason column on mobile */
+      }
+      
+      .table tbody tr:hover {
+        transform: translateX(0) scale(1.01);
+      }
+      
+      /* MOBILE TOAST */
+      .toast-container {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+      }
+      
+      .toast {
+        min-width: auto;
+        width: 100%;
+      }
+    }
+
+    @keyframes fadeInUp { from {opacity:0; transform:translateY(30px);} to {opacity:1; transform:translateY(0);} }
+    .fade-in { animation: fadeInUp 0.6s ease-out; }
+
+    /* LOADING ANIMATION ENHANCEMENT */
+    .btn.loading {
+      position: relative;
+      pointer-events: none;
+    }
+    
+    .btn.loading::after {
+      content: '';
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      border: 2px solid transparent;
+      border-top: 2px solid currentColor;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    
+    .btn.loading i {
+      opacity: 0;
+    }
+
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: var(--secondary-color); }
+    ::-webkit-scrollbar-thumb { background: var(--gradient-1); border-radius:4px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--primary-dark); }
+  </style>
+</head>
+<body>
+  <!-- Toast Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Login -->
+  <div id="login-container" class="login-container">
+    <div class="login-card fade-in">
+      <div class="login-title"><i class="fas fa-lock"></i> Acesso Administrativo</div>
+      <form id="login-form">
+        <div class="form-group">
+          <label for="username">Usuário</label>
+          <input type="text" id="username" class="form-control" placeholder="Digite seu usuário" required>
+        </div>
+        <div class="form-group">
+          <label for="password">Senha</label>
+          <input type="password" id="password" class="form-control" placeholder="Digite sua senha" required>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width:100%;"><i class="fas fa-sign-in-alt"></i> Entrar</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- App -->
+  <div id="app-container" class="hidden">
+    <div class="header">
+      <div class="logo-container">
+        <a href="index.html" class="logo-image" title="Ir para página inicial">DD</a>
+        <a href="index.html" class="logo-text" title="Ir para página inicial">Dev Digital BR</a>
+      </div>
+      <button class="btn btn-danger btn-small" id="logout"><i class="fas fa-sign-out-alt"></i> Sair</button>
+    </div>
+
+    <div class="container">
+      <div id="loading-state" class="loading hidden"><i class="fas fa-spinner"></i> Carregando transações...</div>
+
+      <h1 class="page-title fade-in"><i class="fas fa-chart-line"></i> Painel <span class="highlight">Financeiro</span></h1>
+      <p class="page-subtitle">Gerencie suas finanças de forma inteligente e eficiente</p>
+
+      <!-- Summary Cards -->
+      <div class="summary-grid fade-in">
+        <div class="summary-card receitas">
+          <i class="fas fa-arrow-up summary-icon"></i>
+          <div class="summary-label">Total Receitas</div>
+          <div class="summary-value">R$ <span id="total-receitas">0,00</span></div>
+        </div>
+        <div class="summary-card despesas">
+          <i class="fas fa-arrow-down summary-icon"></i>
+          <div class="summary-label">Total Despesas</div>
+          <div class="summary-value">R$ <span id="total-despesas">0,00</span></div>
+        </div>
+        <div class="summary-card" id="saldo-card">
+          <i class="fas fa-wallet summary-icon"></i>
+          <div class="summary-label">Saldo Atual</div>
+          <div class="summary-value">R$ <span id="saldo">0,00</span></div>
+        </div>
+      </div>
+
+      <!-- Transaction Form -->
+      <div class="transaction-form fade-in">
+        <h3 class="form-title"><i class="fas fa-plus-circle"></i> Nova Transação</h3>
+        <form id="transaction-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="desc">Descrição</label>
+              <input type="text" id="desc" class="form-control" placeholder="Descrição da transação" required>
+            </div>
+            <div class="form-group">
+              <label for="reason">Motivo <span class="optional">(opcional)</span></label>
+              <input type="text" id="reason" class="form-control" placeholder="Ex: Pagamento de cliente, Compra de equipamento...">
+            </div>
+          </div>
+          <div class="form-row-3">
+            <div class="form-group">
+              <label for="amount">Valor (R$)</label>
+              <input type="number" id="amount" class="form-control" placeholder="0,00" step="0.01" required>
+            </div>
+            <div class="form-group">
+              <label for="type">Tipo</label>
+              <select id="type" class="form-control">
+                <option value="receita">💰 Receita</option>
+                <option value="despesa">💸 Despesa</option>
+              </select>
+            </div>
+            <div class="form-group" style="display:flex; align-items:end;">
+              <button type="submit" class="btn btn-success" id="add-transaction-btn" style="width:100%;"><i class="fas fa-plus"></i> Adicionar</button>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <!-- Filters Section -->
+      <div class="filters-section fade-in">
+        <div class="filter-group">
+          <label for="filter-type">Filtrar por Tipo</label>
+          <select id="filter-type" class="form-control">
+            <option value="">🔍 Todos os tipos</option>
+            <option value="receita">💰 Receitas</option>
+            <option value="despesa">💸 Despesas</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label for="filter-month">Filtrar por Mês</label>
+          <select id="filter-month" class="form-control">
+            <option value="">📅 Todos os meses</option>
+          </select>
+        </div>
+        <button class="clear-filters" id="clear-filters">
+          <i class="fas fa-times-circle"></i> Limpar Filtros
+        </button>
+      </div>
+
+      <!-- Transactions Table -->
+      <div class="card fade-in">
+        <h3 class="form-title"><i class="fas fa-list"></i> Histórico de Transações</h3>
+        <div class="table-container">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Descrição</th>
+                <th>Motivo</th>
+                <th>Valor</th>
+                <th>Tipo</th>
+                <th>Data</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="transaction-table-body"></tbody>
+          </table>
+          <div id="empty-state" class="empty-state hidden">
+            <i class="fas fa-inbox"></i>
+            <h3>Nenhuma transação encontrada</h3>
+            <p>Adicione sua primeira transação usando o formulário acima.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const loginContainer = document.getElementById("login-container");
+    const appContainer = document.getElementById("app-container");
+    const loginForm = document.getElementById("login-form");
+    const logoutBtn = document.getElementById("logout");
+    const loadingState = document.getElementById("loading-state");
+    const tableBody = document.getElementById("transaction-table-body");
+    const emptyState = document.getElementById("empty-state");
+    const totalReceitasEl = document.getElementById("total-receitas");
+    const totalDespesasEl = document.getElementById("total-despesas");
+    const saldoEl = document.getElementById("saldo");
+    const filterTypeEl = document.getElementById("filter-type");
+    const filterMonthEl = document.getElementById("filter-month");
+    const clearFiltersBtn = document.getElementById("clear-filters");
+    const addTransactionBtn = document.getElementById("add-transaction-btn");
+
+    const ADMIN_USER = "admin";
+    const ADMIN_PASS = "12345";
+    let transactions = [];
+    let filteredTransactions = [];
+
+    // TOAST SYSTEM
+    function showToast(message, type = 'success', duration = 4000) {
+      const toastContainer = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      
+      const icons = {
+        success: 'fas fa-check-circle',
+        error: 'fas fa-exclamation-circle',
+        warning: 'fas fa-exclamation-triangle',
+        info: 'fas fa-info-circle'
+      };
+
+      toast.className = `toast ${type}`;
+      toast.innerHTML = `
+        <i class="toast-icon ${icons[type]}"></i>
+        <span>${message}</span>
+        <button class="toast-close" onclick="closeToast(this)">
+          <i class="fas fa-times"></i>
+        </button>
+      `;
+
+      toastContainer.appendChild(toast);
+      
+      // Show toast
+      setTimeout(() => toast.classList.add('show'), 100);
+      
+      // Auto remove
+      setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 400);
+      }, duration);
+    }
+
+    function closeToast(button) {
+      const toast = button.parentElement;
+      toast.classList.remove('show');
+      setTimeout(() => toast.remove(), 400);
+    }
+
+    // FILTERS FUNCTIONALITY
+    function populateMonthFilter() {
+      const months = [...new Set(transactions.map(t => {
+        const date = new Date(t.timestamp);
+        return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+      }))].sort().reverse();
+
+      const monthNames = [
+        'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+        'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+      ];
+
+      filterMonthEl.innerHTML = '<option value="">📅 Todos os meses</option>';
+      
+      months.forEach(month => {
+        const [year, monthNum] = month.split('-');
+        const monthName = monthNames[parseInt(monthNum) - 1];
+        const option = document.createElement('option');
+        option.value = month;
+        option.textContent = `${monthName} ${year}`;
+        filterMonthEl.appendChild(option);
+      });
+    }
+
+    function applyFilters() {
+      const typeFilter = filterTypeEl.value;
+      const monthFilter = filterMonthEl.value;
+      
+      filteredTransactions = transactions.filter(transaction => {
+        let matchesType = !typeFilter || transaction.type === typeFilter;
+        let matchesMonth = true;
+        
+        if (monthFilter) {
+          const transactionDate = new Date(transaction.timestamp);
+          const transactionMonth = `${transactionDate.getFullYear()}-${String(transactionDate.getMonth() + 1).padStart(2, '0')}`;
+          matchesMonth = transactionMonth === monthFilter;
+        }
+        
+        return matchesType && matchesMonth;
+      });
+      
+      renderTransactions();
+    }
+
+    function clearFilters() {
+      filterTypeEl.value = '';
+      filterMonthEl.value = '';
+      filteredTransactions = [...transactions];
+      renderTransactions();
+      showToast('Filtros limpos com sucesso!', 'info', 2000);
+    }
+
+    // Event listeners for filters
+    filterTypeEl.addEventListener('change', applyFilters);
+    filterMonthEl.addEventListener('change', applyFilters);
+    clearFiltersBtn.addEventListener('click', clearFilters);
+
+    loginForm.addEventListener("submit", async e => {
+      e.preventDefault();
+      const user = document.getElementById("username").value;
+      const pass = document.getElementById("password").value;
+      
+      if (user === ADMIN_USER && pass === ADMIN_PASS) {
+        sessionStorage.setItem("finance_logged", JSON.stringify({ logged: true, timestamp: Date.now() }));
+        loginContainer.classList.add("hidden");
+        appContainer.classList.remove("hidden");
+        showToast('Login realizado com sucesso! Bem-vindo!', 'success');
+        await loadTransactions();
+      } else {
+        showToast('Usuário ou senha incorretos!', 'error');
+      }
+    });
+
+    logoutBtn.addEventListener("click", () => {
+      sessionStorage.removeItem("finance_logged");
+      loginContainer.classList.remove("hidden");
+      appContainer.classList.add("hidden");
+      transactions = [];
+      showToast('Logout realizado com sucesso!', 'info', 2000);
+    });
+
+    async function checkLoginState() {
+      const loginData = sessionStorage.getItem("finance_logged");
+      if (loginData) {
+        const { logged, timestamp } = JSON.parse(loginData);
+        if (logged && (Date.now() - timestamp) / (1000 * 60 * 60) < 8) {
+          loginContainer.classList.add("hidden");
+          appContainer.classList.remove("hidden");
+          await loadTransactions();
+        } else {
+          sessionStorage.removeItem("finance_logged");
+        }
+      }
+    }
+    checkLoginState();
+
+    async function loadTransactions() {
+      loadingState.classList.remove("hidden");
+      try {
+        const snapshot = await db.collection("transactions").orderBy("timestamp", "desc").get();
+        transactions = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        filteredTransactions = [...transactions];
+        populateMonthFilter();
+        renderTransactions();
+        showToast(`${transactions.length} transações carregadas com sucesso!`, 'success', 2000);
+      } catch (e) {
+        console.error(e);
+        showToast('Erro ao carregar transações. Tente novamente.', 'error');
+      }
+      loadingState.classList.add("hidden");
+    }
+
+    const form = document.getElementById("transaction-form");
+    form.addEventListener("submit", async e => {
+      e.preventDefault();
+      const desc = document.getElementById("desc").value.trim();
+      const reason = document.getElementById("reason").value.trim();
+      const amount = parseFloat(document.getElementById("amount").value);
+      const type = document.getElementById("type").value;
+      
+      if (!desc || isNaN(amount) || amount <= 0) {
+        showToast('Preencha todos os campos corretamente!', 'warning');
+        return;
+      }
+
+      // Add loading state to button
+      addTransactionBtn.classList.add('loading');
+      addTransactionBtn.disabled = true;
+
+      try {
+        const transaction = {
+          desc,
+          reason,
+          amount,
+          type,
+          date: new Date().toLocaleDateString('pt-BR'),
+          timestamp: Date.now()
+        };
+        
+        const docRef = await db.collection("transactions").add(transaction);
+        transaction.id = docRef.id;
+        transactions.unshift(transaction);
+        filteredTransactions = [...transactions];
+        populateMonthFilter();
+        renderTransactions();
+        form.reset();
+        
+        const typeText = type === 'receita' ? 'Receita' : 'Despesa';
+        showToast(`${typeText} de R$ ${amount.toLocaleString('pt-BR', {minimumFractionDigits: 2})} adicionada com sucesso!`, 'success');
+      } catch (e) {
+        console.error(e);
+        showToast('Erro ao adicionar transação. Tente novamente.', 'error');
+      } finally {
+        addTransactionBtn.classList.remove('loading');
+        addTransactionBtn.disabled = false;
+      }
+    });
+
+    async function deleteTransaction(id) {
+      if (confirm("🗑️ Tem certeza que deseja excluir esta transação?")) {
+        try {
+          await db.collection("transactions").doc(id).delete();
+          transactions = transactions.filter(t => t.id !== id);
+          filteredTransactions = filteredTransactions.filter(t => t.id !== id);
+          populateMonthFilter();
+          renderTransactions();
+          showToast('Transação excluída com sucesso!', 'success', 2000);
+        } catch (e) {
+          console.error(e);
+          showToast('Erro ao deletar transação. Tente novamente.', 'error');
+        }
+      }
+    }
+
+    function renderTransactions() {
+      tableBody.innerHTML = '';
+      let totalReceitas = 0, totalDespesas = 0;
+      
+      // Calculate totals from filtered transactions
+      filteredTransactions.forEach(t => {
+        if (t.type === 'receita') totalReceitas += t.amount;
+        else totalDespesas += t.amount;
+      });
+
+      if (filteredTransactions.length === 0) {
+        emptyState.classList.remove("hidden");
+        document.querySelector(".table").style.display = "none";
+        
+        // Show different messages based on filters
+        const typeFilter = filterTypeEl.value;
+        const monthFilter = filterMonthEl.value;
+        const emptyTitle = emptyState.querySelector('h3');
+        const emptyText = emptyState.querySelector('p');
+        
+        if (typeFilter || monthFilter) {
+          emptyTitle.textContent = 'Nenhuma transação encontrada com estes filtros';
+          emptyText.textContent = 'Tente alterar os filtros ou limpar para ver todas as transações.';
+        } else {
+          emptyTitle.textContent = 'Nenhuma transação encontrada';
+          emptyText.textContent = 'Adicione sua primeira transação usando o formulário acima.';
+        }
+      } else {
+        emptyState.classList.add("hidden");
+        document.querySelector(".table").style.display = "table";
+        
+        filteredTransactions.forEach((t, index) => {
+          const row = document.createElement("tr");
+          row.classList.add('new-row');
+          
+          // Remove animation class after animation completes
+          setTimeout(() => row.classList.remove('new-row'), 500);
+          
+          row.innerHTML = `
+            <td style="text-align:left; font-weight:500;">${t.desc}</td>
+            <td style="text-align:left;">${t.reason ? `<span class="reason-text">${t.reason}</span>` : '<span style="color:#666;">—</span>'}</td>
+            <td style="font-weight:700; color:${t.type === 'receita' ? '#25d366' : '#dc3545'};">R$ ${t.amount.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+            <td><span class="type-badge ${t.type}">${t.type === 'receita' ? '💰 Receita' : '💸 Despesa'}</span></td>
+            <td style="color:#a0a0a0;">${t.date}</td>
+            <td><button onclick="deleteTransaction('${t.id}')" class="btn btn-danger btn-small"><i class="fas fa-trash"></i></button></td>
+          `;
+          tableBody.appendChild(row);
+        });
+      }
+
+      // Update summary cards with filtered data
+      totalReceitasEl.textContent = totalReceitas.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      totalDespesasEl.textContent = totalDespesas.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      const saldo = totalReceitas - totalDespesas;
+      saldoEl.textContent = saldo.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      
+      // Update saldo card color based on value
+      const saldoCard = document.getElementById('saldo-card');
+      const saldoValueEl = saldoCard.querySelector('.summary-value');
+      const saldoIconEl = saldoCard.querySelector('.summary-icon');
+      
+      if (saldo > 0) {
+        saldoCard.classList.remove('despesas');
+        saldoCard.classList.add('receitas');
+        saldoValueEl.style.color = '#25d366';
+        saldoIconEl.style.color = '#25d366';
+        saldoIconEl.className = 'fas fa-wallet summary-icon';
+      } else if (saldo < 0) {
+        saldoCard.classList.remove('receitas');
+        saldoCard.classList.add('despesas');
+        saldoValueEl.style.color = '#dc3545';
+        saldoIconEl.style.color = '#dc3545';
+        saldoIconEl.className = 'fas fa-exclamation-triangle summary-icon';
+      } else {
+        saldoCard.classList.remove('receitas', 'despesas');
+        saldoValueEl.style.color = '#ffffff';
+        saldoIconEl.style.color = '#00d4ff';
+        saldoIconEl.className = 'fas fa-wallet summary-icon';
+      }
+    }
+
+    // Expose deleteTransaction to global scope for onclick handlers
+    window.deleteTransaction = deleteTransaction;
+
+    // Add smooth scroll behavior for better mobile experience
+    document.documentElement.style.scrollBehavior = 'smooth';
+
+    // Add touch feedback for mobile
+    if ('ontouchstart' in window) {
+      document.addEventListener('touchstart', function() {}, { passive: true });
+    }
+  </script>
+</body>
+</html>
