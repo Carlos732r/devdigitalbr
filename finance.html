@@ -6,6 +6,30 @@
   <title>Dev Digital BR - Painel Financeiro</title>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
+  <script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-analytics.js";
+    // TODO: Add SDKs for Firebase products that you want to use
+    // https://firebase.google.com/docs/web/setup#available-libraries
+
+    // Your web app's Firebase configuration
+    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfigModule = {
+      apiKey: "AIzaSyBvos9nCRithcUX768xuwQZ70p1_xgmKOg",
+      authDomain: "gestao-financeira-9e033.firebaseapp.com",
+      projectId: "gestao-financeira-9e033",
+      storageBucket: "gestao-financeira-9e033.firebasestorage.app",
+      messagingSenderId: "694364024644",
+      appId: "1:694364024644:web:1758bd0d4a47b71b93b111",
+      measurementId: "G-PNL027GT4B"
+    };
+
+    // Initialize Firebase
+  const app = initializeApp(firebaseConfigModule);
+  const analytics = getAnalytics(app);
+  </script>
+
   <!-- Firebase v9 (versão mais recente e estável) -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
