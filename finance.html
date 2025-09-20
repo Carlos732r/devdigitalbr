@@ -9,12 +9,9 @@
   <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/10.22.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.22.0/firebase-firestore.js"></script>
-  <script type="module" src="financeiro.js" defer></script>
 
   <script>
-   
-
-   // Configuração do Firebase
+    // Configuração do Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyBvos9nCRithcUX768xuwQZ70p1_xgmKOg",
       authDomain: "gestao-financeira-9e033.firebaseapp.com",
@@ -764,6 +761,7 @@
     filterMonthEl.addEventListener('change', applyFilters);
     clearFiltersBtn.addEventListener('click', clearFilters);
 
+    // LOGIN SYSTEM
     loginForm.addEventListener("submit", async e => {
       e.preventDefault();
       const user = document.getElementById("username").value;
@@ -803,6 +801,7 @@
     }
     checkLoginState();
 
+    // FIREBASE FUNCTIONS
     async function loadTransactions() {
       loadingState.classList.remove("hidden");
       try {
@@ -819,8 +818,9 @@
       loadingState.classList.add("hidden");
     }
 
-    const form = document.getElementById("transaction-form");
-    form.addEventListener("submit", async e => {
+    // TRANSACTION FORM
+    const transactionForm = document.getElementById("transaction-form");
+    transactionForm.addEventListener("submit", async e => {
       e.preventDefault();
       const desc = document.getElementById("desc").value.trim();
       const reason = document.getElementById("reason").value.trim();
@@ -839,7 +839,7 @@
       try {
         const transaction = {
           desc,
-          reason,
+          reason: reason || '',
           amount,
           type,
           date: new Date().toLocaleDateString('pt-BR'),
@@ -852,7 +852,7 @@
         filteredTransactions = [...transactions];
         populateMonthFilter();
         renderTransactions();
-        form.reset();
+        transactionForm.reset();
         
         const typeText = type === 'receita' ? 'Receita' : 'Despesa';
         showToast(`${typeText} de R$ ${amount.toLocaleString('pt-BR', {minimumFractionDigits: 2})} adicionada com sucesso!`, 'success');
