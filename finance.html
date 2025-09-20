@@ -6,12 +6,12 @@
   <title>Dev Digital BR - Painel Financeiro</title>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
-  <!-- Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/10.22.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.22.0/firebase-firestore.js"></script>
+  <!-- Firebase v9 (versão mais recente e estável) -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
   <script>
-    // Configuração do Firebase
+    // Configuração do Firebase - SUBSTITUA PELOS SEUS DADOS
     const firebaseConfig = {
       apiKey: "AIzaSyBvos9nCRithcUX768xuwQZ70p1_xgmKOg",
       authDomain: "gestao-financeira-9e033.firebaseapp.com",
@@ -22,11 +22,26 @@
       measurementId: "G-PNL027GT4B"
     };
 
-    const app = firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-    
-    // Teste de conectividade
-    console.log("Firebase inicializado com sucesso");
+    // Inicialização do Firebase
+    try {
+      firebase.initializeApp(firebaseConfig);
+      const db = firebase.firestore();
+      
+      // Configurações importantes do Firestore
+      db.settings({
+        cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED
+      });
+      
+      console.log("✅ Firebase inicializado com sucesso!");
+      
+      // Teste básico de conectividade
+      db.collection('test').limit(1).get()
+        .then(() => console.log("✅ Conexão com Firestore OK"))
+        .catch((error) => console.error("❌ Erro na conexão:", error));
+        
+    } catch (error) {
+      console.error("❌ Erro na inicialização do Firebase:", error);
+    }
   </script>
 
   <style>
@@ -73,7 +88,7 @@
     }
 
     .toast {
-      min-width: 300px;
+      min-width: 350px;
       padding: 15px 20px;
       border-radius: 12px;
       color: white;
@@ -108,6 +123,11 @@
       background: linear-gradient(135deg, rgba(255, 193, 7, 0.95), rgba(255, 143, 0, 0.95));
       border-left-color: var(--warning-color);
       color: var(--secondary-color);
+    }
+
+    .toast.info {
+      background: linear-gradient(135deg, rgba(23, 162, 184, 0.95), rgba(13, 110, 253, 0.95));
+      border-left-color: var(--info-color);
     }
 
     .toast .toast-icon {
@@ -418,6 +438,42 @@
     .empty-state i { font-size:4rem; margin-bottom:1rem; color: var(--primary-color); opacity:0.5; }
     .reason-text { font-size:0.9em; color: var(--text-gray); font-style:italic; }
 
+    /* CONNECTION STATUS */
+    .connection-status {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      z-index: 1000;
+      backdrop-filter: blur(10px);
+      border: 1px solid;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: var(--transition);
+    }
+
+    .connection-status.connected {
+      background: rgba(37, 211, 102, 0.2);
+      color: var(--success-color);
+      border-color: rgba(37, 211, 102, 0.3);
+    }
+
+    .connection-status.disconnected {
+      background: rgba(220, 53, 69, 0.2);
+      color: var(--danger-color);
+      border-color: rgba(220, 53, 69, 0.3);
+    }
+
+    .connection-status.connecting {
+      background: rgba(255, 193, 7, 0.2);
+      color: var(--warning-color);
+      border-color: rgba(255, 193, 7, 0.3);
+    }
+
     /* ENHANCED MOBILE EXPERIENCE */
     @media (max-width:768px){
       .container { padding:0 1rem; margin:1rem auto; }
@@ -473,6 +529,14 @@
         min-width: auto;
         width: 100%;
       }
+
+      .connection-status {
+        position: relative;
+        top: auto;
+        left: auto;
+        margin-bottom: 1rem;
+        align-self: center;
+      }
     }
 
     @keyframes fadeInUp { from {opacity:0; transform:translateY(30px);} to {opacity:1; transform:translateY(0);} }
@@ -499,6 +563,21 @@
       opacity: 0;
     }
 
+    /* DEBUG PANEL */
+    .debug-panel {
+      position: fixed;
+      bottom: 10px;
+      left: 10px;
+      background: rgba(0,0,0,0.8);
+      color: #fff;
+      padding: 0.5rem;
+      border-radius: 5px;
+      font-size: 0.7rem;
+      max-width: 300px;
+      z-index: 1000;
+      display: none;
+    }
+
     ::-webkit-scrollbar { width: 8px; }
     ::-webkit-scrollbar-track { background: var(--secondary-color); }
     ::-webkit-scrollbar-thumb { background: var(--gradient-1); border-radius:4px; }
@@ -506,8 +585,17 @@
   </style>
 </head>
 <body>
+  <!-- Connection Status -->
+  <div id="connection-status" class="connection-status connecting">
+    <i class="fas fa-wifi"></i>
+    <span>Conectando ao Firebase...</span>
+  </div>
+
   <!-- Toast Container -->
   <div class="toast-container" id="toast-container"></div>
+
+  <!-- Debug Panel -->
+  <div id="debug-panel" class="debug-panel"></div>
 
   <!-- Login -->
   <div id="login-container" class="login-container">
@@ -531,10 +619,10 @@
   <div id="app-container" class="hidden">
     <div class="header">
       <div class="logo-container">
-        <a href="index.html" class="logo-image" title="Ir para página inicial">
-          <img src="logo_nome.png" alt="Logo" style="height:70px;">
-        </a>
-        <a href="index.html" class="logo-text" title="Ir para página inicial">Dev Digital BR</a>
+        <div class="logo-image">
+          DD
+        </div>
+        <div class="logo-text">Dev Digital BR</div>
       </div>
       <button class="btn btn-danger btn-small" id="logout"><i class="fas fa-sign-out-alt"></i> Sair</button>
     </div>
@@ -646,6 +734,7 @@
   </div>
 
   <script>
+    // Elementos da DOM
     const loginContainer = document.getElementById("login-container");
     const appContainer = document.getElementById("app-container");
     const loginForm = document.getElementById("login-form");
@@ -660,13 +749,63 @@
     const filterMonthEl = document.getElementById("filter-month");
     const clearFiltersBtn = document.getElementById("clear-filters");
     const addTransactionBtn = document.getElementById("add-transaction-btn");
+    const connectionStatusEl = document.getElementById("connection-status");
+    const debugPanel = document.getElementById("debug-panel");
 
+    // Credenciais de administrador
     const ADMIN_USER = "admin";
     const ADMIN_PASS = "12345";
+
+    // Variáveis de estado
     let transactions = [];
     let filteredTransactions = [];
+    let isFirebaseConnected = false;
+    let debugMode = false;
 
-    // TOAST SYSTEM
+    // DEBUG FUNCTIONS
+    function debugLog(message, type = 'info') {
+      console.log(`[${type.toUpperCase()}] ${message}`);
+      
+      if (debugMode) {
+        const debugPanel = document.getElementById('debug-panel');
+        debugPanel.style.display = 'block';
+        debugPanel.innerHTML += `<div>[${new Date().toLocaleTimeString()}] ${message}</div>`;
+        debugPanel.scrollTop = debugPanel.scrollHeight;
+      }
+    }
+
+    // Ativar debug com Ctrl+Shift+D
+    document.addEventListener('keydown', (e) => {
+      if (e.ctrlKey && e.shiftKey && e.key === 'D') {
+        debugMode = !debugMode;
+        const panel = document.getElementById('debug-panel');
+        panel.style.display = debugMode ? 'block' : 'none';
+        if (debugMode) panel.innerHTML = '<strong>Debug Mode Ativado</strong><br>';
+        showToast(`Debug mode ${debugMode ? 'ativado' : 'desativado'}`, 'info', 2000);
+      }
+    });
+
+    // CONNECTION STATUS UPDATES
+    function updateConnectionStatus(status, message) {
+      connectionStatusEl.className = `connection-status ${status}`;
+      connectionStatusEl.innerHTML = `
+        <i class="fas ${status === 'connected' ? 'fa-wifi' : status === 'disconnected' ? 'fa-wifi-slash' : 'fa-spinner fa-spin'}"></i>
+        <span>${message}</span>
+      `;
+      
+      debugLog(`Connection Status: ${status} - ${message}`);
+      
+      // Auto-hide success status after 3 seconds
+      if (status === 'connected') {
+        setTimeout(() => {
+          if (connectionStatusEl.classList.contains('connected')) {
+            connectionStatusEl.style.display = 'none';
+          }
+        }, 3000);
+      }
+    }
+
+    // ENHANCED TOAST SYSTEM
     function showToast(message, type = 'success', duration = 4000) {
       const toastContainer = document.getElementById('toast-container');
       const toast = document.createElement('div');
@@ -697,12 +836,59 @@
         toast.classList.remove('show');
         setTimeout(() => toast.remove(), 400);
       }, duration);
+
+      debugLog(`Toast: ${type} - ${message}`);
     }
 
     function closeToast(button) {
       const toast = button.parentElement;
       toast.classList.remove('show');
       setTimeout(() => toast.remove(), 400);
+    }
+
+    // FIREBASE CONNECTION TEST
+    async function testFirebaseConnection() {
+      updateConnectionStatus('connecting', 'Testando conexão...');
+      
+      try {
+        // Teste básico de leitura
+        debugLog('Testando leitura no Firestore...');
+        const testDoc = await db.collection('test').limit(1).get();
+        debugLog('Teste de leitura: OK');
+
+        // Teste básico de escrita
+        debugLog('Testando escrita no Firestore...');
+        const testRef = await db.collection('connection_test').add({
+          timestamp: Date.now(),
+          test: true
+        });
+        debugLog(`Teste de escrita: OK (ID: ${testRef.id})`);
+
+        // Limpeza do teste
+        await testRef.delete();
+        debugLog('Limpeza do teste: OK');
+
+        isFirebaseConnected = true;
+        updateConnectionStatus('connected', 'Firebase conectado');
+        return true;
+
+      } catch (error) {
+        debugLog(`Erro na conexão: ${error.code} - ${error.message}`, 'error');
+        isFirebaseConnected = false;
+        
+        let errorMessage = 'Erro de conexão';
+        if (error.code === 'permission-denied') {
+          errorMessage = 'Erro de permissão - Verifique as regras do Firestore';
+        } else if (error.code === 'unavailable') {
+          errorMessage = 'Firebase indisponível';
+        } else if (error.code === 'failed-precondition') {
+          errorMessage = 'Configuração inválida do Firebase';
+        }
+        
+        updateConnectionStatus('disconnected', errorMessage);
+        showToast(`Erro Firebase: ${errorMessage}`, 'error', 6000);
+        return false;
+      }
     }
 
     // FILTERS FUNCTIONALITY
@@ -749,6 +935,7 @@
       });
       
       renderTransactions();
+      debugLog(`Filtros aplicados: ${filteredTransactions.length} de ${transactions.length} transações`);
     }
 
     function clearFilters() {
@@ -759,7 +946,7 @@
       showToast('Filtros limpos com sucesso!', 'info', 2000);
     }
 
-    // Event listeners for filters
+    // Event listeners para filtros
     filterTypeEl.addEventListener('change', applyFilters);
     filterMonthEl.addEventListener('change', applyFilters);
     clearFiltersBtn.addEventListener('click', clearFilters);
@@ -767,16 +954,28 @@
     // LOGIN SYSTEM
     loginForm.addEventListener("submit", async e => {
       e.preventDefault();
-      const user = document.getElementById("username").value;
+      const user = document.getElementById("username").value.trim();
       const pass = document.getElementById("password").value;
+      
+      debugLog(`Tentativa de login: ${user}`);
       
       if (user === ADMIN_USER && pass === ADMIN_PASS) {
         loginContainer.classList.add("hidden");
         appContainer.classList.remove("hidden");
         showToast('Login realizado com sucesso! Bem-vindo!', 'success');
-        await loadTransactions();
+        debugLog('Login bem-sucedido');
+        
+        // Teste conexão e carregue dados
+        const connected = await testFirebaseConnection();
+        if (connected) {
+          await loadTransactions();
+        } else {
+          showToast('Conectado em modo offline. Algumas funcionalidades podem estar limitadas.', 'warning', 5000);
+        }
+        
       } else {
         showToast('Usuário ou senha incorretos!', 'error');
+        debugLog('Login falhou: credenciais incorretas');
       }
     });
 
@@ -786,46 +985,55 @@
       transactions = [];
       filteredTransactions = [];
       showToast('Logout realizado com sucesso!', 'info', 2000);
+      debugLog('Logout realizado');
       
-      // Clear form fields
+      // Limpar campos
       document.getElementById("username").value = '';
       document.getElementById("password").value = '';
     });
 
-    // FIREBASE FUNCTIONS - COM TRATAMENTO DE ERRO MELHORADO
+    // FIREBASE FUNCTIONS - VERSÃO ROBUSTA
     async function loadTransactions() {
+      if (!isFirebaseConnected) {
+        debugLog('Firebase não conectado - pulando carregamento');
+        return;
+      }
+
       loadingState.classList.remove("hidden");
-      console.log("Iniciando carregamento das transações...");
+      debugLog("Iniciando carregamento das transações...");
       
       try {
-        // Teste de conectividade primeiro
-        await db.collection("transactions").limit(1).get();
-        console.log("Conexão com Firebase OK");
-        
-        const snapshot = await db.collection("transactions").orderBy("timestamp", "desc").get();
-        transactions = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        const snapshot = await db.collection("transactions")
+          .orderBy("timestamp", "desc")
+          .get();
+
+        transactions = [];
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          transactions.push({
+            id: doc.id,
+            ...data
+          });
+        });
+
         filteredTransactions = [...transactions];
         populateMonthFilter();
         renderTransactions();
         
-        // Só mostra toast se tiver transações para mostrar
+        debugLog(`${transactions.length} transações carregadas com sucesso`);
         if (transactions.length > 0) {
-          console.log(`${transactions.length} transações carregadas`);
-        } else {
-          console.log("Nenhuma transação encontrada");
+          showToast(`${transactions.length} transações carregadas!`, 'success', 2000);
         }
         
       } catch (error) {
-        console.error("Erro detalhado:", error);
+        debugLog(`Erro ao carregar transações: ${error.code} - ${error.message}`, 'error');
         
-        // Verifica se é problema de regras do Firestore
         if (error.code === 'permission-denied') {
-          showToast('Erro de permissão no Firebase. Verifique as regras do Firestore.', 'error');
+          showToast('Erro de permissão ao carregar dados. Verifique as regras do Firestore.', 'error');
         } else if (error.code === 'unavailable') {
-          showToast('Firebase temporariamente indisponível. Tente novamente.', 'warning');
+          showToast('Firebase temporariamente indisponível. Dados podem não estar atualizados.', 'warning');
         } else {
-          // Não mostra toast de erro genérico, só loga no console
-          console.log("Erro ao carregar transações:", error.message);
+          showToast('Erro ao carregar transações. Verifique sua conexão.', 'error');
         }
         
         // Inicializa arrays vazios mesmo com erro
@@ -837,21 +1045,37 @@
       loadingState.classList.add("hidden");
     }
 
-    // TRANSACTION FORM - COM MELHOR TRATAMENTO DE ERRO
+    // TRANSACTION FORM
     const transactionForm = document.getElementById("transaction-form");
     transactionForm.addEventListener("submit", async e => {
       e.preventDefault();
+      
       const desc = document.getElementById("desc").value.trim();
       const reason = document.getElementById("reason").value.trim();
       const amount = parseFloat(document.getElementById("amount").value);
       const type = document.getElementById("type").value;
       
-      if (!desc || isNaN(amount) || amount <= 0) {
-        showToast('Preencha todos os campos corretamente!', 'warning');
+      // Validação
+      if (!desc) {
+        showToast('Por favor, preencha a descrição!', 'warning');
+        return;
+      }
+      
+      if (isNaN(amount) || amount <= 0) {
+        showToast('Por favor, insira um valor válido maior que zero!', 'warning');
         return;
       }
 
-      // Add loading state to button
+      if (!isFirebaseConnected) {
+        showToast('Firebase não conectado. Reconnectando...', 'warning');
+        const connected = await testFirebaseConnection();
+        if (!connected) {
+          showToast('Não foi possível conectar ao Firebase. Tente novamente.', 'error');
+          return;
+        }
+      }
+
+      // Estado de loading
       addTransactionBtn.classList.add('loading');
       addTransactionBtn.disabled = true;
 
@@ -859,37 +1083,48 @@
         const transaction = {
           desc,
           reason: reason || '',
-          amount,
+          amount: Number(amount),
           type,
           date: new Date().toLocaleDateString('pt-BR'),
           timestamp: Date.now()
         };
         
-        console.log("Tentando salvar transação:", transaction);
+        debugLog(`Salvando transação: ${JSON.stringify(transaction)}`);
         
         const docRef = await db.collection("transactions").add(transaction);
-        console.log("Transação salva com ID:", docRef.id);
+        debugLog(`Transação salva com ID: ${docRef.id}`);
         
+        // Adiciona à lista local
         transaction.id = docRef.id;
         transactions.unshift(transaction);
         filteredTransactions = [...transactions];
         populateMonthFilter();
         renderTransactions();
+        
+        // Reset form
         transactionForm.reset();
         
         const typeText = type === 'receita' ? 'Receita' : 'Despesa';
-        showToast(`${typeText} de R$ ${amount.toLocaleString('pt-BR', {minimumFractionDigits: 2})} adicionada com sucesso!`, 'success');
+        const formattedAmount = amount.toLocaleString('pt-BR', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        });
+        
+        showToast(`✅ ${typeText} de R$ ${formattedAmount} adicionada com sucesso!`, 'success');
         
       } catch (error) {
-        console.error("Erro ao salvar:", error);
+        debugLog(`Erro ao salvar transação: ${error.code} - ${error.message}`, 'error');
         
+        let errorMessage = 'Erro ao salvar transação.';
         if (error.code === 'permission-denied') {
-          showToast('Erro de permissão. Verifique as configurações do Firebase.', 'error');
+          errorMessage = 'Erro de permissão. Verifique as regras do Firebase.';
         } else if (error.code === 'unavailable') {
-          showToast('Serviço temporariamente indisponível. Tente novamente.', 'warning');
-        } else {
-          showToast('Erro ao salvar transação. Verifique sua conexão.', 'error');
+          errorMessage = 'Firebase indisponível. Tente novamente em alguns instantes.';
+        } else if (error.code === 'quota-exceeded') {
+          errorMessage = 'Cota do Firebase excedida. Contate o administrador.';
         }
+        
+        showToast(errorMessage, 'error');
         
       } finally {
         addTransactionBtn.classList.remove('loading');
@@ -898,18 +1133,40 @@
     });
 
     async function deleteTransaction(id) {
-      if (confirm("🗑️ Tem certeza que deseja excluir esta transação?")) {
-        try {
-          await db.collection("transactions").doc(id).delete();
-          transactions = transactions.filter(t => t.id !== id);
-          filteredTransactions = filteredTransactions.filter(t => t.id !== id);
-          populateMonthFilter();
-          renderTransactions();
-          showToast('Transação excluída com sucesso!', 'success', 2000);
-        } catch (error) {
-          console.error("Erro ao deletar:", error);
-          showToast('Erro ao deletar transação. Tente novamente.', 'error');
+      if (!confirm("🗑️ Tem certeza que deseja excluir esta transação? Esta ação não pode ser desfeita.")) {
+        return;
+      }
+
+      if (!isFirebaseConnected) {
+        showToast('Firebase não conectado. Não é possível excluir.', 'error');
+        return;
+      }
+
+      try {
+        debugLog(`Excluindo transação: ${id}`);
+        
+        await db.collection("transactions").doc(id).delete();
+        
+        // Remove da lista local
+        transactions = transactions.filter(t => t.id !== id);
+        filteredTransactions = filteredTransactions.filter(t => t.id !== id);
+        populateMonthFilter();
+        renderTransactions();
+        
+        showToast('Transação excluída com sucesso!', 'success', 2000);
+        debugLog(`Transação ${id} excluída`);
+        
+      } catch (error) {
+        debugLog(`Erro ao excluir transação: ${error.code} - ${error.message}`, 'error');
+        
+        let errorMessage = 'Erro ao excluir transação.';
+        if (error.code === 'permission-denied') {
+          errorMessage = 'Sem permissão para excluir. Verifique as regras do Firebase.';
+        } else if (error.code === 'not-found') {
+          errorMessage = 'Transação não encontrada. Pode já ter sido excluída.';
         }
+        
+        showToast(errorMessage, 'error');
       }
     }
 
@@ -917,17 +1174,20 @@
       tableBody.innerHTML = '';
       let totalReceitas = 0, totalDespesas = 0;
       
-      // Calculate totals from filtered transactions
+      // Calcula totais das transações filtradas
       filteredTransactions.forEach(t => {
-        if (t.type === 'receita') totalReceitas += t.amount;
-        else totalDespesas += t.amount;
+        if (t.type === 'receita') {
+          totalReceitas += Number(t.amount);
+        } else {
+          totalDespesas += Number(t.amount);
+        }
       });
 
       if (filteredTransactions.length === 0) {
         emptyState.classList.remove("hidden");
         document.querySelector(".table").style.display = "none";
         
-        // Show different messages based on filters
+        // Mensagens diferentes baseadas nos filtros
         const typeFilter = filterTypeEl.value;
         const monthFilter = filterMonthEl.value;
         const emptyTitle = emptyState.querySelector('h3');
@@ -948,28 +1208,43 @@
           const row = document.createElement("tr");
           row.classList.add('new-row');
           
-          // Remove animation class after animation completes
+          // Remove animation class após animação
           setTimeout(() => row.classList.remove('new-row'), 500);
+          
+          const formattedAmount = Number(t.amount).toLocaleString('pt-BR', { 
+            minimumFractionDigits: 2, 
+            maximumFractionDigits: 2 
+          });
           
           row.innerHTML = `
             <td style="text-align:left; font-weight:500;">${t.desc}</td>
             <td style="text-align:left;">${t.reason ? `<span class="reason-text">${t.reason}</span>` : '<span style="color:#666;">—</span>'}</td>
-            <td style="font-weight:700; color:${t.type === 'receita' ? '#25d366' : '#dc3545'};">R$ ${t.amount.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+            <td style="font-weight:700; color:${t.type === 'receita' ? '#25d366' : '#dc3545'};">R$ ${formattedAmount}</td>
             <td><span class="type-badge ${t.type}">${t.type === 'receita' ? '💰 Receita' : '💸 Despesa'}</span></td>
             <td style="color:#a0a0a0;">${t.date}</td>
-            <td><button onclick="deleteTransaction('${t.id}')" class="btn btn-danger btn-small"><i class="fas fa-trash"></i></button></td>
+            <td><button onclick="deleteTransaction('${t.id}')" class="btn btn-danger btn-small" title="Excluir transação"><i class="fas fa-trash"></i></button></td>
           `;
           tableBody.appendChild(row);
         });
       }
 
-      // Update summary cards with filtered data
-      totalReceitasEl.textContent = totalReceitas.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-      totalDespesasEl.textContent = totalDespesas.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-      const saldo = totalReceitas - totalDespesas;
-      saldoEl.textContent = saldo.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      // Atualiza cards de resumo
+      totalReceitasEl.textContent = totalReceitas.toLocaleString('pt-BR', { 
+        minimumFractionDigits: 2, 
+        maximumFractionDigits: 2 
+      });
+      totalDespesasEl.textContent = totalDespesas.toLocaleString('pt-BR', { 
+        minimumFractionDigits: 2, 
+        maximumFractionDigits: 2 
+      });
       
-      // Update saldo card color based on value
+      const saldo = totalReceitas - totalDespesas;
+      saldoEl.textContent = saldo.toLocaleString('pt-BR', { 
+        minimumFractionDigits: 2, 
+        maximumFractionDigits: 2 
+      });
+      
+      // Atualiza cor do card de saldo
       const saldoCard = document.getElementById('saldo-card');
       const saldoValueEl = saldoCard.querySelector('.summary-value');
       const saldoIconEl = saldoCard.querySelector('.summary-icon');
@@ -992,21 +1267,33 @@
         saldoIconEl.style.color = '#00d4ff';
         saldoIconEl.className = 'fas fa-wallet summary-icon';
       }
+
+      debugLog(`Renderizados: ${filteredTransactions.length} transações, Saldo: R$ ${saldo.toFixed(2)}`);
     }
 
-    // Expose deleteTransaction to global scope for onclick handlers
+    // Expor função delete para onclick
     window.deleteTransaction = deleteTransaction;
 
-    // Add smooth scroll behavior for better mobile experience
-    document.documentElement.style.scrollBehavior = 'smooth';
+    // INICIALIZAÇÃO
+    document.addEventListener('DOMContentLoaded', () => {
+      debugLog('DOM carregada - Sistema iniciado');
+      console.log('🚀 Sistema Financeiro Dev Digital BR iniciado');
+      console.log('📝 Para ativar debug: Ctrl+Shift+D');
+      console.log('👤 Login: admin / 12345');
+      
+      // Teste inicial de conexão em background
+      testFirebaseConnection().then(connected => {
+        if (!connected) {
+          console.warn('⚠️ Firebase não conectado - verificar configuração');
+        }
+      });
+    });
 
-    // Add touch feedback for mobile
+    // Melhor UX mobile
     if ('ontouchstart' in window) {
       document.addEventListener('touchstart', function() {}, { passive: true });
+      document.documentElement.style.scrollBehavior = 'smooth';
     }
-
-    // Teste de conectividade no carregamento
-    console.log('Sistema financeiro iniciado - Aguardando login...');
   </script>
 </body>
 </html>
