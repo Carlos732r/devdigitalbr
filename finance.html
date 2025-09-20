@@ -532,7 +532,7 @@
   <div id="app-container" class="hidden">
     <div class="header">
       <div class="logo-container">
-        <a href="index.html" class="logo-image" title="Ir para página inicial"></a>
+        <a href="index.html" class="logo-image" title="Ir para página inicial">DD</a>
         <a href="index.html" class="logo-text" title="Ir para página inicial">Dev Digital BR</a>
       </div>
       <button class="btn btn-danger btn-small" id="logout"><i class="fas fa-sign-out-alt"></i> Sair</button>
@@ -768,7 +768,6 @@
       const pass = document.getElementById("password").value;
       
       if (user === ADMIN_USER && pass === ADMIN_PASS) {
-        sessionStorage.setItem("finance_logged", JSON.stringify({ logged: true, timestamp: Date.now() }));
         loginContainer.classList.add("hidden");
         appContainer.classList.remove("hidden");
         showToast('Login realizado com sucesso! Bem-vindo!', 'success');
@@ -779,27 +778,15 @@
     });
 
     logoutBtn.addEventListener("click", () => {
-      sessionStorage.removeItem("finance_logged");
       loginContainer.classList.remove("hidden");
       appContainer.classList.add("hidden");
       transactions = [];
       showToast('Logout realizado com sucesso!', 'info', 2000);
+      
+      // Clear form fields
+      document.getElementById("username").value = '';
+      document.getElementById("password").value = '';
     });
-
-    async function checkLoginState() {
-      const loginData = sessionStorage.getItem("finance_logged");
-      if (loginData) {
-        const { logged, timestamp } = JSON.parse(loginData);
-        if (logged && (Date.now() - timestamp) / (1000 * 60 * 60) < 8) {
-          loginContainer.classList.add("hidden");
-          appContainer.classList.remove("hidden");
-          await loadTransactions();
-        } else {
-          sessionStorage.removeItem("finance_logged");
-        }
-      }
-    }
-    checkLoginState();
 
     // FIREBASE FUNCTIONS
     async function loadTransactions() {
@@ -972,6 +959,9 @@
     if ('ontouchstart' in window) {
       document.addEventListener('touchstart', function() {}, { passive: true });
     }
+
+    // REMOVED AUTO LOGIN CHECK - Now always shows login screen
+    console.log('Sistema iniciado - Tela de login ativa');
   </script>
 </body>
 </html>
