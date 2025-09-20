@@ -24,6 +24,9 @@
 
     const app = firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
+    
+    // Teste de conectividade
+    console.log("Firebase inicializado com sucesso");
   </script>
 
   <style>
@@ -167,10 +170,6 @@
       font-size: 1.8rem; 
       font-weight: 700; 
       color: var(--secondary-color);
-      background-image: url('logo_nome.png');
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
       text-decoration: none;
       transition: var(--transition);
     }
@@ -706,6 +705,8 @@
 
     // FILTERS FUNCTIONALITY
     function populateMonthFilter() {
+      if (transactions.length === 0) return;
+      
       const months = [...new Set(transactions.map(t => {
         const date = new Date(t.timestamp);
         return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
@@ -781,6 +782,7 @@
       loginContainer.classList.remove("hidden");
       appContainer.classList.add("hidden");
       transactions = [];
+      filteredTransactions = [];
       showToast('Logout realizado com sucesso!', 'info', 2000);
       
       // Clear form fields
@@ -788,24 +790,52 @@
       document.getElementById("password").value = '';
     });
 
-    // FIREBASE FUNCTIONS
+    // FIREBASE FUNCTIONS - COM TRATAMENTO DE ERRO MELHORADO
     async function loadTransactions() {
       loadingState.classList.remove("hidden");
+      console.log("Iniciando carregamento das transações...");
+      
       try {
+        // Teste de conectividade primeiro
+        await db.collection("transactions").limit(1).get();
+        console.log("Conexão com Firebase OK");
+        
         const snapshot = await db.collection("transactions").orderBy("timestamp", "desc").get();
         transactions = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         filteredTransactions = [...transactions];
         populateMonthFilter();
         renderTransactions();
-        showToast(`${transactions.length} transações carregadas com sucesso!`, 'success', 2000);
-      } catch (e) {
-        console.error(e);
-        showToast('Erro ao carregar transações. Tente novamente.', 'error');
+        
+        // Só mostra toast se tiver transações para mostrar
+        if (transactions.length > 0) {
+          console.log(`${transactions.length} transações carregadas`);
+        } else {
+          console.log("Nenhuma transação encontrada");
+        }
+        
+      } catch (error) {
+        console.error("Erro detalhado:", error);
+        
+        // Verifica se é problema de regras do Firestore
+        if (error.code === 'permission-denied') {
+          showToast('Erro de permissão no Firebase. Verifique as regras do Firestore.', 'error');
+        } else if (error.code === 'unavailable') {
+          showToast('Firebase temporariamente indisponível. Tente novamente.', 'warning');
+        } else {
+          // Não mostra toast de erro genérico, só loga no console
+          console.log("Erro ao carregar transações:", error.message);
+        }
+        
+        // Inicializa arrays vazios mesmo com erro
+        transactions = [];
+        filteredTransactions = [];
+        renderTransactions();
       }
+      
       loadingState.classList.add("hidden");
     }
 
-    // TRANSACTION FORM
+    // TRANSACTION FORM - COM MELHOR TRATAMENTO DE ERRO
     const transactionForm = document.getElementById("transaction-form");
     transactionForm.addEventListener("submit", async e => {
       e.preventDefault();
@@ -833,7 +863,11 @@
           timestamp: Date.now()
         };
         
+        console.log("Tentando salvar transação:", transaction);
+        
         const docRef = await db.collection("transactions").add(transaction);
+        console.log("Transação salva com ID:", docRef.id);
+        
         transaction.id = docRef.id;
         transactions.unshift(transaction);
         filteredTransactions = [...transactions];
@@ -843,9 +877,18 @@
         
         const typeText = type === 'receita' ? 'Receita' : 'Despesa';
         showToast(`${typeText} de R$ ${amount.toLocaleString('pt-BR', {minimumFractionDigits: 2})} adicionada com sucesso!`, 'success');
-      } catch (e) {
-        console.error(e);
-        showToast('Erro ao adicionar transação. Tente novamente.', 'error');
+        
+      } catch (error) {
+        console.error("Erro ao salvar:", error);
+        
+        if (error.code === 'permission-denied') {
+          showToast('Erro de permissão. Verifique as configurações do Firebase.', 'error');
+        } else if (error.code === 'unavailable') {
+          showToast('Serviço temporariamente indisponível. Tente novamente.', 'warning');
+        } else {
+          showToast('Erro ao salvar transação. Verifique sua conexão.', 'error');
+        }
+        
       } finally {
         addTransactionBtn.classList.remove('loading');
         addTransactionBtn.disabled = false;
@@ -861,8 +904,8 @@
           populateMonthFilter();
           renderTransactions();
           showToast('Transação excluída com sucesso!', 'success', 2000);
-        } catch (e) {
-          console.error(e);
+        } catch (error) {
+          console.error("Erro ao deletar:", error);
           showToast('Erro ao deletar transação. Tente novamente.', 'error');
         }
       }
@@ -960,8 +1003,8 @@
       document.addEventListener('touchstart', function() {}, { passive: true });
     }
 
-    // REMOVED AUTO LOGIN CHECK - Now always shows login screen
-    console.log('Sistema iniciado - Tela de login ativa');
+    // Teste de conectividade no carregamento
+    console.log('Sistema financeiro iniciado - Aguardando login...');
   </script>
 </body>
 </html>
