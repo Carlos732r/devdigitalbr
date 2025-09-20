@@ -11,12 +11,12 @@
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
   <script>
-    // Configuração do Firebase - SUBSTITUA PELOS SEUS DADOS
+    // Configuração do Firebase - SUAS CREDENCIAIS
     const firebaseConfig = {
       apiKey: "AIzaSyBvos9nCRithcUX768xuwQZ70p1_xgmKOg",
       authDomain: "gestao-financeira-9e033.firebaseapp.com",
       projectId: "gestao-financeira-9e033",
-      storageBucket: "gestao-financeira-9e033.appspot.com",
+      storageBucket: "gestao-financeira-9e033.firebasestorage.app",
       messagingSenderId: "694364024644",
       appId: "1:694364024644:web:1758bd0d4a47b71b93b111",
       measurementId: "G-PNL027GT4B"
@@ -795,13 +795,16 @@
       
       debugLog(`Connection Status: ${status} - ${message}`);
       
-      // Auto-hide success status after 3 seconds
+      // Auto-hide success status after 2 seconds
       if (status === 'connected') {
         setTimeout(() => {
           if (connectionStatusEl.classList.contains('connected')) {
-            connectionStatusEl.style.display = 'none';
+            connectionStatusEl.style.opacity = '0';
+            setTimeout(() => {
+              connectionStatusEl.style.display = 'none';
+            }, 300);
           }
-        }, 3000);
+        }, 2000);
       }
     }
 
@@ -846,47 +849,33 @@
       setTimeout(() => toast.remove(), 400);
     }
 
-    // FIREBASE CONNECTION TEST
+    // FIREBASE CONNECTION TEST - VERSÃO SILENCIOSA
     async function testFirebaseConnection() {
-      updateConnectionStatus('connecting', 'Testando conexão...');
+      updateConnectionStatus('connecting', 'Verificando conexão...');
       
       try {
-        // Teste básico de leitura
-        debugLog('Testando leitura no Firestore...');
-        const testDoc = await db.collection('test').limit(1).get();
-        debugLog('Teste de leitura: OK');
-
-        // Teste básico de escrita
-        debugLog('Testando escrita no Firestore...');
-        const testRef = await db.collection('connection_test').add({
-          timestamp: Date.now(),
-          test: true
-        });
-        debugLog(`Teste de escrita: OK (ID: ${testRef.id})`);
-
-        // Limpeza do teste
-        await testRef.delete();
-        debugLog('Limpeza do teste: OK');
+        // Teste simples de leitura
+        debugLog('Testando conexão com Firestore...');
+        await db.collection('transactions').limit(1).get();
+        debugLog('Conexão estabelecida com sucesso');
 
         isFirebaseConnected = true;
-        updateConnectionStatus('connected', 'Firebase conectado');
+        updateConnectionStatus('connected', 'Conectado');
         return true;
 
       } catch (error) {
         debugLog(`Erro na conexão: ${error.code} - ${error.message}`, 'error');
         isFirebaseConnected = false;
         
-        let errorMessage = 'Erro de conexão';
+        let errorMessage = 'Desconectado';
         if (error.code === 'permission-denied') {
-          errorMessage = 'Erro de permissão - Verifique as regras do Firestore';
+          errorMessage = 'Sem permissão';
         } else if (error.code === 'unavailable') {
-          errorMessage = 'Firebase indisponível';
-        } else if (error.code === 'failed-precondition') {
-          errorMessage = 'Configuração inválida do Firebase';
+          errorMessage = 'Indisponível';
         }
         
         updateConnectionStatus('disconnected', errorMessage);
-        showToast(`Erro Firebase: ${errorMessage}`, 'error', 6000);
+        // Removido: toast de erro automático
         return false;
       }
     }
@@ -951,7 +940,7 @@
     filterMonthEl.addEventListener('change', applyFilters);
     clearFiltersBtn.addEventListener('click', clearFilters);
 
-    // LOGIN SYSTEM
+    // LOGIN SYSTEM - VERSÃO OTIMIZADA
     loginForm.addEventListener("submit", async e => {
       e.preventDefault();
       const user = document.getElementById("username").value.trim();
@@ -962,15 +951,16 @@
       if (user === ADMIN_USER && pass === ADMIN_PASS) {
         loginContainer.classList.add("hidden");
         appContainer.classList.remove("hidden");
-        showToast('Login realizado com sucesso! Bem-vindo!', 'success');
+        showToast('Login realizado com sucesso!', 'success', 2000);
         debugLog('Login bem-sucedido');
         
-        // Teste conexão e carregue dados
+        // Teste conexão de forma silenciosa e carregue dados
         const connected = await testFirebaseConnection();
         if (connected) {
           await loadTransactions();
         } else {
-          showToast('Conectado em modo offline. Algumas funcionalidades podem estar limitadas.', 'warning', 5000);
+          debugLog('Firebase não conectado - modo offline');
+          // Não mostra toast de erro, apenas loga
         }
         
       } else {
@@ -992,15 +982,18 @@
       document.getElementById("password").value = '';
     });
 
-    // FIREBASE FUNCTIONS - VERSÃO ROBUSTA
+    // FIREBASE FUNCTIONS - VERSÃO OTIMIZADA E SILENCIOSA
     async function loadTransactions() {
       if (!isFirebaseConnected) {
-        debugLog('Firebase não conectado - pulando carregamento');
+        debugLog('Firebase não conectado - inicializando arrays vazios');
+        transactions = [];
+        filteredTransactions = [];
+        renderTransactions();
         return;
       }
 
       loadingState.classList.remove("hidden");
-      debugLog("Iniciando carregamento das transações...");
+      debugLog("Carregando transações do Firestore...");
       
       try {
         const snapshot = await db.collection("transactions")
@@ -1021,19 +1014,22 @@
         renderTransactions();
         
         debugLog(`${transactions.length} transações carregadas com sucesso`);
-        if (transactions.length > 0) {
-          showToast(`${transactions.length} transações carregadas!`, 'success', 2000);
+        
+        // Só mostra toast se tiver muitas transações ou se estiver em debug
+        if (transactions.length > 5 || debugMode) {
+          showToast(`${transactions.length} transações carregadas`, 'info', 2000);
         }
         
       } catch (error) {
         debugLog(`Erro ao carregar transações: ${error.code} - ${error.message}`, 'error');
         
-        if (error.code === 'permission-denied') {
-          showToast('Erro de permissão ao carregar dados. Verifique as regras do Firestore.', 'error');
-        } else if (error.code === 'unavailable') {
-          showToast('Firebase temporariamente indisponível. Dados podem não estar atualizados.', 'warning');
-        } else {
-          showToast('Erro ao carregar transações. Verifique sua conexão.', 'error');
+        // Só mostra toast de erro se for um problema crítico ou debug ativo
+        if (debugMode || error.code === 'permission-denied') {
+          let errorMessage = 'Erro ao carregar dados';
+          if (error.code === 'permission-denied') {
+            errorMessage = 'Erro de permissão - Verifique as regras do Firestore';
+          }
+          showToast(errorMessage, 'error');
         }
         
         // Inicializa arrays vazios mesmo com erro
@@ -1274,19 +1270,15 @@
     // Expor função delete para onclick
     window.deleteTransaction = deleteTransaction;
 
-    // INICIALIZAÇÃO
+    // INICIALIZAÇÃO - VERSÃO SILENCIOSA
     document.addEventListener('DOMContentLoaded', () => {
       debugLog('DOM carregada - Sistema iniciado');
       console.log('🚀 Sistema Financeiro Dev Digital BR iniciado');
       console.log('📝 Para ativar debug: Ctrl+Shift+D');
       console.log('👤 Login: admin / 12345');
       
-      // Teste inicial de conexão em background
-      testFirebaseConnection().then(connected => {
-        if (!connected) {
-          console.warn('⚠️ Firebase não conectado - verificar configuração');
-        }
-      });
+      // Não faz teste de conexão no carregamento para evitar mensagens desnecessárias
+      // A conexão será testada apenas no login
     });
 
     // Melhor UX mobile
