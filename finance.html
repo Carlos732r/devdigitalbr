@@ -9,6 +9,7 @@
   <!-- Firebase v9 -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 
   <script>
     const firebaseConfig = {
@@ -21,21 +22,18 @@
       measurementId: "G-PNL027GT4B"
     };
 
-    let db;
+    let db, auth;
 
     try {
       firebase.initializeApp(firebaseConfig);
       db = firebase.firestore();
+      auth = firebase.auth();
       
       db.settings({
         cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED
       });
       
       console.log("✅ Firebase inicializado com sucesso!");
-      
-      db.collection('transactions').limit(1).get()
-        .then(() => console.log("✅ Conexão com Firestore OK"))
-        .catch((error) => console.error("❌ Erro na conexão:", error));
         
     } catch (error) {
       console.error("❌ Erro na inicialização do Firebase:", error);
@@ -372,7 +370,6 @@
     .connection-status.connected { background: rgba(37, 211, 102, 0.2); color: var(--success-color); border-color: rgba(37, 211, 102, 0.3); }
     .connection-status.disconnected { background: rgba(220, 53, 69, 0.2); color: var(--danger-color); border-color: rgba(220, 53, 69, 0.3); }
 
-    /* MOBILE RESPONSIVE */
     @media (max-width:768px){
       .header { 
         padding: 0.8rem 1rem;
@@ -524,17 +521,17 @@
 
   <div id="login-container" class="login-container">
     <div class="login-card fade-in">
-      <div class="login-title"><i class="fas fa-lock"></i> Acesso Administrativo</div>
+      <div class="login-title"><i class="fas fa-lock"></i> Acesso Seguro</div>
       <form id="login-form">
         <div class="form-group">
-          <label for="username">Usuário</label>
-          <input type="text" id="username" class="form-control" placeholder="Digite seu usuário" required>
+          <label for="email">Email</label>
+          <input type="email" id="email" class="form-control" placeholder="seuemail@exemplo.com" required>
         </div>
         <div class="form-group">
           <label for="password">Senha</label>
           <input type="password" id="password" class="form-control" placeholder="Digite sua senha" required>
         </div>
-        <button type="submit" class="btn btn-primary" style="width:100%;"><i class="fas fa-sign-in-alt"></i> Entrar</button>
+        <button type="submit" class="btn btn-primary" style="width:100%;" id="login-btn"><i class="fas fa-sign-in-alt"></i> Entrar</button>
       </form>
     </div>
   </div>
@@ -652,16 +649,15 @@
   </div>
 
   <script>
-    const ADMIN_USER = "Carlos";
-    const ADMIN_PASS = "03032006";
-
     let transactions = [];
     let filteredTransactions = [];
     let isFirebaseConnected = false;
+    let currentUser = null;
 
     const loginContainer = document.getElementById("login-container");
     const appContainer = document.getElementById("app-container");
     const loginForm = document.getElementById("login-form");
+    const loginBtn = document.getElementById("login-btn");
     const logoutBtn = document.getElementById("logout");
     const loadingState = document.getElementById("loading-state");
     const tableBody = document.getElementById("transaction-table-body");
@@ -717,6 +713,74 @@
         }, 2000);
       }
     }
+
+    // Monitorar estado de autenticação
+    auth.onAuthStateChanged(async (user) => {
+      if (user) {
+        currentUser = user;
+        loginContainer.classList.add("hidden");
+        appContainer.classList.remove("hidden");
+        
+        const connected = await testFirebaseConnection();
+        if (connected) {
+          await loadTransactions();
+        }
+      } else {
+        currentUser = null;
+        loginContainer.classList.remove("hidden");
+        appContainer.classList.add("hidden");
+        transactions = [];
+        filteredTransactions = [];
+      }
+    });
+
+    // Login com Firebase Authentication
+    loginForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+      
+      loginBtn.disabled = true;
+      loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Entrando...';
+      
+      try {
+        await auth.signInWithEmailAndPassword(email, password);
+        showToast('Login realizado com sucesso', 'success', 2000);
+      } catch (error) {
+        console.error('Erro no login:', error);
+        
+        let errorMessage = 'Erro ao fazer login';
+        
+        if (error.code === 'auth/user-not-found') {
+          errorMessage = 'Usuário não encontrado';
+        } else if (error.code === 'auth/wrong-password') {
+          errorMessage = 'Senha incorreta';
+        } else if (error.code === 'auth/invalid-email') {
+          errorMessage = 'Email inválido';
+        } else if (error.code === 'auth/too-many-requests') {
+          errorMessage = 'Muitas tentativas. Tente novamente mais tarde';
+        }
+        
+        showToast(errorMessage, 'error');
+      } finally {
+        loginBtn.disabled = false;
+        loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Entrar';
+      }
+    });
+
+    // Logout
+    logoutBtn.addEventListener("click", async () => {
+      try {
+        await auth.signOut();
+        showToast('Logout realizado', 'info', 2000);
+        document.getElementById("email").value = '';
+        document.getElementById("password").value = '';
+      } catch (error) {
+        console.error('Erro no logout:', error);
+        showToast('Erro ao fazer logout', 'error');
+      }
+    });
 
     async function testFirebaseConnection() {
       updateConnectionStatus('connecting', 'Verificando conexão...');
@@ -791,37 +855,8 @@
     filterMonthEl.addEventListener('change', applyFilters);
     clearFiltersBtn.addEventListener('click', clearFilters);
 
-    loginForm.addEventListener("submit", async e => {
-      e.preventDefault();
-      const user = document.getElementById("username").value.trim();
-      const pass = document.getElementById("password").value;
-      
-      if (user === ADMIN_USER && pass === ADMIN_PASS) {
-        loginContainer.classList.add("hidden");
-        appContainer.classList.remove("hidden");
-        showToast('Login realizado com sucesso', 'success', 2000);
-        
-        const connected = await testFirebaseConnection();
-        if (connected) {
-          await loadTransactions();
-        }
-      } else {
-        showToast('Usuário ou senha incorretos', 'error');
-      }
-    });
-
-    logoutBtn.addEventListener("click", () => {
-      loginContainer.classList.remove("hidden");
-      appContainer.classList.add("hidden");
-      transactions = [];
-      filteredTransactions = [];
-      showToast('Logout realizado', 'info', 2000);
-      document.getElementById("username").value = '';
-      document.getElementById("password").value = '';
-    });
-
     async function loadTransactions() {
-      if (!isFirebaseConnected) {
+      if (!isFirebaseConnected || !currentUser) {
         transactions = [];
         filteredTransactions = [];
         renderTransactions();
@@ -853,7 +888,13 @@
         }
       } catch (error) {
         console.error('Erro ao carregar transações:', error);
-        showToast('Erro ao carregar dados', 'error');
+        
+        if (error.code === 'permission-denied') {
+          showToast('Sem permissão para acessar dados', 'error');
+        } else {
+          showToast('Erro ao carregar dados', 'error');
+        }
+        
         transactions = [];
         filteredTransactions = [];
         renderTransactions();
@@ -863,7 +904,7 @@
     }
 
     const transactionForm = document.getElementById("transaction-form");
-    transactionForm.addEventListener("submit", async e => {
+    transactionForm.addEventListener("submit", async (e) => {
       e.preventDefault();
       
       const desc = document.getElementById("desc").value.trim();
@@ -876,13 +917,9 @@
         return;
       }
 
-      if (!isFirebaseConnected) {
-        showToast('Firebase não conectado', 'warning');
-        const connected = await testFirebaseConnection();
-        if (!connected) {
-          showToast('Não foi possível conectar', 'error');
-          return;
-        }
+      if (!isFirebaseConnected || !currentUser) {
+        showToast('Você precisa estar autenticado', 'warning');
+        return;
       }
 
       addTransactionBtn.disabled = true;
@@ -894,7 +931,8 @@
           amount: Number(amount),
           type,
           date: new Date().toLocaleDateString('pt-BR'),
-          timestamp: Date.now()
+          timestamp: Date.now(),
+          userId: currentUser.uid
         };
         
         const docRef = await db.collection("transactions").add(transaction);
@@ -916,7 +954,12 @@
         showToast(`${typeText} de R$ ${formattedAmount} adicionada`, 'success');
       } catch (error) {
         console.error('Erro ao salvar:', error);
-        showToast('Erro ao salvar transação', 'error');
+        
+        if (error.code === 'permission-denied') {
+          showToast('Sem permissão para adicionar transação', 'error');
+        } else {
+          showToast('Erro ao salvar transação', 'error');
+        }
       } finally {
         addTransactionBtn.disabled = false;
       }
@@ -927,8 +970,8 @@
         return;
       }
 
-      if (!isFirebaseConnected) {
-        showToast('Firebase não conectado', 'error');
+      if (!isFirebaseConnected || !currentUser) {
+        showToast('Você precisa estar autenticado', 'error');
         return;
       }
 
@@ -943,7 +986,12 @@
         showToast('Transação excluída', 'success', 2000);
       } catch (error) {
         console.error('Erro ao excluir:', error);
-        showToast('Erro ao excluir transação', 'error');
+        
+        if (error.code === 'permission-denied') {
+          showToast('Sem permissão para excluir transação', 'error');
+        } else {
+          showToast('Erro ao excluir transação', 'error');
+        }
       }
     }
 
@@ -1025,8 +1073,7 @@
     window.deleteTransaction = deleteTransaction;
 
     document.addEventListener('DOMContentLoaded', () => {
-      console.log('Sistema Financeiro Dev Digital BR iniciado');
-      console.log('Login: Carlos / 03032006');
+      console.log('Sistema Financeiro Dev Digital BR com Firebase Auth');
     });
   </script>
 </body>
