@@ -6,30 +6,6 @@
   <title>Dev Digital BR - Painel Financeiro</title>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
-  <script type="module">
-    // Import the functions you need from the SDKs you need
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
-    import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-analytics.js";
-    // TODO: Add SDKs for Firebase products that you want to use
-    // https://firebase.google.com/docs/web/setup#available-libraries
-
-    // Your web app's Firebase configuration
-    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-  const firebaseConfigModule = {
-      apiKey: "AIzaSyBvos9nCRithcUX768xuwQZ70p1_xgmKOg",
-      authDomain: "gestao-financeira-9e033.firebaseapp.com",
-      projectId: "gestao-financeira-9e033",
-      storageBucket: "gestao-financeira-9e033.firebasestorage.app",
-      messagingSenderId: "694364024644",
-      appId: "1:694364024644:web:1758bd0d4a47b71b93b111",
-      measurementId: "G-PNL027GT4B"
-    };
-
-    // Initialize Firebase
-  const app = initializeApp(firebaseConfigModule);
-  const analytics = getAnalytics(app);
-  </script>
-
   <!-- Firebase v9 (versão mais recente e estável) -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
@@ -46,10 +22,13 @@
       measurementId: "G-PNL027GT4B"
     };
 
+    // ✅ CORREÇÃO: Declarar db como variável global
+    let db;
+
     // Inicialização do Firebase
     try {
       firebase.initializeApp(firebaseConfig);
-      const db = firebase.firestore();
+      db = firebase.firestore();
       
       // Configurações importantes do Firestore
       db.settings({
@@ -57,9 +36,10 @@
       });
       
       console.log("✅ Firebase inicializado com sucesso!");
+      console.log("✅ Variável 'db' disponível globalmente:", typeof db);
       
       // Teste básico de conectividade
-      db.collection('test').limit(1).get()
+      db.collection('transactions').limit(1).get()
         .then(() => console.log("✅ Conexão com Firestore OK"))
         .catch((error) => console.error("❌ Erro na conexão:", error));
         
@@ -233,11 +213,6 @@
       text-decoration: none;
       transition: var(--transition);
     }
-    
-    .logo-text:hover {
-      transform: translateY(-2px);
-      filter: brightness(1.2);
-    }
 
     .container { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; }
     .card {
@@ -296,7 +271,6 @@
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; }
     .form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; }
 
-    /* FILTERS SECTION */
     .filters-section {
       background: var(--gradient-2);
       padding: 1.5rem;
@@ -363,12 +337,9 @@
     .btn-success { background: var(--success-color); color: var(--text-light); }
     .btn-small { padding: 0.5rem 1rem; font-size: 0.9rem; border-radius: 20px; }
     .btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
-    .btn-primary:hover:not(:disabled) { box-shadow: 0 10px 30px rgba(0,212,255,0.4); }
-    .btn-danger:hover:not(:disabled) { background: #a71d2a; }
 
     .page-title { text-align:center; font-size:2.5rem; font-weight:700; margin-bottom:1rem; display:flex; align-items:center; justify-content:center; gap:1rem; }
     .page-title .highlight { background: var(--gradient-1); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
-    .page-subtitle { text-align:center; color: var(--text-gray); font-size:1.1rem; margin-bottom:3rem; }
 
     .table-container { overflow-x:auto; border-radius: var(--border-radius); }
     .table { width:100%; border-collapse:collapse; background: rgba(255,255,255,0.02); border-radius: var(--border-radius); overflow:hidden; }
@@ -376,50 +347,14 @@
     .table th { padding:1rem; text-align:center; font-weight:600; color: var(--secondary-color); font-size:0.95rem; }
     .table td { padding:1rem; text-align:center; border-bottom:1px solid rgba(255,255,255,0.1); color: var(--text-light); }
     
-    /* ENHANCED TABLE ROW ANIMATIONS */
     .table tbody tr {
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       position: relative;
-      overflow: hidden;
-    }
-    
-    .table tbody tr::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(0,212,255,0.1), transparent);
-      transition: left 0.5s;
     }
     
     .table tbody tr:hover {
       background: rgba(0,212,255,0.08);
-      transform: translateX(5px) scale(1.02);
-      box-shadow: 0 8px 25px rgba(0,212,255,0.15);
-    }
-    
-    .table tbody tr:hover::before {
-      left: 100%;
-    }
-    
-    .table tbody tr:last-child td { border-bottom: none; }
-
-    /* ROW ENTRY ANIMATION */
-    @keyframes slideInFromRight {
-      from {
-        opacity: 0;
-        transform: translateX(50px);
-      }
-      to {
-        opacity: 1;
-        transform: translateX(0);
-      }
-    }
-
-    .table tbody tr.new-row {
-      animation: slideInFromRight 0.5s ease-out;
+      transform: translateX(5px);
     }
 
     .summary-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(250px,1fr)); gap:1.5rem; margin-bottom:2rem; }
@@ -447,7 +382,6 @@
     .summary-icon { font-size:2.5rem; margin-bottom:1rem; color: var(--primary-color); }
     .summary-card.receitas .summary-icon { color: var(--success-color); }
     .summary-card.despesas .summary-icon { color: var(--danger-color); }
-    .summary-label { font-size:1rem; color: var(--text-gray); margin-bottom:0.5rem; font-weight:600; }
     .summary-value { font-size:2rem; font-weight:700; color: var(--text-light); }
     .summary-card.receitas .summary-value { color: var(--success-color); }
     .summary-card.despesas .summary-value { color: var(--danger-color); }
@@ -460,9 +394,7 @@
 
     .empty-state { text-align:center; padding:3rem; color: var(--text-gray); }
     .empty-state i { font-size:4rem; margin-bottom:1rem; color: var(--primary-color); opacity:0.5; }
-    .reason-text { font-size:0.9em; color: var(--text-gray); font-style:italic; }
 
-    /* CONNECTION STATUS */
     .connection-status {
       position: fixed;
       top: 10px;
@@ -492,136 +424,25 @@
       border-color: rgba(220, 53, 69, 0.3);
     }
 
-    .connection-status.connecting {
-      background: rgba(255, 193, 7, 0.2);
-      color: var(--warning-color);
-      border-color: rgba(255, 193, 7, 0.3);
-    }
-
-    /* ENHANCED MOBILE EXPERIENCE */
     @media (max-width:768px){
-      .container { padding:0 1rem; margin:1rem auto; }
-      .header { padding:1rem; flex-direction: column; gap: 1rem; }
-      .logo-container { justify-content: center; }
-      .logo-text { font-size:1.5rem; }
-      .logo-image { width:70px; height:70px; font-size:1.5rem; }
-      .card { padding:1.5rem; }
-      .page-title { font-size:2rem; flex-direction: column; gap: 0.5rem; }
       .form-row, .form-row-3 { grid-template-columns:1fr; }
       .summary-grid { grid-template-columns:1fr; }
-      .table th, .table td { padding:0.5rem; font-size:0.9rem; }
-      .btn { padding:0.8rem 1.5rem; }
-      
-      /* MOBILE FILTERS */
-      .filters-section {
-        flex-direction: column;
-        gap: 1rem;
-      }
-      
-      .filter-group {
-        min-width: 100%;
-      }
-      
-      .clear-filters {
-        align-self: center;
-        width: 100%;
-        justify-content: center;
-      }
-      
-      /* MOBILE TABLE */
-      .table-container {
-        font-size: 0.85rem;
-      }
-      
-      .table th:nth-child(2),
-      .table td:nth-child(2) {
-        display: none; /* Hide reason column on mobile */
-      }
-      
-      .table tbody tr:hover {
-        transform: translateX(0) scale(1.01);
-      }
-      
-      /* MOBILE TOAST */
-      .toast-container {
-        top: 10px;
-        right: 10px;
-        left: 10px;
-      }
-      
-      .toast {
-        min-width: auto;
-        width: 100%;
-      }
-
-      .connection-status {
-        position: relative;
-        top: auto;
-        left: auto;
-        margin-bottom: 1rem;
-        align-self: center;
-      }
+      .filters-section { flex-direction: column; }
+      .filter-group { min-width: 100%; }
     }
 
     @keyframes fadeInUp { from {opacity:0; transform:translateY(30px);} to {opacity:1; transform:translateY(0);} }
     .fade-in { animation: fadeInUp 0.6s ease-out; }
-
-    /* LOADING ANIMATION ENHANCEMENT */
-    .btn.loading {
-      position: relative;
-      pointer-events: none;
-    }
-    
-    .btn.loading::after {
-      content: '';
-      position: absolute;
-      width: 20px;
-      height: 20px;
-      border: 2px solid transparent;
-      border-top: 2px solid currentColor;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-    }
-    
-    .btn.loading i {
-      opacity: 0;
-    }
-
-    /* DEBUG PANEL */
-    .debug-panel {
-      position: fixed;
-      bottom: 10px;
-      left: 10px;
-      background: rgba(0,0,0,0.8);
-      color: #fff;
-      padding: 0.5rem;
-      border-radius: 5px;
-      font-size: 0.7rem;
-      max-width: 300px;
-      z-index: 1000;
-      display: none;
-    }
-
-    ::-webkit-scrollbar { width: 8px; }
-    ::-webkit-scrollbar-track { background: var(--secondary-color); }
-    ::-webkit-scrollbar-thumb { background: var(--gradient-1); border-radius:4px; }
-    ::-webkit-scrollbar-thumb:hover { background: var(--primary-dark); }
   </style>
 </head>
 <body>
-  <!-- Connection Status -->
-  <div id="connection-status" class="connection-status connecting">
+  <div id="connection-status" class="connection-status">
     <i class="fas fa-wifi"></i>
-    <span>Conectando ao Firebase...</span>
+    <span>Verificando conexão...</span>
   </div>
 
-  <!-- Toast Container -->
   <div class="toast-container" id="toast-container"></div>
 
-  <!-- Debug Panel -->
-  <div id="debug-panel" class="debug-panel"></div>
-
-  <!-- Login -->
   <div id="login-container" class="login-container">
     <div class="login-card fade-in">
       <div class="login-title"><i class="fas fa-lock"></i> Acesso Administrativo</div>
@@ -639,13 +460,10 @@
     </div>
   </div>
 
-  <!-- App -->
   <div id="app-container" class="hidden">
     <div class="header">
       <div class="logo-container">
-        <div class="logo-image">
-          DD
-        </div>
+        <div class="logo-image">DD</div>
         <div class="logo-text">Dev Digital BR</div>
       </div>
       <button class="btn btn-danger btn-small" id="logout"><i class="fas fa-sign-out-alt"></i> Sair</button>
@@ -655,28 +473,25 @@
       <div id="loading-state" class="loading hidden"><i class="fas fa-spinner"></i> Carregando transações...</div>
 
       <h1 class="page-title fade-in"><i class="fas fa-chart-line"></i> Painel <span class="highlight">Financeiro</span></h1>
-      <p class="page-subtitle">Gerencie suas finanças de forma inteligente e eficiente</p>
 
-      <!-- Summary Cards -->
       <div class="summary-grid fade-in">
         <div class="summary-card receitas">
           <i class="fas fa-arrow-up summary-icon"></i>
-          <div class="summary-label">Total Receitas</div>
+          <div>Total Receitas</div>
           <div class="summary-value">R$ <span id="total-receitas">0,00</span></div>
         </div>
         <div class="summary-card despesas">
           <i class="fas fa-arrow-down summary-icon"></i>
-          <div class="summary-label">Total Despesas</div>
+          <div>Total Despesas</div>
           <div class="summary-value">R$ <span id="total-despesas">0,00</span></div>
         </div>
         <div class="summary-card" id="saldo-card">
           <i class="fas fa-wallet summary-icon"></i>
-          <div class="summary-label">Saldo Atual</div>
+          <div>Saldo Atual</div>
           <div class="summary-value">R$ <span id="saldo">0,00</span></div>
         </div>
       </div>
 
-      <!-- Transaction Form -->
       <div class="transaction-form fade-in">
         <h3 class="form-title"><i class="fas fa-plus-circle"></i> Nova Transação</h3>
         <form id="transaction-form">
@@ -687,7 +502,7 @@
             </div>
             <div class="form-group">
               <label for="reason">Motivo <span class="optional">(opcional)</span></label>
-              <input type="text" id="reason" class="form-control" placeholder="Ex: Pagamento de cliente, Compra de equipamento...">
+              <input type="text" id="reason" class="form-control" placeholder="Ex: Pagamento de cliente">
             </div>
           </div>
           <div class="form-row-3">
@@ -709,20 +524,19 @@
         </form>
       </div>
 
-      <!-- Filters Section -->
       <div class="filters-section fade-in">
         <div class="filter-group">
           <label for="filter-type">Filtrar por Tipo</label>
           <select id="filter-type" class="form-control">
-            <option value="">🔍 Todos os tipos</option>
-            <option value="receita">💰 Receitas</option>
-            <option value="despesa">💸 Despesas</option>
+            <option value="">Todos os tipos</option>
+            <option value="receita">Receitas</option>
+            <option value="despesa">Despesas</option>
           </select>
         </div>
         <div class="filter-group">
           <label for="filter-month">Filtrar por Mês</label>
           <select id="filter-month" class="form-control">
-            <option value="">📅 Todos os meses</option>
+            <option value="">Todos os meses</option>
           </select>
         </div>
         <button class="clear-filters" id="clear-filters">
@@ -730,7 +544,6 @@
         </button>
       </div>
 
-      <!-- Transactions Table -->
       <div class="card fade-in">
         <h3 class="form-title"><i class="fas fa-list"></i> Histórico de Transações</h3>
         <div class="table-container">
@@ -758,7 +571,13 @@
   </div>
 
   <script>
-    // Elementos da DOM
+    const ADMIN_USER = "admin";
+    const ADMIN_PASS = "12345";
+
+    let transactions = [];
+    let filteredTransactions = [];
+    let isFirebaseConnected = false;
+
     const loginContainer = document.getElementById("login-container");
     const appContainer = document.getElementById("app-container");
     const loginForm = document.getElementById("login-form");
@@ -774,65 +593,7 @@
     const clearFiltersBtn = document.getElementById("clear-filters");
     const addTransactionBtn = document.getElementById("add-transaction-btn");
     const connectionStatusEl = document.getElementById("connection-status");
-    const debugPanel = document.getElementById("debug-panel");
 
-    // Credenciais de administrador
-    const ADMIN_USER = "admin";
-    const ADMIN_PASS = "12345";
-
-    // Variáveis de estado
-    let transactions = [];
-    let filteredTransactions = [];
-    let isFirebaseConnected = false;
-    let debugMode = false;
-
-    // DEBUG FUNCTIONS
-    function debugLog(message, type = 'info') {
-      console.log(`[${type.toUpperCase()}] ${message}`);
-      
-      if (debugMode) {
-        const debugPanel = document.getElementById('debug-panel');
-        debugPanel.style.display = 'block';
-        debugPanel.innerHTML += `<div>[${new Date().toLocaleTimeString()}] ${message}</div>`;
-        debugPanel.scrollTop = debugPanel.scrollHeight;
-      }
-    }
-
-    // Ativar debug com Ctrl+Shift+D
-    document.addEventListener('keydown', (e) => {
-      if (e.ctrlKey && e.shiftKey && e.key === 'D') {
-        debugMode = !debugMode;
-        const panel = document.getElementById('debug-panel');
-        panel.style.display = debugMode ? 'block' : 'none';
-        if (debugMode) panel.innerHTML = '<strong>Debug Mode Ativado</strong><br>';
-        showToast(`Debug mode ${debugMode ? 'ativado' : 'desativado'}`, 'info', 2000);
-      }
-    });
-
-    // CONNECTION STATUS UPDATES
-    function updateConnectionStatus(status, message) {
-      connectionStatusEl.className = `connection-status ${status}`;
-      connectionStatusEl.innerHTML = `
-        <i class="fas ${status === 'connected' ? 'fa-wifi' : status === 'disconnected' ? 'fa-wifi-slash' : 'fa-spinner fa-spin'}"></i>
-        <span>${message}</span>
-      `;
-      
-      debugLog(`Connection Status: ${status} - ${message}`);
-      
-      // Auto-hide success status after 2 seconds
-      if (status === 'connected') {
-        setTimeout(() => {
-          if (connectionStatusEl.classList.contains('connected')) {
-            connectionStatusEl.style.opacity = '0';
-            setTimeout(() => {
-              connectionStatusEl.style.display = 'none';
-            }, 300);
-          }
-        }, 2000);
-      }
-    }
-
-    // ENHANCED TOAST SYSTEM
     function showToast(message, type = 'success', duration = 4000) {
       const toastContainer = document.getElementById('toast-container');
       const toast = document.createElement('div');
@@ -848,63 +609,52 @@
       toast.innerHTML = `
         <i class="toast-icon ${icons[type]}"></i>
         <span>${message}</span>
-        <button class="toast-close" onclick="closeToast(this)">
+        <button class="toast-close" onclick="this.parentElement.remove()">
           <i class="fas fa-times"></i>
         </button>
       `;
 
       toastContainer.appendChild(toast);
-      
-      // Show toast
       setTimeout(() => toast.classList.add('show'), 100);
-      
-      // Auto remove
       setTimeout(() => {
         toast.classList.remove('show');
         setTimeout(() => toast.remove(), 400);
       }, duration);
-
-      debugLog(`Toast: ${type} - ${message}`);
     }
 
-    function closeToast(button) {
-      const toast = button.parentElement;
-      toast.classList.remove('show');
-      setTimeout(() => toast.remove(), 400);
+    function updateConnectionStatus(status, message) {
+      connectionStatusEl.className = `connection-status ${status}`;
+      connectionStatusEl.innerHTML = `
+        <i class="fas ${status === 'connected' ? 'fa-wifi' : status === 'disconnected' ? 'fa-wifi-slash' : 'fa-spinner fa-spin'}"></i>
+        <span>${message}</span>
+      `;
+      
+      if (status === 'connected') {
+        setTimeout(() => {
+          connectionStatusEl.style.opacity = '0';
+          setTimeout(() => connectionStatusEl.style.display = 'none', 300);
+        }, 2000);
+      }
     }
 
-    // FIREBASE CONNECTION TEST - VERSÃO SILENCIOSA
     async function testFirebaseConnection() {
       updateConnectionStatus('connecting', 'Verificando conexão...');
       
       try {
-        // Teste simples de leitura
-        debugLog('Testando conexão com Firestore...');
+        console.log('Testando conexão - db está definido?', typeof db !== 'undefined');
         await db.collection('transactions').limit(1).get();
-        debugLog('Conexão estabelecida com sucesso');
-
         isFirebaseConnected = true;
         updateConnectionStatus('connected', 'Conectado');
+        console.log('Conexão estabelecida com sucesso');
         return true;
-
       } catch (error) {
-        debugLog(`Erro na conexão: ${error.code} - ${error.message}`, 'error');
+        console.error('Erro na conexão:', error);
         isFirebaseConnected = false;
-        
-        let errorMessage = 'Desconectado';
-        if (error.code === 'permission-denied') {
-          errorMessage = 'Sem permissão';
-        } else if (error.code === 'unavailable') {
-          errorMessage = 'Indisponível';
-        }
-        
-        updateConnectionStatus('disconnected', errorMessage);
-        // Removido: toast de erro automático
+        updateConnectionStatus('disconnected', 'Desconectado');
         return false;
       }
     }
 
-    // FILTERS FUNCTIONALITY
     function populateMonthFilter() {
       if (transactions.length === 0) return;
       
@@ -918,7 +668,7 @@
         'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
       ];
 
-      filterMonthEl.innerHTML = '<option value="">📅 Todos os meses</option>';
+      filterMonthEl.innerHTML = '<option value="">Todos os meses</option>';
       
       months.forEach(month => {
         const [year, monthNum] = month.split('-');
@@ -948,7 +698,6 @@
       });
       
       renderTransactions();
-      debugLog(`Filtros aplicados: ${filteredTransactions.length} de ${transactions.length} transações`);
     }
 
     function clearFilters() {
@@ -956,40 +705,29 @@
       filterMonthEl.value = '';
       filteredTransactions = [...transactions];
       renderTransactions();
-      showToast('Filtros limpos com sucesso!', 'info', 2000);
+      showToast('Filtros limpos', 'info', 2000);
     }
 
-    // Event listeners para filtros
     filterTypeEl.addEventListener('change', applyFilters);
     filterMonthEl.addEventListener('change', applyFilters);
     clearFiltersBtn.addEventListener('click', clearFilters);
 
-    // LOGIN SYSTEM - VERSÃO OTIMIZADA
     loginForm.addEventListener("submit", async e => {
       e.preventDefault();
       const user = document.getElementById("username").value.trim();
       const pass = document.getElementById("password").value;
       
-      debugLog(`Tentativa de login: ${user}`);
-      
       if (user === ADMIN_USER && pass === ADMIN_PASS) {
         loginContainer.classList.add("hidden");
         appContainer.classList.remove("hidden");
-        showToast('Login realizado com sucesso!', 'success', 2000);
-        debugLog('Login bem-sucedido');
+        showToast('Login realizado com sucesso', 'success', 2000);
         
-        // Teste conexão de forma silenciosa e carregue dados
         const connected = await testFirebaseConnection();
         if (connected) {
           await loadTransactions();
-        } else {
-          debugLog('Firebase não conectado - modo offline');
-          // Não mostra toast de erro, apenas loga
         }
-        
       } else {
-        showToast('Usuário ou senha incorretos!', 'error');
-        debugLog('Login falhou: credenciais incorretas');
+        showToast('Usuário ou senha incorretos', 'error');
       }
     });
 
@@ -998,18 +736,13 @@
       appContainer.classList.add("hidden");
       transactions = [];
       filteredTransactions = [];
-      showToast('Logout realizado com sucesso!', 'info', 2000);
-      debugLog('Logout realizado');
-      
-      // Limpar campos
+      showToast('Logout realizado', 'info', 2000);
       document.getElementById("username").value = '';
       document.getElementById("password").value = '';
     });
 
-    // FIREBASE FUNCTIONS - VERSÃO OTIMIZADA E SILENCIOSA
     async function loadTransactions() {
       if (!isFirebaseConnected) {
-        debugLog('Firebase não conectado - inicializando arrays vazios');
         transactions = [];
         filteredTransactions = [];
         renderTransactions();
@@ -1017,7 +750,6 @@
       }
 
       loadingState.classList.remove("hidden");
-      debugLog("Carregando transações do Firestore...");
       
       try {
         const snapshot = await db.collection("transactions")
@@ -1037,26 +769,12 @@
         populateMonthFilter();
         renderTransactions();
         
-        debugLog(`${transactions.length} transações carregadas com sucesso`);
-        
-        // Só mostra toast se tiver muitas transações ou se estiver em debug
-        if (transactions.length > 5 || debugMode) {
+        if (transactions.length > 0) {
           showToast(`${transactions.length} transações carregadas`, 'info', 2000);
         }
-        
       } catch (error) {
-        debugLog(`Erro ao carregar transações: ${error.code} - ${error.message}`, 'error');
-        
-        // Só mostra toast de erro se for um problema crítico ou debug ativo
-        if (debugMode || error.code === 'permission-denied') {
-          let errorMessage = 'Erro ao carregar dados';
-          if (error.code === 'permission-denied') {
-            errorMessage = 'Erro de permissão - Verifique as regras do Firestore';
-          }
-          showToast(errorMessage, 'error');
-        }
-        
-        // Inicializa arrays vazios mesmo com erro
+        console.error('Erro ao carregar transações:', error);
+        showToast('Erro ao carregar dados', 'error');
         transactions = [];
         filteredTransactions = [];
         renderTransactions();
@@ -1065,7 +783,6 @@
       loadingState.classList.add("hidden");
     }
 
-    // TRANSACTION FORM
     const transactionForm = document.getElementById("transaction-form");
     transactionForm.addEventListener("submit", async e => {
       e.preventDefault();
@@ -1075,28 +792,20 @@
       const amount = parseFloat(document.getElementById("amount").value);
       const type = document.getElementById("type").value;
       
-      // Validação
-      if (!desc) {
-        showToast('Por favor, preencha a descrição!', 'warning');
-        return;
-      }
-      
-      if (isNaN(amount) || amount <= 0) {
-        showToast('Por favor, insira um valor válido maior que zero!', 'warning');
+      if (!desc || isNaN(amount) || amount <= 0) {
+        showToast('Preencha todos os campos corretamente', 'warning');
         return;
       }
 
       if (!isFirebaseConnected) {
-        showToast('Firebase não conectado. Reconnectando...', 'warning');
+        showToast('Firebase não conectado', 'warning');
         const connected = await testFirebaseConnection();
         if (!connected) {
-          showToast('Não foi possível conectar ao Firebase. Tente novamente.', 'error');
+          showToast('Não foi possível conectar', 'error');
           return;
         }
       }
 
-      // Estado de loading
-      addTransactionBtn.classList.add('loading');
       addTransactionBtn.disabled = true;
 
       try {
@@ -1109,19 +818,14 @@
           timestamp: Date.now()
         };
         
-        debugLog(`Salvando transação: ${JSON.stringify(transaction)}`);
-        
         const docRef = await db.collection("transactions").add(transaction);
-        debugLog(`Transação salva com ID: ${docRef.id}`);
         
-        // Adiciona à lista local
         transaction.id = docRef.id;
         transactions.unshift(transaction);
         filteredTransactions = [...transactions];
         populateMonthFilter();
         renderTransactions();
         
-        // Reset form
         transactionForm.reset();
         
         const typeText = type === 'receita' ? 'Receita' : 'Despesa';
@@ -1130,63 +834,37 @@
           maximumFractionDigits: 2
         });
         
-        showToast(`✅ ${typeText} de R$ ${formattedAmount} adicionada com sucesso!`, 'success');
-        
+        showToast(`${typeText} de R$ ${formattedAmount} adicionada`, 'success');
       } catch (error) {
-        debugLog(`Erro ao salvar transação: ${error.code} - ${error.message}`, 'error');
-        
-        let errorMessage = 'Erro ao salvar transação.';
-        if (error.code === 'permission-denied') {
-          errorMessage = 'Erro de permissão. Verifique as regras do Firebase.';
-        } else if (error.code === 'unavailable') {
-          errorMessage = 'Firebase indisponível. Tente novamente em alguns instantes.';
-        } else if (error.code === 'quota-exceeded') {
-          errorMessage = 'Cota do Firebase excedida. Contate o administrador.';
-        }
-        
-        showToast(errorMessage, 'error');
-        
+        console.error('Erro ao salvar:', error);
+        showToast('Erro ao salvar transação', 'error');
       } finally {
-        addTransactionBtn.classList.remove('loading');
         addTransactionBtn.disabled = false;
       }
     });
 
     async function deleteTransaction(id) {
-      if (!confirm("🗑️ Tem certeza que deseja excluir esta transação? Esta ação não pode ser desfeita.")) {
+      if (!confirm("Tem certeza que deseja excluir esta transação?")) {
         return;
       }
 
       if (!isFirebaseConnected) {
-        showToast('Firebase não conectado. Não é possível excluir.', 'error');
+        showToast('Firebase não conectado', 'error');
         return;
       }
 
       try {
-        debugLog(`Excluindo transação: ${id}`);
-        
         await db.collection("transactions").doc(id).delete();
         
-        // Remove da lista local
         transactions = transactions.filter(t => t.id !== id);
         filteredTransactions = filteredTransactions.filter(t => t.id !== id);
         populateMonthFilter();
         renderTransactions();
         
-        showToast('Transação excluída com sucesso!', 'success', 2000);
-        debugLog(`Transação ${id} excluída`);
-        
+        showToast('Transação excluída', 'success', 2000);
       } catch (error) {
-        debugLog(`Erro ao excluir transação: ${error.code} - ${error.message}`, 'error');
-        
-        let errorMessage = 'Erro ao excluir transação.';
-        if (error.code === 'permission-denied') {
-          errorMessage = 'Sem permissão para excluir. Verifique as regras do Firebase.';
-        } else if (error.code === 'not-found') {
-          errorMessage = 'Transação não encontrada. Pode já ter sido excluída.';
-        }
-        
-        showToast(errorMessage, 'error');
+        console.error('Erro ao excluir:', error);
+        showToast('Erro ao excluir transação', 'error');
       }
     }
 
@@ -1194,7 +872,6 @@
       tableBody.innerHTML = '';
       let totalReceitas = 0, totalDespesas = 0;
       
-      // Calcula totais das transações filtradas
       filteredTransactions.forEach(t => {
         if (t.type === 'receita') {
           totalReceitas += Number(t.amount);
@@ -1206,30 +883,12 @@
       if (filteredTransactions.length === 0) {
         emptyState.classList.remove("hidden");
         document.querySelector(".table").style.display = "none";
-        
-        // Mensagens diferentes baseadas nos filtros
-        const typeFilter = filterTypeEl.value;
-        const monthFilter = filterMonthEl.value;
-        const emptyTitle = emptyState.querySelector('h3');
-        const emptyText = emptyState.querySelector('p');
-        
-        if (typeFilter || monthFilter) {
-          emptyTitle.textContent = 'Nenhuma transação encontrada com estes filtros';
-          emptyText.textContent = 'Tente alterar os filtros ou limpar para ver todas as transações.';
-        } else {
-          emptyTitle.textContent = 'Nenhuma transação encontrada';
-          emptyText.textContent = 'Adicione sua primeira transação usando o formulário acima.';
-        }
       } else {
         emptyState.classList.add("hidden");
         document.querySelector(".table").style.display = "table";
         
-        filteredTransactions.forEach((t, index) => {
+        filteredTransactions.forEach(t => {
           const row = document.createElement("tr");
-          row.classList.add('new-row');
-          
-          // Remove animation class após animação
-          setTimeout(() => row.classList.remove('new-row'), 500);
           
           const formattedAmount = Number(t.amount).toLocaleString('pt-BR', { 
             minimumFractionDigits: 2, 
@@ -1238,17 +897,16 @@
           
           row.innerHTML = `
             <td style="text-align:left; font-weight:500;">${t.desc}</td>
-            <td style="text-align:left;">${t.reason ? `<span class="reason-text">${t.reason}</span>` : '<span style="color:#666;">—</span>'}</td>
+            <td style="text-align:left;">${t.reason || '—'}</td>
             <td style="font-weight:700; color:${t.type === 'receita' ? '#25d366' : '#dc3545'};">R$ ${formattedAmount}</td>
             <td><span class="type-badge ${t.type}">${t.type === 'receita' ? '💰 Receita' : '💸 Despesa'}</span></td>
             <td style="color:#a0a0a0;">${t.date}</td>
-            <td><button onclick="deleteTransaction('${t.id}')" class="btn btn-danger btn-small" title="Excluir transação"><i class="fas fa-trash"></i></button></td>
+            <td><button onclick="deleteTransaction('${t.id}')" class="btn btn-danger btn-small"><i class="fas fa-trash"></i></button></td>
           `;
           tableBody.appendChild(row);
         });
       }
 
-      // Atualiza cards de resumo
       totalReceitasEl.textContent = totalReceitas.toLocaleString('pt-BR', { 
         minimumFractionDigits: 2, 
         maximumFractionDigits: 2 
@@ -1264,52 +922,30 @@
         maximumFractionDigits: 2 
       });
       
-      // Atualiza cor do card de saldo
       const saldoCard = document.getElementById('saldo-card');
       const saldoValueEl = saldoCard.querySelector('.summary-value');
       const saldoIconEl = saldoCard.querySelector('.summary-icon');
       
       if (saldo > 0) {
-        saldoCard.classList.remove('despesas');
         saldoCard.classList.add('receitas');
         saldoValueEl.style.color = '#25d366';
         saldoIconEl.style.color = '#25d366';
-        saldoIconEl.className = 'fas fa-wallet summary-icon';
       } else if (saldo < 0) {
-        saldoCard.classList.remove('receitas');
         saldoCard.classList.add('despesas');
         saldoValueEl.style.color = '#dc3545';
         saldoIconEl.style.color = '#dc3545';
-        saldoIconEl.className = 'fas fa-exclamation-triangle summary-icon';
       } else {
-        saldoCard.classList.remove('receitas', 'despesas');
         saldoValueEl.style.color = '#ffffff';
         saldoIconEl.style.color = '#00d4ff';
-        saldoIconEl.className = 'fas fa-wallet summary-icon';
       }
-
-      debugLog(`Renderizados: ${filteredTransactions.length} transações, Saldo: R$ ${saldo.toFixed(2)}`);
     }
 
-    // Expor função delete para onclick
     window.deleteTransaction = deleteTransaction;
 
-    // INICIALIZAÇÃO - VERSÃO SILENCIOSA
     document.addEventListener('DOMContentLoaded', () => {
-      debugLog('DOM carregada - Sistema iniciado');
-      console.log('🚀 Sistema Financeiro Dev Digital BR iniciado');
-      console.log('📝 Para ativar debug: Ctrl+Shift+D');
-      console.log('👤 Login: admin / 12345');
-      
-      // Não faz teste de conexão no carregamento para evitar mensagens desnecessárias
-      // A conexão será testada apenas no login
+      console.log('Sistema iniciado');
+      console.log('Login: admin / 12345');
     });
-
-    // Melhor UX mobile
-    if ('ontouchstart' in window) {
-      document.addEventListener('touchstart', function() {}, { passive: true });
-      document.documentElement.style.scrollBehavior = 'smooth';
-    }
   </script>
 </body>
 </html>
