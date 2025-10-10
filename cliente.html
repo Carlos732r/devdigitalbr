@@ -1,0 +1,1169 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dev Digital BR - Controle de Clientes</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary-color: #00d4ff;
+      --primary-dark: #0099cc;
+      --secondary-color: #0a0a0a;
+      --text-light: #ffffff;
+      --text-gray: #a0a0a0;
+      --gradient-1: linear-gradient(135deg, #00d4ff 0%, #0099cc 50%, #0066aa 100%);
+      --gradient-2: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+      --gradient-bg: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%);
+      --border-radius: 15px;
+      --box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      --transition: all 0.3s ease;
+      --success-color: #25d366;
+      --danger-color: #dc3545;
+      --warning-color: #ffc107;
+      --info-color: #17a2b8;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--gradient-bg);
+      color: var(--text-light);
+      overflow-x: hidden;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* Cabeçalho */
+    .header {
+      background: rgba(10,10,10,0.95);
+      backdrop-filter: blur(10px);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      box-shadow: 0 2px 20px rgba(0,0,0,0.3);
+    }
+
+    .logo-container { 
+      display: flex; 
+      align-items: center; 
+      gap: 1rem;
+    }
+    
+    .logo-link {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      text-decoration: none;
+      transition: var(--transition);
+    }
+    
+    .logo-link:hover {
+      transform: translateY(-2px);
+    }
+    
+    .logo-image {
+      width: 70px;
+      height: 70px;
+      border-radius: var(--border-radius);
+      background: var(--gradient-1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 15px rgba(0,212,255,0.3);
+      overflow: hidden;
+    }
+    
+    .logo-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+    
+    .logo-text {
+      font-size: 1.5rem;
+      font-weight: 700;
+      background: var(--gradient-1);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* Container Principal */
+    .container { 
+      max-width: 1400px; 
+      margin: 2rem auto; 
+      padding: 0 1rem; 
+    }
+
+    /* Título da Página */
+    .page-title { 
+      text-align:center; 
+      font-size:2.5rem; 
+      font-weight:700; 
+      margin-bottom:2rem; 
+      display:flex; 
+      align-items:center; 
+      justify-content:center; 
+      gap:1rem;
+    }
+    
+    .page-title .highlight { 
+      background: var(--gradient-1); 
+      -webkit-background-clip: text; 
+      background-clip: text; 
+      -webkit-text-fill-color: transparent; 
+    }
+
+    /* Cards */
+    .card {
+      background: var(--gradient-2);
+      border-radius: 20px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      border: 1px solid rgba(255,255,255,0.1);
+      box-shadow: var(--box-shadow);
+      backdrop-filter: blur(10px);
+    }
+
+    /* Formulário */
+    .form-title { 
+      font-size:1.5rem; 
+      font-weight:600; 
+      margin-bottom:1.5rem; 
+      color: var(--text-light); 
+      display:flex; 
+      align-items:center; 
+      gap:0.5rem; 
+    }
+
+    .form-group { 
+      margin-bottom: 1.5rem; 
+      text-align: left; 
+    }
+    
+    .form-group label { 
+      display: block; 
+      margin-bottom: 0.5rem; 
+      color: var(--text-light); 
+      font-weight: 600; 
+    }
+    
+    .form-group label .optional { 
+      color: var(--text-gray); 
+      font-weight: 400; 
+      font-size: 0.9rem; 
+    }
+    
+    .form-control {
+      width: 100%; 
+      padding: 1rem;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 12px;
+      background: rgba(255,255,255,0.05);
+      color: var(--text-light);
+      font-size: 1rem;
+      transition: var(--transition);
+      backdrop-filter: blur(10px);
+    }
+    
+    .form-control:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 2px rgba(0,212,255,0.2);
+      background: rgba(255,255,255,0.08);
+    }
+    
+    .form-control::placeholder { 
+      color: var(--text-gray); 
+    }
+
+    .form-row { 
+      display: grid; 
+      grid-template-columns: 1fr 1fr; 
+      gap: 1rem; 
+      margin-bottom: 1.5rem; 
+    }
+    
+    .form-row-3 { 
+      display: grid; 
+      grid-template-columns: 1fr 1fr 1fr; 
+      gap: 1rem; 
+      margin-bottom: 1.5rem; 
+    }
+
+    /* Botões */
+    .btn {
+      padding: 1rem 2rem;
+      border: none;
+      border-radius: 50px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      text-decoration: none;
+    }
+
+    .btn:disabled { 
+      opacity: 0.6; 
+      cursor: not-allowed; 
+    }
+    
+    .btn-primary { 
+      background: var(--gradient-1); 
+      color: var(--secondary-color); 
+    }
+    
+    .btn-success { 
+      background: var(--success-color); 
+      color: var(--text-light); 
+    }
+    
+    .btn-danger { 
+      background: var(--danger-color); 
+      color: var(--text-light); 
+    }
+    
+    .btn-warning { 
+      background: var(--warning-color); 
+      color: var(--secondary-color); 
+    }
+    
+    .btn-info { 
+      background: var(--info-color); 
+      color: var(--text-light); 
+    }
+    
+    .btn-small { 
+      padding: 0.5rem 1rem; 
+      font-size: 0.9rem; 
+      border-radius: 20px; 
+    }
+    
+    .btn:hover:not(:disabled) { 
+      transform: translateY(-2px); 
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3); 
+    }
+
+    /* Seção de Filtros */
+    .filters-section {
+      background: var(--gradient-2);
+      padding: 1.5rem;
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.1);
+      margin-bottom: 2rem;
+      display: flex;
+      gap: 1rem;
+      align-items: end;
+      flex-wrap: wrap;
+    }
+
+    .filter-group { 
+      flex: 1; 
+      min-width: 200px; 
+    }
+    
+    .filter-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: var(--text-light);
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .search-box {
+      display: flex;
+      gap: 0.5rem;
+      flex: 2;
+      min-width: 300px;
+    }
+
+    /* Estatísticas */
+    .stats-grid { 
+      display:grid; 
+      grid-template-columns:repeat(auto-fit, minmax(200px,1fr)); 
+      gap:1.5rem; 
+      margin-bottom:2rem; 
+    }
+    
+    .stats-card {
+      background: var(--gradient-2);
+      padding:1.5rem;
+      border-radius:20px;
+      text-align:center;
+      border:1px solid rgba(255,255,255,0.1);
+      position: relative;
+      overflow:hidden;
+      transition: var(--transition);
+    }
+    
+    .stats-card::before { 
+      content:''; 
+      position:absolute; 
+      top:0; 
+      left:0; 
+      right:0; 
+      height:4px; 
+      background: var(--gradient-1); 
+    }
+    
+    .stats-card:hover { 
+      transform: translateY(-5px); 
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4); 
+    }
+    
+    .stats-card.success::before { 
+      background: var(--success-color); 
+    }
+    
+    .stats-card.warning::before { 
+      background: var(--warning-color); 
+    }
+    
+    .stats-card.danger::before { 
+      background: var(--danger-color); 
+    }
+
+    .stats-icon { 
+      font-size:2rem; 
+      margin-bottom:0.5rem; 
+      color: var(--primary-color); 
+    }
+    
+    .stats-card.success .stats-icon { 
+      color: var(--success-color); 
+    }
+    
+    .stats-card.warning .stats-icon { 
+      color: var(--warning-color); 
+    }
+    
+    .stats-card.danger .stats-icon { 
+      color: var(--danger-color); 
+    }
+    
+    .stats-value { 
+      font-size:1.8rem; 
+      font-weight:700; 
+      color: var(--text-light); 
+    }
+    
+    .stats-label {
+      font-size: 0.9rem;
+      color: var(--text-gray);
+      margin-top: 0.5rem;
+    }
+
+    /* Tabela */
+    .table-container { 
+      overflow-x:auto; 
+      border-radius: var(--border-radius); 
+    }
+    
+    .table { 
+      width:100%; 
+      border-collapse:collapse; 
+      background: rgba(255,255,255,0.02); 
+      border-radius: var(--border-radius); 
+      overflow:hidden; 
+    }
+    
+    .table thead { 
+      background: var(--gradient-1); 
+    }
+    
+    .table th { 
+      padding:1rem; 
+      text-align:left; 
+      font-weight:600; 
+      color: var(--secondary-color); 
+      font-size:0.95rem; 
+    }
+    
+    .table td { 
+      padding:1rem; 
+      text-align:left; 
+      border-bottom:1px solid rgba(255,255,255,0.1); 
+      color: var(--text-light); 
+    }
+    
+    .table tbody tr { 
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+      position: relative; 
+    }
+    
+    .table tbody tr:hover { 
+      background: rgba(0,212,255,0.08); 
+    }
+    
+    .table tbody tr:nth-child(even) {
+      background: rgba(255,255,255,0.02);
+    }
+
+    /* Badges de Status */
+    .status-badge { 
+      padding:0.4rem 1rem; 
+      border-radius:20px; 
+      font-size:0.85rem; 
+      font-weight:600; 
+      text-transform:uppercase; 
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+    
+    .status-badge.pago { 
+      background: rgba(37,211,102,0.2); 
+      color: var(--success-color); 
+      border:1px solid rgba(37,211,102,0.3); 
+    }
+    
+    .status-badge.pendente { 
+      background: rgba(255,193,7,0.2); 
+      color: var(--warning-color); 
+      border:1px solid rgba(255,193,7,0.3); 
+    }
+    
+    .status-badge.atrasado { 
+      background: rgba(220,53,69,0.2); 
+      color: var(--danger-color); 
+      border:1px solid rgba(220,53,69,0.3); 
+    }
+
+    /* Ações da Tabela */
+    .action-buttons {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    /* Estado Vazio */
+    .empty-state { 
+      text-align:center; 
+      padding:3rem; 
+      color: var(--text-gray); 
+    }
+    
+    .empty-state i { 
+      font-size:4rem; 
+      margin-bottom:1rem; 
+      color: var(--primary-color); 
+      opacity:0.5; 
+    }
+
+    /* Toast Notifications */
+    .toast-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .toast {
+      min-width: 350px;
+      padding: 15px 20px;
+      border-radius: 12px;
+      color: white;
+      font-weight: 600;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+      backdrop-filter: blur(10px);
+      transform: translateX(400px);
+      opacity: 0;
+      transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-left: 4px solid;
+    }
+
+    .toast.show { 
+      transform: translateX(0); 
+      opacity: 1; 
+    }
+    
+    .toast.success { 
+      background: linear-gradient(135deg, rgba(37, 211, 102, 0.95), rgba(25, 135, 84, 0.95)); 
+      border-left-color: var(--success-color); 
+    }
+    
+    .toast.error { 
+      background: linear-gradient(135deg, rgba(220, 53, 69, 0.95), rgba(176, 42, 55, 0.95)); 
+      border-left-color: var(--danger-color); 
+    }
+    
+    .toast.warning { 
+      background: linear-gradient(135deg, rgba(255, 193, 7, 0.95), rgba(255, 143, 0, 0.95)); 
+      border-left-color: var(--warning-color); 
+      color: var(--secondary-color); 
+    }
+    
+    .toast.info { 
+      background: linear-gradient(135deg, rgba(23, 162, 184, 0.95), rgba(13, 110, 253, 0.95)); 
+      border-left-color: var(--info-color); 
+    }
+
+    /* Animações */
+    @keyframes fadeInUp { 
+      from {opacity:0; transform:translateY(30px);} 
+      to {opacity:1; transform:translateY(0);} 
+    }
+    
+    .fade-in { 
+      animation: fadeInUp 0.6s ease-out; 
+    }
+
+    /* Responsividade */
+    @media (max-width:768px){
+      .header { 
+        padding: 0.8rem 1rem;
+      }
+      
+      .logo-image {
+        width: 50px;
+        height: 50px;
+      }
+      
+      .logo-text { 
+        font-size: 1.1rem;
+      }
+      
+      .container { 
+        padding: 0 0.8rem; 
+        margin: 1rem auto; 
+      }
+      
+      .card { 
+        padding: 1.2rem; 
+      }
+      
+      .page-title { 
+        font-size: 1.8rem;
+      }
+      
+      .form-row, .form-row-3 { 
+        grid-template-columns: 1fr; 
+      }
+      
+      .stats-grid { 
+        grid-template-columns: 1fr;
+      }
+      
+      .filters-section { 
+        flex-direction: column;
+      }
+      
+      .filter-group, .search-box { 
+        min-width: 100%; 
+      }
+      
+      .table {
+        font-size: 0.85rem;
+      }
+      
+      .table th, .table td { 
+        padding: 0.6rem 0.4rem; 
+      }
+      
+      .action-buttons {
+        flex-direction: column;
+      }
+      
+      .toast {
+        min-width: auto;
+        width: calc(100% - 40px);
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Container de Notificações -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Cabeçalho -->
+  <div class="header">
+    <a href="index.html" class="logo-link">
+      <div class="logo-image">
+        <img src="logo_nome.png" alt="Dev Digital BR Logo">
+      </div>
+      <div class="logo-text">Dev Digital BR</div>
+    </a>
+    <a href="index.html" class="btn btn-primary btn-small">
+      <i class="fas fa-arrow-left"></i> Voltar ao Site
+    </a>
+  </div>
+
+  <!-- Container Principal -->
+  <div class="container">
+    <!-- Título da Página -->
+    <h1 class="page-title fade-in">
+      <i class="fas fa-users"></i> 
+      Controle de <span class="highlight">Clientes</span>
+    </h1>
+
+    <!-- Cards de Estatísticas -->
+    <div class="stats-grid fade-in">
+      <div class="stats-card">
+        <i class="fas fa-users stats-icon"></i>
+        <div class="stats-value" id="total-clientes">0</div>
+        <div class="stats-label">Total de Clientes</div>
+      </div>
+      <div class="stats-card success">
+        <i class="fas fa-check-circle stats-icon"></i>
+        <div class="stats-value" id="clientes-pagos">0</div>
+        <div class="stats-label">Pagamentos em Dia</div>
+      </div>
+      <div class="stats-card warning">
+        <i class="fas fa-clock stats-icon"></i>
+        <div class="stats-value" id="clientes-pendentes">0</div>
+        <div class="stats-label">Vencendo em Breve</div>
+      </div>
+      <div class="stats-card danger">
+        <i class="fas fa-exclamation-circle stats-icon"></i>
+        <div class="stats-value" id="clientes-atrasados">0</div>
+        <div class="stats-label">Pagamentos Atrasados</div>
+      </div>
+    </div>
+
+    <!-- Formulário de Cadastro -->
+    <div class="card fade-in">
+      <h3 class="form-title">
+        <i class="fas fa-user-plus"></i> 
+        <span id="form-title-text">Cadastrar Novo Cliente</span>
+      </h3>
+      <form id="cliente-form">
+        <input type="hidden" id="cliente-id">
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="nome">Nome do Cliente</label>
+            <input type="text" id="nome" class="form-control" placeholder="João Silva" required>
+          </div>
+          <div class="form-group">
+            <label for="empresa">Nome da Empresa</label>
+            <input type="text" id="empresa" class="form-control" placeholder="Empresa XYZ Ltda" required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="servico">Serviço Prestado</label>
+            <input type="text" id="servico" class="form-control" placeholder="Desenvolvimento de Site" required>
+          </div>
+          <div class="form-group">
+            <label for="telefone">Telefone / WhatsApp</label>
+            <input type="tel" id="telefone" class="form-control" placeholder="(11) 98765-4321" required>
+          </div>
+        </div>
+
+        <div class="form-row-3">
+          <div class="form-group">
+            <label for="valor">Valor (R$)</label>
+            <input type="number" id="valor" class="form-control" placeholder="0,00" step="0.01" min="0" required>
+          </div>
+          <div class="form-group">
+            <label for="forma-pagamento">Forma de Pagamento</label>
+            <select id="forma-pagamento" class="form-control" required>
+              <option value="">Selecione...</option>
+              <option value="pix">PIX</option>
+              <option value="cartao-credito">Cartão de Crédito</option>
+              <option value="cartao-debito">Cartão de Débito</option>
+              <option value="boleto">Boleto</option>
+              <option value="dinheiro">Dinheiro</option>
+              <option value="transferencia">Transferência Bancária</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="vencimento">Data de Vencimento</label>
+            <input type="date" id="vencimento" class="form-control" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="observacoes">Observações <span class="optional">(opcional)</span></label>
+          <textarea id="observacoes" class="form-control" rows="3" placeholder="Informações adicionais sobre o cliente ou pagamento..."></textarea>
+        </div>
+
+        <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+          <button type="button" class="btn btn-danger" id="cancel-btn" style="display: none;">
+            <i class="fas fa-times"></i> Cancelar
+          </button>
+          <button type="submit" class="btn btn-success" id="submit-btn">
+            <i class="fas fa-check"></i> Cadastrar Cliente
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Seção de Filtros -->
+    <div class="filters-section fade-in">
+      <div class="filter-group">
+        <label for="filter-status">Filtrar por Status</label>
+        <select id="filter-status" class="form-control">
+          <option value="">Todos</option>
+          <option value="pago">Pagos</option>
+          <option value="pendente">Pendentes</option>
+          <option value="atrasado">Atrasados</option>
+        </select>
+      </div>
+      <div class="search-box">
+        <input type="text" id="search-input" class="form-control" placeholder="Buscar por nome ou empresa...">
+        <button class="btn btn-primary btn-small" onclick="buscarClientes()">
+          <i class="fas fa-search"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Tabela de Clientes -->
+    <div class="card fade-in">
+      <h3 class="form-title">
+        <i class="fas fa-list"></i> Lista de Clientes
+      </h3>
+      <div class="table-container">
+        <table class="table" id="clientes-table">
+          <thead>
+            <tr>
+              <th>Cliente</th>
+              <th>Empresa</th>
+              <th>Serviço</th>
+              <th>Valor</th>
+              <th>Pagamento</th>
+              <th>Vencimento</th>
+              <th>Status</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="clientes-tbody"></tbody>
+        </table>
+        <div id="empty-state" class="empty-state" style="display: none;">
+          <i class="fas fa-user-slash"></i>
+          <h3>Nenhum cliente cadastrado</h3>
+          <p>Adicione seu primeiro cliente usando o formulário acima.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Array para armazenar os clientes
+    let clientes = [];
+    let clienteEditando = null;
+
+    // Elementos do DOM
+    const form = document.getElementById('cliente-form');
+    const tbody = document.getElementById('clientes-tbody');
+    const emptyState = document.getElementById('empty-state');
+    const table = document.getElementById('clientes-table');
+    const cancelBtn = document.getElementById('cancel-btn');
+    const submitBtn = document.getElementById('submit-btn');
+    const formTitleText = document.getElementById('form-title-text');
+    const filterStatus = document.getElementById('filter-status');
+    const searchInput = document.getElementById('search-input');
+
+    // Função para mostrar notificações
+    function showToast(message, type = 'success', duration = 3000) {
+      const toastContainer = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      
+      const icons = {
+        success: 'fas fa-check-circle',
+        error: 'fas fa-exclamation-circle',
+        warning: 'fas fa-exclamation-triangle',
+        info: 'fas fa-info-circle'
+      };
+
+      toast.className = `toast ${type}`;
+      toast.innerHTML = `
+        <i class="${icons[type]}"></i>
+        <span>${message}</span>
+      `;
+
+      toastContainer.appendChild(toast);
+      setTimeout(() => toast.classList.add('show'), 100);
+      
+      setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 400);
+      }, duration);
+    }
+
+    // Função para formatar valor em Real
+    function formatarMoeda(valor) {
+      return new Intl.NumberFormat('pt-BR', {
+        style: 'currency',
+        currency: 'BRL'
+      }).format(valor);
+    }
+
+    // Função para formatar data
+    function formatarData(data) {
+      return new Date(data + 'T00:00:00').toLocaleDateString('pt-BR');
+    }
+
+    // Função para calcular status baseado na data de vencimento
+    function calcularStatus(vencimento, isPago) {
+      if (isPago) return 'pago';
+      
+      const hoje = new Date();
+      hoje.setHours(0, 0, 0, 0);
+      
+      const dataVencimento = new Date(vencimento + 'T00:00:00');
+      const diffTime = dataVencimento - hoje;
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      
+      if (diffDays < 0) return 'atrasado';
+      if (diffDays <= 3) return 'pendente';
+      return 'pendente';
+    }
+
+    // Função para renderizar status com badge
+    function renderStatus(status) {
+      const badges = {
+        'pago': '<span class="status-badge pago"><i class="fas fa-check"></i> Pago</span>',
+        'pendente': '<span class="status-badge pendente"><i class="fas fa-clock"></i> Pendente</span>',
+        'atrasado': '<span class="status-badge atrasado"><i class="fas fa-exclamation"></i> Atrasado</span>'
+      };
+      return badges[status] || badges['pendente'];
+    }
+
+    // Função para adicionar ou editar cliente
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const cliente = {
+  id: document.getElementById('cliente-id').value || Date.now().toString(),
+  nome: document.getElementById('nome').value,
+  empresa: document.getElementById('empresa').value,
+  servico: document.getElementById('servico').value,
+  telefone: document.getElementById('telefone').value,
+  valor: parseFloat(document.getElementById('valor').value),
+  formaPagamento: document.getElementById('forma-pagamento').value,
+  vencimento: document.getElementById('vencimento').value,
+  observacoes: document.getElementById('observacoes').value,
+  isPago: false
+      };
+
+      if (clienteEditando) {
+        // Mantém o status de pagamento ao editar
+        const clienteExistente = clientes.find(c => c.id === cliente.id);
+        if (clienteExistente) {
+          cliente.isPago = clienteExistente.isPago;
+        }
+        
+        // Atualizar cliente existente
+        const index = clientes.findIndex(c => c.id === cliente.id);
+        if (index !== -1) {
+          clientes[index] = cliente;
+          showToast('Cliente atualizado com sucesso!', 'success');
+        }
+      } else {
+        // Adicionar novo cliente
+        clientes.push(cliente);
+        showToast('Cliente cadastrado com sucesso!', 'success');
+      }
+
+      // Limpar formulário e resetar estado
+      form.reset();
+      document.getElementById('cliente-id').value = '';
+      clienteEditando = null;
+      cancelarEdicao();
+      
+      // Renderizar tabela
+      renderizarTabela();
+      atualizarEstatisticas();
+    });
+
+    // Função para cancelar edição
+    function cancelarEdicao() {
+      form.reset();
+      document.getElementById('cliente-id').value = '';
+      clienteEditando = null;
+      formTitleText.textContent = 'Cadastrar Novo Cliente';
+      submitBtn.innerHTML = '<i class="fas fa-check"></i> Cadastrar Cliente';
+      cancelBtn.style.display = 'none';
+    }
+
+    // Event listener para o botão cancelar
+    cancelBtn.addEventListener('click', cancelarEdicao);
+
+    // Função para editar cliente
+    function editarCliente(id) {
+      const cliente = clientes.find(c => c.id === id);
+      if (cliente) {
+        clienteEditando = cliente;
+        document.getElementById('cliente-id').value = cliente.id;
+        document.getElementById('nome').value = cliente.nome;
+        document.getElementById('empresa').value = cliente.empresa;
+        document.getElementById('servico').value = cliente.servico;
+        document.getElementById('telefone').value = cliente.telefone;
+        document.getElementById('valor').value = cliente.valor;
+        document.getElementById('forma-pagamento').value = cliente.formaPagamento;
+        document.getElementById('vencimento').value = cliente.vencimento;
+        document.getElementById('observacoes').value = cliente.observacoes || '';
+        
+        formTitleText.textContent = 'Editar Cliente';
+        submitBtn.innerHTML = '<i class="fas fa-save"></i> Salvar Alterações';
+        cancelBtn.style.display = 'inline-flex';
+        
+        // Scroll suave para o formulário
+        form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        
+        showToast('Editando cliente: ' + cliente.nome, 'info');
+      }
+    }
+
+    // Função para excluir cliente
+    function excluirCliente(id) {
+      const cliente = clientes.find(c => c.id === id);
+      if (cliente && confirm(`Deseja realmente excluir o cliente ${cliente.nome}?`)) {
+        clientes = clientes.filter(c => c.id !== id);
+        renderizarTabela();
+        atualizarEstatisticas();
+        showToast('Cliente excluído com sucesso!', 'warning');
+      }
+    }
+
+    // Função para marcar como pago
+    function marcarComoPago(id) {
+      const cliente = clientes.find(c => c.id === id);
+      if (cliente) {
+        cliente.isPago = !cliente.isPago;
+        renderizarTabela();
+        atualizarEstatisticas();
+        
+        if (cliente.isPago) {
+          showToast(`Pagamento de ${cliente.nome} marcado como PAGO!`, 'success');
+        } else {
+          showToast(`Pagamento de ${cliente.nome} marcado como PENDENTE!`, 'warning');
+        }
+      }
+    }
+
+    // Função para contatar via WhatsApp
+    function contatarWhatsApp(telefone, nome, valor, vencimento) {
+      // Remove caracteres não numéricos do telefone
+      const numeroLimpo = telefone.replace(/\D/g, '');
+      
+      // Adiciona código do país se não tiver
+      const numeroFormatado = numeroLimpo.startsWith('55') ? numeroLimpo : '55' + numeroLimpo;
+      
+      // Mensagem padrão
+      const mensagem = `Olá ${nome}! 👋\n\nEste é um lembrete sobre o pagamento do serviço prestado.\n\n💰 Valor: ${formatarMoeda(valor)}\n📅 Vencimento: ${formatarData(vencimento)}\n\nPor favor, entre em contato caso tenha alguma dúvida.\n\nAtenciosamente,\nDev Digital BR`;
+      
+      // Codifica a mensagem para URL
+      const mensagemCodificada = encodeURIComponent(mensagem);
+      
+      // Abre WhatsApp Web ou app
+      window.open(`https://wa.me/${numeroFormatado}?text=${mensagemCodificada}`, '_blank');
+      
+      showToast('Abrindo WhatsApp...', 'info');
+    }
+
+    // Função para renderizar a tabela
+    function renderizarTabela() {
+      if (clientes.length === 0) {
+        table.style.display = 'none';
+        emptyState.style.display = 'block';
+        return;
+      }
+
+      table.style.display = 'table';
+      emptyState.style.display = 'none';
+
+      // Aplicar filtros
+      let clientesFiltrados = [...clientes];
+      
+      // Filtro por status
+      const statusFiltro = filterStatus.value;
+      if (statusFiltro) {
+        clientesFiltrados = clientesFiltrados.filter(cliente => {
+          const status = calcularStatus(cliente.vencimento, cliente.isPago);
+          return status === statusFiltro;
+        });
+      }
+      
+      // Filtro por busca
+      const termoBusca = searchInput.value.toLowerCase();
+      if (termoBusca) {
+        clientesFiltrados = clientesFiltrados.filter(cliente => 
+          cliente.nome.toLowerCase().includes(termoBusca) || 
+          cliente.empresa.toLowerCase().includes(termoBusca)
+        );
+      }
+
+      // Ordenar por data de vencimento
+      clientesFiltrados.sort((a, b) => new Date(a.vencimento) - new Date(b.vencimento));
+
+      tbody.innerHTML = clientesFiltrados.map(cliente => {
+        const status = calcularStatus(cliente.vencimento, cliente.isPago);
+        const btnPagoClass = cliente.isPago ? 'btn-success' : 'btn-warning';
+        const btnPagoIcon = cliente.isPago ? 'fa-check-circle' : 'fa-circle';
+        const btnPagoText = cliente.isPago ? 'Pago' : 'Marcar Pago';
+
+        return `
+          <tr>
+            <td>
+              <strong>${cliente.nome}</strong>
+              ${cliente.observacoes ? `<br><small style="color: var(--text-gray);">${cliente.observacoes}</small>` : ''}
+            </td>
+            <td>${cliente.empresa}</td>
+            <td>${cliente.servico}</td>
+            <td><strong>${formatarMoeda(cliente.valor)}</strong></td>
+            <td>${cliente.formaPagamento.replace('-', ' ').toUpperCase()}</td>
+            <td>${formatarData(cliente.vencimento)}</td>
+            <td>${renderStatus(status)}</td>
+            <td>
+              <div class="action-buttons">
+                <button class="btn ${btnPagoClass} btn-small" onclick="marcarComoPago('${cliente.id}')" title="${btnPagoText}">
+                  <i class="fas ${btnPagoIcon}"></i>
+                </button>
+                <button class="btn btn-info btn-small" onclick="editarCliente('${cliente.id}')" title="Editar">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn btn-success btn-small" onclick="contatarWhatsApp('${cliente.telefone}', '${cliente.nome}', ${cliente.valor}, '${cliente.vencimento}')" title="WhatsApp">
+                  <i class="fab fa-whatsapp"></i>
+                </button>
+                <button class="btn btn-danger btn-small" onclick="excluirCliente('${cliente.id}')" title="Excluir">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // Função para atualizar estatísticas
+    function atualizarEstatisticas() {
+      const totalClientes = clientes.length;
+      let pagos = 0;
+      let pendentes = 0;
+      let atrasados = 0;
+
+      clientes.forEach(cliente => {
+        const status = calcularStatus(cliente.vencimento, cliente.isPago);
+        if (status === 'pago') pagos++;
+        else if (status === 'pendente') pendentes++;
+        else if (status === 'atrasado') atrasados++;
+      });
+
+      document.getElementById('total-clientes').textContent = totalClientes;
+      document.getElementById('clientes-pagos').textContent = pagos;
+      document.getElementById('clientes-pendentes').textContent = pendentes;
+      document.getElementById('clientes-atrasados').textContent = atrasados;
+    }
+
+    // Função para buscar clientes
+    function buscarClientes() {
+      renderizarTabela();
+      const termo = searchInput.value.toLowerCase();
+      if (termo) {
+        showToast(`Buscando por: ${termo}`, 'info');
+      }
+    }
+
+    // Event listeners para filtros
+    filterStatus.addEventListener('change', renderizarTabela);
+    searchInput.addEventListener('keyup', function(e) {
+      if (e.key === 'Enter') {
+        buscarClientes();
+      } else {
+        renderizarTabela();
+      }
+    });
+
+    // Adicionar alguns clientes de exemplo
+    function adicionarClientesExemplo() {
+      clientes = [
+        {
+          id: '1',
+          nome: 'João Silva',
+          empresa: 'Tech Solutions',
+          servico: 'Desenvolvimento de Site',
+          telefone: '(11) 98765-4321',
+          valor: 2500.00,
+          formaPagamento: 'pix',
+          vencimento: '2025-01-15',
+          observacoes: 'Site institucional com blog',
+          isPago: true
+        },
+        {
+          id: '2',
+          nome: 'Maria Santos',
+          empresa: 'Boutique Fashion',
+          servico: 'E-commerce',
+          telefone: '(11) 91234-5678',
+          valor: 4500.00,
+          formaPagamento: 'cartao-credito',
+          vencimento: '2025-01-10',
+          observacoes: 'Loja virtual com gateway de pagamento',
+          isPago: false
+        },
+        {
+          id: '3',
+          nome: 'Carlos Oliveira',
+          empresa: 'Consultoria Plus',
+          servico: 'Sistema de Gestão',
+          telefone: '(11) 95555-5555',
+          valor: 8000.00,
+          formaPagamento: 'boleto',
+          vencimento: '2025-01-05',
+          observacoes: '',
+          isPago: false
+        }
+      ];
+      
+      renderizarTabela();
+      atualizarEstatisticas();
+      showToast('Clientes de exemplo carregados!', 'info');
+    }
+
+    // Inicialização
+    document.addEventListener('DOMContentLoaded', function() {
+      // Define data mínima como hoje
+      const hoje = new Date().toISOString().split('T')[0];
+      document.getElementById('vencimento').min = hoje;
+      
+      // Adiciona clientes de exemplo (remover em produção)
+      adicionarClientesExemplo();
+      
+      // Adiciona animação de entrada
+      const cards = document.querySelectorAll('.fade-in');
+      cards.forEach((card, index) => {
+        setTimeout(() => {
+          card.style.opacity = '1';
+        }, index * 100);
+      });
+    });
+
+    // Função para exportar dados (futura integração com Firebase)
+    function exportarDados() {
+      const dadosExportacao = {
+        timestamp: new Date().toISOString(),
+        totalClientes: clientes.length,
+        clientes: clientes
+      };
+      
+      console.log('Dados prontos para exportação:', dadosExportacao);
+      showToast('Dados preparados para exportação!', 'info');
+      
+      // Aqui você pode adicionar a integração com Firebase
+      // firebase.database().ref('clientes').set(dadosExportacao);
+    }
+
+    // Adicionar botão de exportação no futuro
+    console.log('Sistema de Controle de Clientes - Dev Digital BR');
+    console.log('Pronto para integração com Firebase');
+    console.log('Para exportar dados, use: exportarDados()');
+  </script>
+</body>
+</html>
