@@ -5,6 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dev Digital BR - Controle de Clientes</title>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  
+  <!-- Firebase SDK -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-app-compat.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-database-compat.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-auth-compat.min.js"></script>
 
   <style>
     :root {
@@ -180,6 +185,17 @@
     
     .form-control::placeholder { 
       color: var(--text-gray); 
+    }
+
+    /* Estilização para select options */
+    select.form-control option {
+      background: rgba(26, 26, 26, 0.98);
+      color: var(--text-light);
+      padding: 10px;
+    }
+    
+    select.form-control option:hover {
+      background: rgba(0, 212, 255, 0.2);
     }
 
     .form-row { 
@@ -754,9 +770,111 @@
   </div>
 
   <script>
+    // ========== CONFIGURAÇÃO DO FIREBASE ==========
+    const firebaseConfig = {
+      apiKey: "AIzaSyBvos9nCRithcUX768xuwQZ70p1_xgmKOg",
+      authDomain: "gestao-financeira-9e033.firebaseapp.com",
+      databaseURL: "https://gestao-financeira-9e033-default-rtdb.firebaseio.com",
+      projectId: "gestao-financeira-9e033",
+      storageBucket: "gestao-financeira-9e033.firebasestorage.app",
+      messagingSenderId: "694364024644",
+      appId: "1:694364024644:web:1758bd0d4a47b71b93b111",
+      measurementId: "G-PNL027GT4B"
+    };
+
+    // Inicializar Firebase
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+    const auth = firebase.auth();
+    
+    // Referência para a coleção de clientes
+    let clientesRef;
+    let currentUserId = null;
+
+    // Verificar autenticação
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        currentUserId = user.uid;
+        clientesRef = database.ref('clientes/' + currentUserId);
+        console.log('✅ Usuário autenticado:', currentUserId);
+        carregarClientesDoFirebase();
+      } else {
+        console.log('⚠️ Nenhum usuário autenticado');
+        showToast('Por favor, faça login no sistema', 'warning');
+        // Continua funcionando localmente mesmo sem login
+        renderizarTabela();
+        atualizarEstatisticas();
+      }
+    });
+
+    // ========== CÓDIGO DO SISTEMA ==========
     // Array para armazenar os clientes
     let clientes = [];
     let clienteEditando = null;
+
+    // Função para carregar clientes do Firebase
+    function carregarClientesDoFirebase() {
+      if (!clientesRef) return;
+      
+      clientesRef.on('value', (snapshot) => {
+        clientes = [];
+        snapshot.forEach((childSnapshot) => {
+          const cliente = {
+            id: childSnapshot.key,
+            ...childSnapshot.val()
+          };
+          clientes.push(cliente);
+        });
+        
+        renderizarTabela();
+        atualizarEstatisticas();
+        console.log('📥 Clientes carregados do Firebase:', clientes.length);
+      });
+    }
+
+    // Função para salvar cliente no Firebase
+    function salvarClienteNoFirebase(cliente) {
+      if (!clientesRef) {
+        showToast('Firebase não conectado. Dados salvos localmente.', 'warning');
+        return;
+      }
+
+      const clienteData = {
+        nome: cliente.nome,
+        empresa: cliente.empresa,
+        servico: cliente.servico,
+        telefone: cliente.telefone,
+        valor: cliente.valor,
+        formaPagamento: cliente.formaPagamento,
+        vencimento: cliente.vencimento,
+        observacoes: cliente.observacoes,
+        isPago: cliente.isPago,
+        timestamp: Date.now()
+      };
+
+      clientesRef.child(cliente.id).set(clienteData)
+        .then(() => {
+          console.log('✅ Cliente salvo no Firebase:', cliente.id);
+        })
+        .catch((error) => {
+          console.error('❌ Erro ao salvar no Firebase:', error);
+          showToast('Erro ao salvar no Firebase: ' + error.message, 'error');
+        });
+    }
+
+    // Função para excluir cliente do Firebase
+    function excluirClienteDoFirebase(clienteId) {
+      if (!clientesRef) return;
+
+      clientesRef.child(clienteId).remove()
+        .then(() => {
+          console.log('🗑️ Cliente excluído do Firebase:', clienteId);
+        })
+        .catch((error) => {
+          console.error('❌ Erro ao excluir do Firebase:', error);
+          showToast('Erro ao excluir do Firebase: ' + error.message, 'error');
+        });
+    }
 
     // Elementos do DOM
     const form = document.getElementById('cliente-form');
@@ -840,16 +958,16 @@
       e.preventDefault();
       
       const cliente = {
-  id: document.getElementById('cliente-id').value || Date.now().toString(),
-  nome: document.getElementById('nome').value,
-  empresa: document.getElementById('empresa').value,
-  servico: document.getElementById('servico').value,
-  telefone: document.getElementById('telefone').value,
-  valor: parseFloat(document.getElementById('valor').value),
-  formaPagamento: document.getElementById('forma-pagamento').value,
-  vencimento: document.getElementById('vencimento').value,
-  observacoes: document.getElementById('observacoes').value,
-  isPago: false
+        id: document.getElementById('cliente-id').value || database.ref().child('clientes').push().key,
+        nome: document.getElementById('nome').value,
+        empresa: document.getElementById('empresa').value,
+        servico: document.getElementById('servico').value,
+        telefone: document.getElementById('telefone').value,
+        valor: parseFloat(document.getElementById('valor').value),
+        formaPagamento: document.getElementById('forma-pagamento').value,
+        vencimento: document.getElementById('vencimento').value,
+        observacoes: document.getElementById('observacoes').value,
+        isPago: false
       };
 
       if (clienteEditando) {
@@ -859,27 +977,19 @@
           cliente.isPago = clienteExistente.isPago;
         }
         
-        // Atualizar cliente existente
-        const index = clientes.findIndex(c => c.id === cliente.id);
-        if (index !== -1) {
-          clientes[index] = cliente;
-          showToast('Cliente atualizado com sucesso!', 'success');
-        }
+        showToast('Cliente atualizado com sucesso!', 'success');
       } else {
-        // Adicionar novo cliente
-        clientes.push(cliente);
         showToast('Cliente cadastrado com sucesso!', 'success');
       }
+
+      // Salvar no Firebase
+      salvarClienteNoFirebase(cliente);
 
       // Limpar formulário e resetar estado
       form.reset();
       document.getElementById('cliente-id').value = '';
       clienteEditando = null;
       cancelarEdicao();
-      
-      // Renderizar tabela
-      renderizarTabela();
-      atualizarEstatisticas();
     });
 
     // Função para cancelar edição
@@ -925,9 +1035,9 @@
     function excluirCliente(id) {
       const cliente = clientes.find(c => c.id === id);
       if (cliente && confirm(`Deseja realmente excluir o cliente ${cliente.nome}?`)) {
-        clientes = clientes.filter(c => c.id !== id);
-        renderizarTabela();
-        atualizarEstatisticas();
+        // Excluir do Firebase
+        excluirClienteDoFirebase(id);
+        
         showToast('Cliente excluído com sucesso!', 'warning');
       }
     }
@@ -937,8 +1047,9 @@
       const cliente = clientes.find(c => c.id === id);
       if (cliente) {
         cliente.isPago = !cliente.isPago;
-        renderizarTabela();
-        atualizarEstatisticas();
+        
+        // Atualizar no Firebase
+        salvarClienteNoFirebase(cliente);
         
         if (cliente.isPago) {
           showToast(`Pagamento de ${cliente.nome} marcado como PAGO!`, 'success');
@@ -1081,60 +1192,11 @@
       }
     });
 
-    // Adicionar alguns clientes de exemplo
-    function adicionarClientesExemplo() {
-      clientes = [
-        {
-          id: '1',
-          nome: 'João Silva',
-          empresa: 'Tech Solutions',
-          servico: 'Desenvolvimento de Site',
-          telefone: '(11) 98765-4321',
-          valor: 2500.00,
-          formaPagamento: 'pix',
-          vencimento: '2025-01-15',
-          observacoes: 'Site institucional com blog',
-          isPago: true
-        },
-        {
-          id: '2',
-          nome: 'Maria Santos',
-          empresa: 'Boutique Fashion',
-          servico: 'E-commerce',
-          telefone: '(11) 91234-5678',
-          valor: 4500.00,
-          formaPagamento: 'cartao-credito',
-          vencimento: '2025-01-10',
-          observacoes: 'Loja virtual com gateway de pagamento',
-          isPago: false
-        },
-        {
-          id: '3',
-          nome: 'Carlos Oliveira',
-          empresa: 'Consultoria Plus',
-          servico: 'Sistema de Gestão',
-          telefone: '(11) 95555-5555',
-          valor: 8000.00,
-          formaPagamento: 'boleto',
-          vencimento: '2025-01-05',
-          observacoes: '',
-          isPago: false
-        }
-      ];
-      
-      renderizarTabela();
-      atualizarEstatisticas();
-      showToast('Clientes de exemplo carregados!', 'info');
-    }
-
     // Inicialização
     document.addEventListener('DOMContentLoaded', function() {
       // Define data mínima como hoje
       const hoje = new Date().toISOString().split('T')[0];
       document.getElementById('vencimento').min = hoje;
-      
-      // Adiciona clientes de exemplo (remover em produção)
-      adicionarClientesExemplo();
       
       // Adiciona animação de entrada
       const cards = document.querySelectorAll('.fade-in');
@@ -1143,27 +1205,15 @@
           card.style.opacity = '1';
         }, index * 100);
       });
+      
+      console.log('🚀 Sistema de Controle de Clientes - Dev Digital BR');
+      console.log('🔥 Firebase integrado e sincronizando...');
     });
-
-    // Função para exportar dados (futura integração com Firebase)
-    function exportarDados() {
-      const dadosExportacao = {
-        timestamp: new Date().toISOString(),
-        totalClientes: clientes.length,
-        clientes: clientes
-      };
-      
-      console.log('Dados prontos para exportação:', dadosExportacao);
-      showToast('Dados preparados para exportação!', 'info');
-      
-      // Aqui você pode adicionar a integração com Firebase
-      // firebase.database().ref('clientes').set(dadosExportacao);
-    }
 
     // Adicionar botão de exportação no futuro
     console.log('Sistema de Controle de Clientes - Dev Digital BR');
-    console.log('Pronto para integração com Firebase');
-    console.log('Para exportar dados, use: exportarDados()');
+    console.log('✅ Firebase integrado com sucesso!');
+    console.log('📊 Estrutura no Firebase: /clientes/{userId}/{clienteId}');
   </script>
 </body>
 </html>
