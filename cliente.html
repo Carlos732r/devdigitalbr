@@ -5,11 +5,40 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dev Digital BR - Controle de Clientes</title>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-  
-  <!-- Firebase SDK para Firestore -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-app-compat.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-firestore-compat.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-auth-compat.min.js"></script>
+
+  <!-- Firebase v9 -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBvos9nCRithcUX768xuwQZ70p1_xgmKOg",
+      authDomain: "gestao-financeira-9e033.firebaseapp.com",
+      projectId: "gestao-financeira-9e033",
+      storageBucket: "gestao-financeira-9e033.firebasestorage.app",
+      messagingSenderId: "694364024644",
+      appId: "1:694364024644:web:1758bd0d4a47b71b93b111",
+      measurementId: "G-PNL027GT4B"
+    };
+
+    let db, auth;
+
+    try {
+      firebase.initializeApp(firebaseConfig);
+      db = firebase.firestore();
+      auth = firebase.auth();
+      
+      db.settings({
+        cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED
+      });
+      
+      console.log("✅ Firebase inicializado com sucesso!");
+        
+    } catch (error) {
+      console.error("❌ Erro na inicialização do Firebase:", error);
+    }
+  </script>
 
   <style>
     :root {
@@ -40,6 +69,8 @@
       line-height: 1.6;
       min-height: 100vh;
     }
+
+    .hidden { display: none !important; }
 
     /* Cabeçalho */
     .header {
@@ -528,10 +559,63 @@
       border-left-color: var(--info-color); 
     }
 
+    .toast .toast-close {
+      margin-left: auto; background: none; border: none; color: inherit;
+      font-size: 1.1rem; cursor: pointer; opacity: 0.7; padding: 0;
+      width: 20px; height: 20px; display: flex; align-items: center;
+      justify-content: center; transition: opacity 0.2s;
+    }
+    .toast .toast-close:hover { opacity: 1; }
+
+    .loading { 
+      display: flex; 
+      justify-content: center; 
+      align-items: center; 
+      padding: 2rem; 
+      color: var(--text-gray); 
+    }
+    .loading i { 
+      animation: spin 1s linear infinite; 
+      margin-right: 0.5rem; 
+    }
+
+    .connection-status {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      z-index: 1000;
+      backdrop-filter: blur(10px);
+      border: 1px solid;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: var(--transition);
+    }
+
+    .connection-status.connected { 
+      background: rgba(37, 211, 102, 0.2); 
+      color: var(--success-color); 
+      border-color: rgba(37, 211, 102, 0.3); 
+    }
+    .connection-status.disconnected { 
+      background: rgba(220, 53, 69, 0.2); 
+      color: var(--danger-color); 
+      border-color: rgba(220, 53, 69, 0.3); 
+    }
+
     /* Animações */
     @keyframes fadeInUp { 
       from {opacity:0; transform:translateY(30px);} 
       to {opacity:1; transform:translateY(0);} 
+    }
+    
+    @keyframes spin { 
+      0% { transform: rotate(0deg); } 
+      100% { transform: rotate(360deg); } 
     }
     
     .fade-in { 
@@ -602,6 +686,12 @@
   </style>
 </head>
 <body>
+  <!-- Status de Conexão -->
+  <div id="connection-status" class="connection-status">
+    <i class="fas fa-wifi"></i>
+    <span>Verificando conexão...</span>
+  </div>
+
   <!-- Container de Notificações -->
   <div class="toast-container" id="toast-container"></div>
 
@@ -613,13 +703,18 @@
       </div>
       <div class="logo-text">Dev Digital BR</div>
     </a>
-    <a href="index.html" class="btn btn-primary btn-small">
-      <i class="fas fa-arrow-left"></i> Voltar ao Site
+    <a href="painel.html" class="btn btn-primary btn-small">
+      <i class="fas fa-arrow-left"></i> Voltar ao Painel
     </a>
   </div>
 
   <!-- Container Principal -->
   <div class="container">
+    <!-- Loading State -->
+    <div id="loading-state" class="loading hidden">
+      <i class="fas fa-spinner"></i> Carregando clientes...
+    </div>
+
     <!-- Título da Página -->
     <h1 class="page-title fade-in">
       <i class="fas fa-users"></i> 
@@ -760,7 +855,7 @@
           </thead>
           <tbody id="clientes-tbody"></tbody>
         </table>
-        <div id="empty-state" class="empty-state" style="display: none;">
+        <div id="empty-state" class="empty-state hidden">
           <i class="fas fa-user-slash"></i>
           <h3>Nenhum cliente cadastrado</h3>
           <p>Adicione seu primeiro cliente usando o formulário acima.</p>
@@ -770,125 +865,12 @@
   </div>
 
   <script>
-    // ========== CONFIGURAÇÃO DO FIREBASE (FIRESTORE) ==========
-    const firebaseConfig = {
-      apiKey: "AIzaSyBvos9nCRithcUX768xuwQZ70p1_xgmKOg",
-      authDomain: "gestao-financeira-9e033.firebaseapp.com",
-      projectId: "gestao-financeira-9e033",
-      storageBucket: "gestao-financeira-9e033.firebasestorage.app",
-      messagingSenderId: "694364024644",
-      appId: "1:694364024644:web:1758bd0d4a47b71b93b111",
-      measurementId: "G-PNL027GT4B"
-    };
-
-    // Inicializar Firebase
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-    const auth = firebase.auth();
-    
-    let currentUserId = null;
-
-    // Verificar autenticação
-    auth.onAuthStateChanged((user) => {
-      if (user) {
-        currentUserId = user.uid;
-        console.log('✅ Usuário autenticado:', currentUserId);
-        carregarClientesDoFirestore();
-      } else {
-        console.log('⚠️ Nenhum usuário autenticado');
-        showToast('Por favor, faça login no sistema', 'warning');
-        renderizarTabela();
-        atualizarEstatisticas();
-      }
-    });
-
-    // ========== CÓDIGO DO SISTEMA ==========
-    // Array para armazenar os clientes
+    // Variáveis globais
     let clientes = [];
+    let filteredClientes = [];
     let clienteEditando = null;
-
-    // Função para carregar clientes do Firestore
-    function carregarClientesDoFirestore() {
-      if (!currentUserId) return;
-      
-      db.collection('clientes')
-        .where('userId', '==', currentUserId)
-        .orderBy('timestamp', 'desc')
-        .onSnapshot((snapshot) => {
-          clientes = [];
-          snapshot.forEach((doc) => {
-            clientes.push({
-              id: doc.id,
-              ...doc.data()
-            });
-          });
-          
-          renderizarTabela();
-          atualizarEstatisticas();
-          console.log('📥 Clientes carregados do Firestore:', clientes.length);
-        }, (error) => {
-          console.error('❌ Erro ao carregar clientes:', error);
-          showToast('Erro ao carregar dados: ' + error.message, 'error');
-        });
-    }
-
-    // Função para salvar cliente no Firestore
-    function salvarClienteNoFirestore(cliente) {
-      if (!currentUserId) {
-        showToast('Usuário não autenticado!', 'error');
-        return Promise.reject('Não autenticado');
-      }
-
-      const clienteData = {
-        nome: cliente.nome,
-        empresa: cliente.empresa,
-        servico: cliente.servico,
-        telefone: cliente.telefone,
-        valor: cliente.valor,
-        formaPagamento: cliente.formaPagamento,
-        vencimento: cliente.vencimento,
-        observacoes: cliente.observacoes,
-        isPago: cliente.isPago,
-        userId: currentUserId,
-        timestamp: firebase.firestore.FieldValue.serverTimestamp()
-      };
-
-      if (cliente.id) {
-        // Atualizar cliente existente
-        return db.collection('clientes').doc(cliente.id).update(clienteData)
-          .then(() => {
-            console.log('✅ Cliente atualizado no Firestore:', cliente.id);
-          })
-          .catch((error) => {
-            console.error('❌ Erro ao atualizar no Firestore:', error);
-            showToast('Erro ao salvar: ' + error.message, 'error');
-          });
-      } else {
-        // Adicionar novo cliente
-        return db.collection('clientes').add(clienteData)
-          .then((docRef) => {
-            console.log('✅ Cliente salvo no Firestore:', docRef.id);
-          })
-          .catch((error) => {
-            console.error('❌ Erro ao salvar no Firestore:', error);
-            showToast('Erro ao salvar: ' + error.message, 'error');
-          });
-      }
-    }
-
-    // Função para excluir cliente do Firestore
-    function excluirClienteDoFirestore(clienteId) {
-      if (!currentUserId) return Promise.reject('Não autenticado');
-
-      return db.collection('clientes').doc(clienteId).delete()
-        .then(() => {
-          console.log('🗑️ Cliente excluído do Firestore:', clienteId);
-        })
-        .catch((error) => {
-          console.error('❌ Erro ao excluir do Firestore:', error);
-          showToast('Erro ao excluir: ' + error.message, 'error');
-        });
-    }
+    let isFirebaseConnected = false;
+    let currentUser = null;
 
     // Elementos do DOM
     const form = document.getElementById('cliente-form');
@@ -900,9 +882,11 @@
     const formTitleText = document.getElementById('form-title-text');
     const filterStatus = document.getElementById('filter-status');
     const searchInput = document.getElementById('search-input');
+    const loadingState = document.getElementById('loading-state');
+    const connectionStatusEl = document.getElementById('connection-status');
 
     // Função para mostrar notificações
-    function showToast(message, type = 'success', duration = 3000) {
+    function showToast(message, type = 'success', duration = 4000) {
       const toastContainer = document.getElementById('toast-container');
       const toast = document.createElement('div');
       
@@ -917,6 +901,9 @@
       toast.innerHTML = `
         <i class="${icons[type]}"></i>
         <span>${message}</span>
+        <button class="toast-close" onclick="this.parentElement.remove()">
+          <i class="fas fa-times"></i>
+        </button>
       `;
 
       toastContainer.appendChild(toast);
@@ -926,6 +913,55 @@
         toast.classList.remove('show');
         setTimeout(() => toast.remove(), 400);
       }, duration);
+    }
+
+    function updateConnectionStatus(status, message) {
+      connectionStatusEl.className = `connection-status ${status}`;
+      connectionStatusEl.innerHTML = `
+        <i class="fas ${status === 'connected' ? 'fa-wifi' : status === 'disconnected' ? 'fa-wifi-slash' : 'fa-spinner fa-spin'}"></i>
+        <span>${message}</span>
+      `;
+      
+      if (status === 'connected') {
+        setTimeout(() => {
+          connectionStatusEl.style.opacity = '0';
+          setTimeout(() => connectionStatusEl.style.display = 'none', 300);
+        }, 2000);
+      }
+    }
+
+    // Monitorar estado de autenticação
+    auth.onAuthStateChanged(async (user) => {
+      if (user) {
+        currentUser = user;
+        console.log('✅ Usuário autenticado:', currentUser.uid);
+        
+        const connected = await testFirebaseConnection();
+        if (connected) {
+          await loadClientes();
+        }
+      } else {
+        currentUser = null;
+        console.log('⚠️ Usuário não autenticado - redirecionando...');
+        // Redireciona para o painel para fazer login
+        window.location.href = 'painel.html';
+      }
+    });
+
+    async function testFirebaseConnection() {
+      updateConnectionStatus('connecting', 'Verificando conexão...');
+      
+      try {
+        await db.collection('clientes').limit(1).get();
+        isFirebaseConnected = true;
+        updateConnectionStatus('connected', 'Conectado');
+        return true;
+      } catch (error) {
+        console.error('Erro na conexão:', error);
+        isFirebaseConnected = false;
+        updateConnectionStatus('disconnected', 'Desconectado');
+        return false;
+      }
     }
 
     // Função para formatar valor em Real
@@ -967,43 +1003,125 @@
       return badges[status] || badges['pendente'];
     }
 
+    // Carregar clientes do Firestore
+    async function loadClientes() {
+      if (!isFirebaseConnected || !currentUser) {
+        clientes = [];
+        filteredClientes = [];
+        renderizarTabela();
+        return;
+      }
+
+      loadingState.classList.remove("hidden");
+      
+      try {
+        const snapshot = await db.collection("clientes")
+          .where("userId", "==", currentUser.uid)
+          .orderBy("timestamp", "desc")
+          .get();
+
+        clientes = [];
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          clientes.push({
+            id: doc.id,
+            ...data
+          });
+        });
+
+        filteredClientes = [...clientes];
+        renderizarTabela();
+        atualizarEstatisticas();
+        
+        if (clientes.length > 0) {
+          showToast(`${clientes.length} clientes carregados`, 'info', 2000);
+        }
+      } catch (error) {
+        console.error('Erro ao carregar clientes:', error);
+        
+        if (error.code === 'permission-denied') {
+          showToast('Sem permissão para acessar dados', 'error');
+        } else {
+          showToast('Erro ao carregar dados', 'error');
+        }
+        
+        clientes = [];
+        filteredClientes = [];
+        renderizarTabela();
+      }
+      
+      loadingState.classList.add("hidden");
+    }
+
     // Função para adicionar ou editar cliente
-    form.addEventListener('submit', function(e) {
+    form.addEventListener('submit', async function(e) {
       e.preventDefault();
       
-      const cliente = {
-        id: document.getElementById('cliente-id').value || null,
-        nome: document.getElementById('nome').value,
-        empresa: document.getElementById('empresa').value,
-        servico: document.getElementById('servico').value,
-        telefone: document.getElementById('telefone').value,
+      const clienteData = {
+        nome: document.getElementById('nome').value.trim(),
+        empresa: document.getElementById('empresa').value.trim(),
+        servico: document.getElementById('servico').value.trim(),
+        telefone: document.getElementById('telefone').value.trim(),
         valor: parseFloat(document.getElementById('valor').value),
         formaPagamento: document.getElementById('forma-pagamento').value,
         vencimento: document.getElementById('vencimento').value,
-        observacoes: document.getElementById('observacoes').value,
+        observacoes: document.getElementById('observacoes').value.trim(),
         isPago: false
       };
 
-      if (clienteEditando) {
-        // Mantém o status de pagamento ao editar
-        const clienteExistente = clientes.find(c => c.id === cliente.id);
-        if (clienteExistente) {
-          cliente.isPago = clienteExistente.isPago;
-        }
-        
-        showToast('Cliente atualizado com sucesso!', 'success');
-      } else {
-        showToast('Cliente cadastrado com sucesso!', 'success');
+      if (!isFirebaseConnected || !currentUser) {
+        showToast('Você precisa estar autenticado', 'warning');
+        return;
       }
 
-      // Salvar no Firestore
-      salvarClienteNoFirestore(cliente);
+      submitBtn.disabled = true;
 
-      // Limpar formulário e resetar estado
-      form.reset();
-      document.getElementById('cliente-id').value = '';
-      clienteEditando = null;
-      cancelarEdicao();
+      try {
+        const clienteId = document.getElementById('cliente-id').value;
+        
+        if (clienteEditando && clienteId) {
+          // Mantém o status de pagamento ao editar
+          const clienteExistente = clientes.find(c => c.id === clienteId);
+          if (clienteExistente) {
+            clienteData.isPago = clienteExistente.isPago;
+          }
+          
+          clienteData.userId = currentUser.uid;
+          clienteData.timestamp = Date.now();
+          
+          await db.collection("clientes").doc(clienteId).update(clienteData);
+          
+          showToast('Cliente atualizado com sucesso!', 'success');
+        } else {
+          // Adicionar novo cliente
+          clienteData.userId = currentUser.uid;
+          clienteData.timestamp = Date.now();
+          
+          await db.collection("clientes").add(clienteData);
+          
+          showToast('Cliente cadastrado com sucesso!', 'success');
+        }
+
+        // Recarregar clientes
+        await loadClientes();
+
+        // Limpar formulário e resetar estado
+        form.reset();
+        document.getElementById('cliente-id').value = '';
+        clienteEditando = null;
+        cancelarEdicao();
+        
+      } catch (error) {
+        console.error('Erro ao salvar:', error);
+        
+        if (error.code === 'permission-denied') {
+          showToast('Sem permissão para salvar cliente', 'error');
+        } else {
+          showToast('Erro ao salvar cliente', 'error');
+        }
+      } finally {
+        submitBtn.disabled = false;
+      }
     });
 
     // Função para cancelar edição
@@ -1046,29 +1164,65 @@
     }
 
     // Função para excluir cliente
-    function excluirCliente(id) {
+    async function excluirCliente(id) {
       const cliente = clientes.find(c => c.id === id);
-      if (cliente && confirm(`Deseja realmente excluir o cliente ${cliente.nome}?`)) {
-        // Excluir do Firestore
-        excluirClienteDoFirestore(id);
-        showToast('Cliente excluído com sucesso!', 'warning');
+      if (!cliente) return;
+      
+      if (!confirm(`Deseja realmente excluir o cliente ${cliente.nome}?`)) {
+        return;
+      }
+
+      if (!isFirebaseConnected || !currentUser) {
+        showToast('Você precisa estar autenticado', 'error');
+        return;
+      }
+
+      try {
+        await db.collection("clientes").doc(id).delete();
+        
+        await loadClientes();
+        
+        showToast('Cliente excluído com sucesso!', 'warning', 2000);
+      } catch (error) {
+        console.error('Erro ao excluir:', error);
+        
+        if (error.code === 'permission-denied') {
+          showToast('Sem permissão para excluir cliente', 'error');
+        } else {
+          showToast('Erro ao excluir cliente', 'error');
+        }
       }
     }
 
     // Função para marcar como pago
-    function marcarComoPago(id) {
+    async function marcarComoPago(id) {
       const cliente = clientes.find(c => c.id === id);
-      if (cliente) {
-        cliente.isPago = !cliente.isPago;
+      if (!cliente) return;
+
+      if (!isFirebaseConnected || !currentUser) {
+        showToast('Você precisa estar autenticado', 'error');
+        return;
+      }
+
+      try {
+        const novoStatus = !cliente.isPago;
         
-        // Atualizar no Firestore
-        salvarClienteNoFirestore(cliente);
+        await db.collection("clientes").doc(id).update({
+          isPago: novoStatus
+        });
         
-        if (cliente.isPago) {
+        cliente.isPago = novoStatus;
+        renderizarTabela();
+        atualizarEstatisticas();
+        
+        if (novoStatus) {
           showToast(`Pagamento de ${cliente.nome} marcado como PAGO!`, 'success');
         } else {
           showToast(`Pagamento de ${cliente.nome} marcado como PENDENTE!`, 'warning');
         }
+      } catch (error) {
+        console.error('Erro ao atualizar status:', error);
+        showToast('Erro ao atualizar status de pagamento', 'error');
       }
     }
 
@@ -1094,76 +1248,78 @@
 
     // Função para renderizar a tabela
     function renderizarTabela() {
-      if (clientes.length === 0) {
+      tbody.innerHTML = '';
+
+      // Aplicar filtros
+      const statusFiltro = filterStatus.value;
+      const termoBusca = searchInput.value.toLowerCase();
+      
+      filteredClientes = clientes.filter(cliente => {
+        let matchesStatus = true;
+        let matchesSearch = true;
+        
+        if (statusFiltro) {
+          const status = calcularStatus(cliente.vencimento, cliente.isPago);
+          matchesStatus = status === statusFiltro;
+        }
+        
+        if (termoBusca) {
+          matchesSearch = cliente.nome.toLowerCase().includes(termoBusca) || 
+                         cliente.empresa.toLowerCase().includes(termoBusca);
+        }
+        
+        return matchesStatus && matchesSearch;
+      });
+
+      if (filteredClientes.length === 0) {
         table.style.display = 'none';
-        emptyState.style.display = 'block';
+        emptyState.classList.remove('hidden');
         return;
       }
 
       table.style.display = 'table';
-      emptyState.style.display = 'none';
-
-      // Aplicar filtros
-      let clientesFiltrados = [...clientes];
-      
-      // Filtro por status
-      const statusFiltro = filterStatus.value;
-      if (statusFiltro) {
-        clientesFiltrados = clientesFiltrados.filter(cliente => {
-          const status = calcularStatus(cliente.vencimento, cliente.isPago);
-          return status === statusFiltro;
-        });
-      }
-      
-      // Filtro por busca
-      const termoBusca = searchInput.value.toLowerCase();
-      if (termoBusca) {
-        clientesFiltrados = clientesFiltrados.filter(cliente => 
-          cliente.nome.toLowerCase().includes(termoBusca) || 
-          cliente.empresa.toLowerCase().includes(termoBusca)
-        );
-      }
+      emptyState.classList.add('hidden');
 
       // Ordenar por data de vencimento
-      clientesFiltrados.sort((a, b) => new Date(a.vencimento) - new Date(b.vencimento));
+      filteredClientes.sort((a, b) => new Date(a.vencimento) - new Date(b.vencimento));
 
-      tbody.innerHTML = clientesFiltrados.map(cliente => {
+      filteredClientes.forEach(cliente => {
         const status = calcularStatus(cliente.vencimento, cliente.isPago);
         const btnPagoClass = cliente.isPago ? 'btn-success' : 'btn-warning';
         const btnPagoIcon = cliente.isPago ? 'fa-check-circle' : 'fa-circle';
         const btnPagoText = cliente.isPago ? 'Pago' : 'Marcar Pago';
 
-        return `
-          <tr>
-            <td>
-              <strong>${cliente.nome}</strong>
-              ${cliente.observacoes ? `<br><small style="color: var(--text-gray);">${cliente.observacoes}</small>` : ''}
-            </td>
-            <td>${cliente.empresa}</td>
-            <td>${cliente.servico}</td>
-            <td><strong>${formatarMoeda(cliente.valor)}</strong></td>
-            <td>${cliente.formaPagamento.replace('-', ' ').toUpperCase()}</td>
-            <td>${formatarData(cliente.vencimento)}</td>
-            <td>${renderStatus(status)}</td>
-            <td>
-              <div class="action-buttons">
-                <button class="btn ${btnPagoClass} btn-small" onclick="marcarComoPago('${cliente.id}')" title="${btnPagoText}">
-                  <i class="fas ${btnPagoIcon}"></i>
-                </button>
-                <button class="btn btn-info btn-small" onclick="editarCliente('${cliente.id}')" title="Editar">
-                  <i class="fas fa-edit"></i>
-                </button>
-                <button class="btn btn-success btn-small" onclick="contatarWhatsApp('${cliente.telefone}', '${cliente.nome}', ${cliente.valor}, '${cliente.vencimento}')" title="WhatsApp">
-                  <i class="fab fa-whatsapp"></i>
-                </button>
-                <button class="btn btn-danger btn-small" onclick="excluirCliente('${cliente.id}')" title="Excluir">
-                  <i class="fas fa-trash"></i>
-                </button>
-              </div>
-            </td>
-          </tr>
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td style="text-align:left;">
+            <strong>${cliente.nome}</strong>
+            ${cliente.observacoes ? `<br><small style="color: var(--text-gray);">${cliente.observacoes}</small>` : ''}
+          </td>
+          <td style="text-align:left;">${cliente.empresa}</td>
+          <td style="text-align:left;">${cliente.servico}</td>
+          <td style="font-weight:700;"><strong>${formatarMoeda(cliente.valor)}</strong></td>
+          <td>${cliente.formaPagamento.replace('-', ' ').toUpperCase()}</td>
+          <td>${formatarData(cliente.vencimento)}</td>
+          <td>${renderStatus(status)}</td>
+          <td>
+            <div class="action-buttons">
+              <button class="btn ${btnPagoClass} btn-small" onclick="marcarComoPago('${cliente.id}')" title="${btnPagoText}">
+                <i class="fas ${btnPagoIcon}"></i>
+              </button>
+              <button class="btn btn-info btn-small" onclick="editarCliente('${cliente.id}')" title="Editar">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button class="btn btn-success btn-small" onclick="contatarWhatsApp('${cliente.telefone}', '${cliente.nome}', ${cliente.valor}, '${cliente.vencimento}')" title="WhatsApp">
+                <i class="fab fa-whatsapp"></i>
+              </button>
+              <button class="btn btn-danger btn-small" onclick="excluirCliente('${cliente.id}')" title="Excluir">
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+          </td>
         `;
-      }).join('');
+        tbody.appendChild(row);
+      });
     }
 
     // Função para atualizar estatísticas
@@ -1205,28 +1361,23 @@
       }
     });
 
+    // Tornar funções globais
+    window.editarCliente = editarCliente;
+    window.excluirCliente = excluirCliente;
+    window.marcarComoPago = marcarComoPago;
+    window.contatarWhatsApp = contatarWhatsApp;
+    window.buscarClientes = buscarClientes;
+
     // Inicialização
     document.addEventListener('DOMContentLoaded', function() {
       // Define data mínima como hoje
       const hoje = new Date().toISOString().split('T')[0];
       document.getElementById('vencimento').min = hoje;
       
-      // Adiciona animação de entrada
-      const cards = document.querySelectorAll('.fade-in');
-      cards.forEach((card, index) => {
-        setTimeout(() => {
-          card.style.opacity = '1';
-        }, index * 100);
-      });
-      
       console.log('🚀 Sistema de Controle de Clientes - Dev Digital BR');
-      console.log('🔥 Firebase integrado e sincronizando...');
+      console.log('✅ Firestore integrado com sucesso!');
+      console.log('📊 Coleção: clientes (filtrado por userId)');
     });
-
-    // Adicionar botão de exportação no futuro
-    console.log('Sistema de Controle de Clientes - Dev Digital BR');
-    console.log('✅ Firestore integrado com sucesso!');
-    console.log('📊 Coleção: clientes (filtrado por userId)');
   </script>
 </body>
 </html>
