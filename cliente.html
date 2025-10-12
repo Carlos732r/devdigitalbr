@@ -1003,9 +1003,10 @@
       return badges[status] || badges['pendente'];
     }
 
-    // Carregar clientes do Firestore
+    // Carregar clientes do Firestore COM LISTENER EM TEMPO REAL
     async function loadClientes() {
       if (!isFirebaseConnected || !currentUser) {
+        console.log('❌ Não pode carregar: Firebase conectado?', isFirebaseConnected, 'User?', !!currentUser);
         clientes = [];
         filteredClientes = [];
         renderizarTabela();
@@ -1015,42 +1016,70 @@
       loadingState.classList.remove("hidden");
       
       try {
-        const snapshot = await db.collection("clientes")
+        console.log('🔍 Configurando listener em tempo real para userId:', currentUser.uid);
+        
+        // LISTENER EM TEMPO REAL - atualiza automaticamente quando há mudanças
+        db.collection("clientes")
           .where("userId", "==", currentUser.uid)
           .orderBy("timestamp", "desc")
-          .get();
+          .onSnapshot((snapshot) => {
+            console.log('📦 Atualização recebida! Total de documentos:', snapshot.size);
 
-        clientes = [];
-        snapshot.forEach(doc => {
-          const data = doc.data();
-          clientes.push({
-            id: doc.id,
-            ...data
+            clientes = [];
+            snapshot.forEach(doc => {
+              const data = doc.data();
+              console.log('📄 Cliente:', doc.id, data);
+              clientes.push({
+                id: doc.id,
+                ...data
+              });
+            });
+
+            console.log('✅ Total de clientes carregados:', clientes.length);
+
+            filteredClientes = [...clientes];
+            renderizarTabela();
+            atualizarEstatisticas();
+            
+            loadingState.classList.add("hidden");
+            
+            if (clientes.length > 0 && snapshot.docChanges().length > 0) {
+              const change = snapshot.docChanges()[0];
+              if (change.type === 'added' && !change.doc.metadata.hasPendingWrites) {
+                // Só mostra toast se não for a primeira carga
+                if (snapshot.docChanges().length === 1) {
+                  showToast(`${clientes.length} clientes no sistema`, 'info', 2000);
+                }
+              }
+            }
+          }, (error) => {
+            console.error('❌ Erro no listener:', error);
+            console.error('Código do erro:', error.code);
+            console.error('Mensagem:', error.message);
+            
+            if (error.code === 'permission-denied') {
+              showToast('Sem permissão para acessar dados', 'error');
+            } else if (error.code === 'failed-precondition') {
+              showToast('Índice necessário. Verifique o console do Firebase.', 'error');
+              console.log('🔗 Crie o índice em: https://console.firebase.google.com/');
+            } else {
+              showToast('Erro ao carregar dados: ' + error.message, 'error');
+            }
+            
+            clientes = [];
+            filteredClientes = [];
+            renderizarTabela();
+            loadingState.classList.add("hidden");
           });
-        });
 
-        filteredClientes = [...clientes];
-        renderizarTabela();
-        atualizarEstatisticas();
-        
-        if (clientes.length > 0) {
-          showToast(`${clientes.length} clientes carregados`, 'info', 2000);
-        }
       } catch (error) {
-        console.error('Erro ao carregar clientes:', error);
-        
-        if (error.code === 'permission-denied') {
-          showToast('Sem permissão para acessar dados', 'error');
-        } else {
-          showToast('Erro ao carregar dados', 'error');
-        }
-        
+        console.error('❌ Erro ao configurar listener:', error);
+        showToast('Erro ao configurar sincronização', 'error');
         clientes = [];
         filteredClientes = [];
         renderizarTabela();
+        loadingState.classList.add("hidden");
       }
-      
-      loadingState.classList.add("hidden");
     }
 
     // Função para adicionar ou editar cliente
@@ -1102,8 +1131,8 @@
           showToast('Cliente cadastrado com sucesso!', 'success');
         }
 
-        // Recarregar clientes
-        await loadClientes();
+        // NÃO precisa recarregar manualmente - o listener em tempo real faz isso!
+        // await loadClientes(); ← REMOVIDO
 
         // Limpar formulário e resetar estado
         form.reset();
@@ -1180,7 +1209,7 @@
       try {
         await db.collection("clientes").doc(id).delete();
         
-        await loadClientes();
+        // NÃO precisa recarregar - o listener em tempo real atualiza automaticamente!
         
         showToast('Cliente excluído com sucesso!', 'warning', 2000);
       } catch (error) {
