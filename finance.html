@@ -6,7 +6,6 @@
   <title>Dev Digital BR - Painel Financeiro</title>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
-  <!-- Firebase v9 -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
@@ -625,7 +624,27 @@
           <i class="fas fa-times-circle"></i> Limpar Filtros
         </button>
       </div>
-
+      
+      <div class="card fade-in" id="monthly-profit-card" style="display: none;">
+        <h3 class="form-title"><i class="fas fa-calendar-check"></i> Lucro do Mês Selecionado</h3>
+        <div class="summary-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+          <div class="summary-card receitas">
+            <i class="fas fa-arrow-up summary-icon"></i>
+            <div style="font-size: 0.9rem;">Receitas do Mês</div>
+            <div class="summary-value" style="font-size: 1.5rem;">R$ <span id="month-receitas">0,00</span></div>
+          </div>
+          <div class="summary-card despesas">
+            <i class="fas fa-arrow-down summary-icon"></i>
+            <div style="font-size: 0.9rem;">Despesas do Mês</div>
+            <div class="summary-value" style="font-size: 1.5rem;">R$ <span id="month-despesas">0,00</span></div>
+          </div>
+          <div class="summary-card" id="month-profit-card">
+            <i class="fas fa-chart-line summary-icon"></i>
+            <div style="font-size: 0.9rem;">Lucro do Mês</div>
+            <div class="summary-value" style="font-size: 1.5rem;">R$ <span id="month-profit">0,00</span></div>
+          </div>
+        </div>
+      </div>
       <div class="card fade-in">
         <h3 class="form-title"><i class="fas fa-list"></i> Histórico de Transações</h3>
         <div class="table-container">
@@ -1003,14 +1022,14 @@
       tableBody.innerHTML = '';
       let totalReceitas = 0, totalDespesas = 0;
       
-      filteredTransactions.forEach(t => {
+      transactions.forEach(t => { // Note: Calculates totals based on ALL transactions, not filtered ones.
         if (t.type === 'receita') {
           totalReceitas += Number(t.amount);
         } else {
           totalDespesas += Number(t.amount);
         }
       });
-
+      
       if (filteredTransactions.length === 0) {
         emptyState.classList.remove("hidden");
         document.querySelector(".table").style.display = "none";
