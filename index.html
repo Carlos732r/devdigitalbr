@@ -1131,6 +1131,267 @@ fbq('track', 'PageView');
             border-color: var(--primary-color);
             box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.2);
         }
+
+        /* --- NOVOS ESTILOS ADICIONADOS --- */
+        
+        /* Animação de partículas no hero */
+        .particles {
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+            z-index: 1;
+        }
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            animation: float 15s infinite;
+            opacity: 0.6;
+        }
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) translateX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.6;
+            }
+            90% {
+                opacity: 0.6;
+            }
+            100% {
+                transform: translateY(-100vh) translateX(100px);
+                opacity: 0;
+            }
+        }
+
+        /* Seção de Depoimentos */
+        .testimonials-section {
+            background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
+            padding: 6rem 5% 3rem;
+        }
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        .testimonial-card {
+            background: var(--gradient-2);
+            padding: 2rem;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: var(--transition);
+            position: relative;
+        }
+        .testimonial-card::before {
+            content: '"';
+            position: absolute;
+            top: 1rem;
+            left: 1.5rem;
+            font-size: 4rem;
+            color: var(--primary-color);
+            opacity: 0.2;
+            font-family: Georgia, serif;
+        }
+        .testimonial-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 212, 255, 0.2);
+        }
+        .testimonial-text {
+            color: var(--text-gray);
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+            font-style: italic;
+        }
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .author-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--gradient-1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--secondary-color);
+            font-weight: 700;
+            overflow: hidden; /* Garante que a imagem se ajuste ao círculo */
+        }
+        .author-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Garante que a imagem preencha o círculo sem distorcer */
+        }
+        .author-info h4 {
+            margin-bottom: 0.2rem;
+            font-size: 1rem;
+        }
+        .author-info p {
+            color: var(--text-gray);
+            font-size: 0.85rem;
+            margin: 0;
+        }
+        .stars {
+            color: #FFD700;
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+        }
+        /* Estilo para a tag <a> que envolve o card */
+        .testimonial-link {
+            text-decoration: none;
+            color: inherit;
+            display: block; /* Faz o link ocupar todo o espaço do card */
+            transition: var(--transition);
+        }
+
+        /* Missão, Visão e Valores */
+        .mvv-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        .mvv-card {
+            background: var(--gradient-2);
+            padding: 2rem;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: var(--transition);
+            text-align: center;
+        }
+        .mvv-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 212, 255, 0.2);
+        }
+        .mvv-icon {
+            font-size: 2.5rem;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+        }
+        .mvv-card h3 {
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+        .mvv-card p {
+            color: var(--text-gray);
+            line-height: 1.6;
+        }
+
+        /* Efeitos Hover Aprimorados */
+        .service-card {
+            position: relative;
+            overflow: hidden;
+        }
+        .service-card::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(0, 212, 255, 0.1) 0%, transparent 70%);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s ease, height 0.6s ease;
+        }
+        .service-card:hover::after {
+            width: 300px;
+            height: 300px;
+        }
+        .service-icon {
+            transition: all 0.3s ease;
+        }
+        .service-card:hover .service-icon {
+            transform: scale(1.1) rotateY(360deg);
+        }
+
+        /* Botões com efeito de brilho */
+        .btn::before,.service-btn::before,.portfolio-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s ease;
+        }
+        .btn:hover::before,.service-btn:hover::before,.portfolio-btn:hover::before {
+            left: 100%;
+        }
+
+        /* Divisores de seção */
+        .section-divider {
+            height: 2px;
+            background: var(--gradient-1);
+            margin: 4rem auto;
+            max-width: 200px;
+            border-radius: 10px;
+            opacity: 0.5;
+        }
+
+        /* Seções alternadas */
+        .section-alt {
+            background: rgba(26, 26, 26, 0.5);
+        }
+
+        /* Animações de scroll */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .slide-in-left {
+            opacity: 0;
+            transform: translateX(-50px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+        .slide-in-left.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        .slide-in-right {
+            opacity: 0;
+            transform: translateX(50px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+        .slide-in-right.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        .zoom-in {
+            opacity: 0;
+            transform: scale(0.9);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+        .zoom-in.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* Responsivo para depoimentos */
+        @media (max-width: 768px) {
+            .testimonials-grid {
+                grid-template-columns: 1fr;
+            }
+            .mvv-grid {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 <body class="loading">
@@ -1159,6 +1420,7 @@ fbq('track', 'PageView');
 
     <main>
         <section id="home" class="hero">
+            <div class="particles" id="particles"></div>
             <div class="hero-content">
                 <h1>Transformando <span class="highlight">ideias</span> em soluções digitais</h1>
                 <p>Especialistas em criação de logos marcantes, desenvolvimento de sites modernos, prompts otimizados para IA, manutenção profissional e posts promocionais estratégicos que transformam sua presença digital e impulsionam o crescimento exponencial do seu negócio no mundo digital.</p>
@@ -1242,21 +1504,88 @@ fbq('track', 'PageView');
                         <a href="portifolio.html" class="portfolio-btn">Ver Portfólio</a>
                     </div>
                 </article>
+
+                
+                <article class="portfolio-item">
+                    <div class="portfolio-image">
+                        <img src="logo_nome.png" alt="Prévia de Logos" loading="lazy">
+                    </div>
+                    <div class="portfolio-content">
+                        <h3>Logos</h3>
+                        <p>Veja nossa coleção de logos criativas e profissionais.</p>
+                        <a href="portifolio.html" class="portfolio-btn">Ver Logos</a>
+                    </div>
+                </article>
+                
             </div>
         </section>
 
-        <section id="sobre" class="section">
-            <h2 class="section-title">Sobre a <span class="highlight">Dev Digital BR</span></h2>
-            <p class="section-subtitle">Especialistas em transformação digital</p>
+        <section class="testimonials-section">
+            <div class="section">
+                <h2 class="section-title fade-in">O Que Dizem <span class="highlight">Nossos Clientes</span></h2>
+                <p class="section-subtitle fade-in">Confiança e satisfação comprovadas</p>
+                
+                <div class="testimonials-grid">
+
+                    <a href="http://www.piauigas.com.br" target="_blank" rel="noopener noreferrer" class="testimonial-link">
+                        <article class="testimonial-card fade-in">
+                            <p class="testimonial-text">"Trabalho excepcional! A Dev Digital BR criou um site moderno e funcional para minha empresa. O atendimento foi impecável e o resultado superou minhas expectativas."</p>
+                            <div class="testimonial-author">
+                                <div class="author-avatar">
+                                    <img src="imagens/logo_piaui.png" alt="Logo Piauí Gás">
+                                </div>
+                                <div class="author-info">
+                                    <h4>Piauí Gás</h4>
+                                    <p>Cliente - Teodoro Sampaio</p>
+                                    <div class="stars">★★★★★</div>
+                                </div>
+                            </div>
+                        </article>
+                    </a>
+                    
+                    <a href="http://www.assistenciatecnicavitoria.com.br" target="_blank" rel="noopener noreferrer" class="testimonial-link">
+                        <article class="testimonial-card fade-in">
+                            <p class="testimonial-text">"Profissionais extremamente competentes e criativos. Minha landing page ficou incrível e já está gerando ótimos resultados. Recomendo muito!"</p>
+                            <div class="testimonial-author">
+                                <div class="author-avatar">
+                                    <img src="imagens/logo_refrigeracaoVitoria.png" alt="Logo Assistência Técnica Vitória">
+                                </div>
+                                <div class="author-info">
+                                    <h4>Assistência Técnica Vitória</h4>
+                                    <p>Cliente - Carapicuíba</p>
+                                    <div class="stars">★★★★★</div>
+                                </div>
+                            </div>
+                        </article>
+                    </a>
+                    
+                    <article class="testimonial-card fade-in">
+                        <p class="testimonial-text">"A logo que criaram para minha empresa é perfeita! Moderna, profissional e representa exatamente o que eu queria. Muito satisfeita com o serviço."</p>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">A</div>
+                            <div class="author-info">
+                                <h4>Ana Paula</h4>
+                                <p>Designer - Pirapozinho</p>
+                                <div class="stars">★★★★★</div>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+        <div class="section-divider"></div>
+
+        <section id="sobre" class="section section-alt">
+            <h2 class="section-title fade-in">Sobre a <span class="highlight">Dev Digital BR</span></h2>
+            <p class="section-subtitle fade-in">Especialistas em transformação digital</p>
             
             <div class="about-content">
-                <div class="about-text">
+                <div class="about-text slide-in-left">
                     <p>Na <strong>Dev Digital BR</strong>, somos especialistas em criar soluções digitais que fazem a diferença. Com mais de 1 ano de experiência no mercado, desenvolvemos projetos que combinam criatividade, funcionalidade e resultados.</p>
-                    
                     <p>Nossa missão é transformar sua presença online em um diferencial competitivo, oferecendo serviços personalizados que atendem às necessidades específicas do seu negócio.</p>
                 </div>
                 
-                <div class="about-features">
+                <div class="about-features slide-in-right">
                     <div class="feature-item">
                         <div class="feature-icon"><i class="fas fa-rocket" aria-hidden="true"></i></div>
                         <div>
@@ -1282,7 +1611,28 @@ fbq('track', 'PageView');
                     </div>
                 </div>
             </div>
+            
+            <div class="mvv-grid">
+                <div class="mvv-card zoom-in">
+                    <div class="mvv-icon"><i class="fas fa-bullseye"></i></div>
+                    <h3>Nossa Missão</h3>
+                    <p>Transformar ideias em soluções digitais de alta qualidade, impulsionando o crescimento dos nossos clientes através da inovação e excelência em tecnologia.</p>
+                </div>
+                
+                <div class="mvv-card zoom-in">
+                    <div class="mvv-icon"><i class="fas fa-eye"></i></div>
+                    <h3>Nossa Visão</h3>
+                    <p>Ser referência no Oeste Paulista em soluções digitais, reconhecidos pela qualidade, inovação e compromisso com o sucesso dos nossos clientes.</p>
+                </div>
+                
+                <div class="mvv-card zoom-in">
+                    <div class="mvv-icon"><i class="fas fa-heart"></i></div>
+                    <h3>Nossos Valores</h3>
+                    <p>Compromisso, criatividade, transparência, excelência e foco total na satisfação do cliente. Cada projeto é tratado com dedicação máxima.</p>
+                </div>
+            </div>
         </section>
+        <div class="section-divider"></div>
 
         <section id="processo" class="section">
             <h2 class="section-title">Como <span class="highlight">Funciona?</span></h2>
@@ -1624,50 +1974,59 @@ fbq('track', 'PageView');
                 }, 3000);
             });
         }
-
-        // Smooth page load
-        window.addEventListener('load', function() {
-            setTimeout(() => {
-                body.classList.remove('loading');
-            }, 100);
-        });
-
-        // Handle resize events
-        const handleResize = debounce(() => {
-            if (window.innerWidth > 768 && nav.classList.contains('active')) {
-                closeMenu();
+        
+        // --- NOVO JAVASCRIPT ADICIONADO ---
+        
+        // Criar partículas animadas
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            if (!particlesContainer) return;
+            const particleCount = 50;
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 15 + 's';
+                particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+                particlesContainer.appendChild(particle);
             }
-        }, 250);
+        }
 
-        window.addEventListener('resize', handleResize);
-
-        // Intersection Observer for animations
-        const observeElements = () => {
+        // Animações de scroll
+        function handleScrollAnimations() {
+            const elements = document.querySelectorAll('.fade-in, .slide-in-left, .slide-in-right, .zoom-in');
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
-                        entry.target.style.opacity = '1';
-                        entry.target.style.transform = 'translateY(0)';
+                        entry.target.classList.add('visible');
                     }
                 });
             }, {
                 threshold: 0.1,
                 rootMargin: '0px 0px -50px 0px'
             });
-
-            // Observe sections for animation
-            document.querySelectorAll('.section').forEach(section => {
-                section.style.opacity = '0';
-                section.style.transform = 'translateY(30px)';
-                section.style.transition = 'all 0.6s ease-out';
-                observer.observe(section);
-            });
-        };
-
-        // Initialize animations if supported
-        if ('IntersectionObserver' in window) {
-            observeElements();
+            elements.forEach(element => observer.observe(element));
         }
+
+        // Inicializar quando o DOM carregar
+        document.addEventListener('DOMContentLoaded', function() {
+            createParticles();
+            handleScrollAnimations();
+
+            // Smooth page load
+            setTimeout(() => {
+                body.classList.remove('loading');
+            }, 100);
+            
+            // Handle resize events
+            const handleResize = debounce(() => {
+                if (window.innerWidth > 768 && nav.classList.contains('active')) {
+                    closeMenu();
+                }
+            }, 250);
+
+            window.addEventListener('resize', handleResize);
+        });
 
         // Error handling for images
         document.querySelectorAll('img').forEach(img => {
