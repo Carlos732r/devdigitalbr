@@ -17,26 +17,26 @@
     <meta property="og:type" content="website">
 
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-<link rel="manifest" href="/site.webmanifest">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
 
-<!-- Facebook Pixel Code -->
-<script>
-!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){
-n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];
-t=b.createElement(e);t.async=!0;t.src=v;
-s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}
-(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
-fbq('init', '1497275881278041');
-fbq('track', 'PageView');
-</script>
-<noscript>
-<img height="1" width="1" src="https://www.facebook.com/tr?id=1497275881278041&ev=PageView&noscript=1"/>
-</noscript>
-<!-- End Facebook Pixel Code -->
+    <!-- Facebook Pixel Code -->
+    <script>
+    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){
+    n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];
+    t=b.createElement(e);t.async=!0;t.src=v;
+    s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}
+    (window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '1497275881278041');
+    fbq('track', 'PageView');
+    </script>
+    <noscript>
+    <img height="1" width="1" src="https://www.facebook.com/tr?id=1497275881278041&ev=PageView&noscript=1"/>
+    </noscript>
+    <!-- End Facebook Pixel Code -->
 
     <style>
         :root {
@@ -262,6 +262,21 @@ fbq('track', 'PageView');
             transform: scale(1.05);
         }
 
+        /* Melhorar visualização das logos */
+        .portfolio-card[data-category="logo"] .portfolio-image {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .portfolio-card[data-category="logo"] .portfolio-image img {
+            object-fit: contain;
+            max-width: 90%;
+            max-height: 90%;
+        }
+
         .portfolio-tags-top {
             position: absolute;
             top: 1rem;
@@ -350,6 +365,96 @@ fbq('track', 'PageView');
             font-size: 0.8rem;
         }
 
+        /* Modal para visualização de logos */
+        .logo-modal {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.95);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .logo-modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-modal-content {
+            position: relative;
+            max-width: 90%;
+            max-height: 90vh;
+            animation: zoomIn 0.3s ease;
+        }
+
+        .logo-modal-content img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 10px;
+            max-height: 80vh;
+        }
+
+        .logo-modal-close {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: var(--gradient-1);
+            color: var(--secondary-color);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.4);
+            z-index: 10000;
+        }
+
+        .logo-modal-close:hover {
+            transform: scale(1.1) rotate(-90deg);
+            box-shadow: 0 6px 20px rgba(0, 212, 255, 0.6);
+        }
+
+        .logo-modal-info {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(10, 10, 10, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            color: var(--text-light);
+            font-weight: 600;
+            text-align: center;
+            border: 1px solid rgba(0, 212, 255, 0.3);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes zoomIn {
+            from { 
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to { 
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
         /* Footer */
         footer {
             background: var(--secondary-color);
@@ -417,6 +522,24 @@ fbq('track', 'PageView');
             .logo {
                 font-size: 1.8rem;
             }
+
+            .logo-modal-close {
+                width: 45px;
+                height: 45px;
+                font-size: 1.3rem;
+                top: 15px;
+                left: 15px;
+            }
+            
+            .logo-modal-info {
+                font-size: 0.9rem;
+                padding: 0.8rem 1.5rem;
+                max-width: 90%;
+            }
+
+            .logo-modal-content {
+                max-width: 95%;
+            }
         }
     </style>
 
@@ -453,10 +576,12 @@ fbq('track', 'PageView');
                 <button class="filter-btn active" data-filter="all">Todos os Nichos</button>
                 <button class="filter-btn" data-filter="institucional">Institucional</button>
                 <button class="filter-btn" data-filter="landing-page">Landing Page</button>
+                <button class="filter-btn" data-filter="logo">Logos</button>
             </div>
 
             <div class="portfolio-grid">
 
+                <!-- SITES E LANDING PAGES -->
                 <div class="portfolio-card" data-category="landing-page">
                     <div class="portfolio-image">
                         <img src="imagens/fotogas.png" alt="Projeto Piauí Gás">
@@ -594,15 +719,165 @@ fbq('track', 'PageView');
                         </div>
                     </div>
                 </div>
+
+                <!-- LOGOS -->
+                <div class="portfolio-card" data-category="logo">
+                    <div class="portfolio-image">
+                        <img src="imagens/logo_piaui.png" alt="Logo Piauí Gás">
+                        <div class="portfolio-tags-top">
+                            <span class="tag">Depósito de Gás</span>
+                            <span class="tag">Logo</span>
+                        </div>
+                    </div>
+                    <div class="portfolio-info">
+                        <h3>Logo Piauí Gás</h3>
+                        <p class="portfolio-meta">Teodoro Sampaio - SP - 2025</p>
+                        <div class="portfolio-card-buttons">
+                            <a href="#" class="btn btn-secondary btn-ver-logo" data-logo="imagens/logo_piaui.png" data-nome="Logo Piauí Gás">Ver Logo</a>
+                            <a href="https://wa.me/5515992710295?text=Olá! Vi a logo do Piauí Gás e gostaria de criar uma logo profissional." target="_blank" class="btn btn-primary">Quero uma</a>
+                        </div>
+                        <div class="portfolio-tags-bottom">
+                            <span class="tag-bottom">Identidade Visual</span>
+                            <span class="tag-bottom">Branding</span>
+                            <span class="tag-bottom">Design Profissional</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="portfolio-card" data-category="logo">
+                    <div class="portfolio-image">
+                        <img src="imagens/logo_refrigeracaoVitoria.png" alt="Logo Refrigeração Vitória">
+                        <div class="portfolio-tags-top">
+                            <span class="tag">Assistência Técnica</span>
+                            <span class="tag">Logo</span>
+                        </div>
+                    </div>
+                    <div class="portfolio-info">
+                        <h3>Logo Refrigeração Vitória</h3>
+                        <p class="portfolio-meta">Carapicuíba - SP - 2025</p>
+                        <div class="portfolio-card-buttons">
+                            <a href="#" class="btn btn-secondary btn-ver-logo" data-logo="imagens/logo_refrigeracaoVitoria.png" data-nome="Logo Refrigeração Vitória">Ver Logo</a>
+                            <a href="https://wa.me/5515992710295?text=Olá! Vi a logo da Refrigeração Vitória e gostaria de criar uma logo profissional." target="_blank" class="btn btn-primary">Quero uma</a>
+                        </div>
+                        <div class="portfolio-tags-bottom">
+                            <span class="tag-bottom">Identidade Visual</span>
+                            <span class="tag-bottom">Branding</span>
+                            <span class="tag-bottom">Design Profissional</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="portfolio-card" data-category="logo">
+                    <div class="portfolio-image">
+                        <img src="imagens/logo_venha.png" alt="Logo Venha Concursar">
+                        <div class="portfolio-tags-top">
+                            <span class="tag">Educação</span>
+                            <span class="tag">Logo</span>
+                        </div>
+                    </div>
+                    <div class="portfolio-info">
+                        <h3>Logo Venha Concursar</h3>
+                        <p class="portfolio-meta">Brasil - 2025</p>
+                        <div class="portfolio-card-buttons">
+                            <a href="#" class="btn btn-secondary btn-ver-logo" data-logo="imagens/logo_venha.png" data-nome="Logo Venha Concursar">Ver Logo</a>
+                            <a href="https://wa.me/5515992710295?text=Olá! Vi a logo do Venha Concursar e gostaria de criar uma logo profissional." target="_blank" class="btn btn-primary">Quero uma</a>
+                        </div>
+                        <div class="portfolio-tags-bottom">
+                            <span class="tag-bottom">Identidade Visual</span>
+                            <span class="tag-bottom">Branding</span>
+                            <span class="tag-bottom">Design Profissional</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="portfolio-card" data-category="logo">
+                    <div class="portfolio-image">
+                        <img src="logo_nome.png" alt="Logo Dev Digital BR">
+                        <div class="portfolio-tags-top">
+                            <span class="tag">Tech</span>
+                            <span class="tag">Logo</span>
+                        </div>
+                    </div>
+                    <div class="portfolio-info">
+                        <h3>Logo Dev Digital BR</h3>
+                        <p class="portfolio-meta">Teodoro Sampaio - SP - 2024</p>
+                        <div class="portfolio-card-buttons">
+                            <a href="#" class="btn btn-secondary btn-ver-logo" data-logo="logo_nome.png" data-nome="Logo Dev Digital BR">Ver Logo</a>
+                            <a href="https://wa.me/5515992710295?text=Olá! Vi a logo da Dev Digital BR e gostaria de criar uma logo profissional." target="_blank" class="btn btn-primary">Quero uma</a>
+                        </div>
+                        <div class="portfolio-tags-bottom">
+                            <span class="tag-bottom">Identidade Visual</span>
+                            <span class="tag-bottom">Branding</span>
+                            <span class="tag-bottom">Design Profissional</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="portfolio-card" data-category="logo">
+                    <div class="portfolio-image">
+                        <img src="imagens/scoreUp.png" alt="Logo Score Up">
+                        <div class="portfolio-tags-top">
+                            <span class="tag">Financeiro</span>
+                            <span class="tag">Logo</span>
+                        </div>
+                    </div>
+                    <div class="portfolio-info">
+                        <h3>Logo Score Up</h3>
+                        <p class="portfolio-meta">Brasil - 2025</p>
+                        <div class="portfolio-card-buttons">
+                            <a href="#" class="btn btn-secondary btn-ver-logo" data-logo="imagens/scoreUp.png" data-nome="Logo Score Up">Ver Logo</a>
+                            <a href="https://wa.me/5515992710295?text=Olá! Vi a logo do Score Up e gostaria de criar uma logo profissional." target="_blank" class="btn btn-primary">Quero uma</a>
+                        </div>
+                        <div class="portfolio-tags-bottom">
+                            <span class="tag-bottom">Identidade Visual</span>
+                            <span class="tag-bottom">Branding</span>
+                            <span class="tag-bottom">Design Profissional</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="portfolio-card" data-category="logo">
+                    <div class="portfolio-image">
+                        <img src="imagens/logo_reflexao.png" alt="Logo Reflexão Diária">
+                        <div class="portfolio-tags-top">
+                            <span class="tag">Instagram</span>
+                            <span class="tag">Logo</span>
+                        </div>
+                    </div>
+                    <div class="portfolio-info">
+                        <h3>Logo Reflexão Diária</h3>
+                        <p class="portfolio-meta">Brasil - 2025</p>
+                        <div class="portfolio-card-buttons">
+                            <a href="#" class="btn btn-secondary btn-ver-logo" data-logo="imagens/logo_reflexao.png" data-nome="Logo Reflexão Diária">Ver Logo</a>
+                            <a href="https://wa.me/5515992710295?text=Olá! Vi a logo do Reflexão Diária e gostaria de criar uma logo profissional." target="_blank" class="btn btn-primary">Quero uma</a>
+                        </div>
+                        <div class="portfolio-tags-bottom">
+                            <span class="tag-bottom">Identidade Visual</span>
+                            <span class="tag-bottom">Branding</span>
+                            <span class="tag-bottom">Redes Sociais</span>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </section>
     </main>
 
+    <!-- Modal para visualização de logos -->
+    <div class="logo-modal" id="logoModal">
+        <button class="logo-modal-close" id="closeModal" aria-label="Voltar ao portfólio">
+            <i class="fas fa-arrow-left"></i>
+        </button>
+        <div class="logo-modal-content">
+            <img src="" alt="Logo" id="modalImage">
+            <div class="logo-modal-info" id="modalInfo"></div>
+        </div>
+    </div>
+
     <footer>
         <div class="social-links">
-            <a href="https://www.instagram.com/oficial_dev_digital/"><i class="fab fa-instagram"></i></a>
-            <a href="#"><i class="fab fa-facebook"></i></a>
-
+            <a href="https://www.instagram.com/oficial_dev_digital/" target="_blank" rel="noopener" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+            <a href="https://www.facebook.com/profile.php?id=61580229984541" target="_blank" rel="noopener" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
         </div>
         <p>&copy; 2025 Dev Digital BR - Todos os direitos reservados.</p>
     </footer>
@@ -620,6 +895,47 @@ fbq('track', 'PageView');
                 icon.classList.toggle('fa-times');
             });
         }
+
+        // Modal de logos
+        const logoModal = document.getElementById('logoModal');
+        const modalImage = document.getElementById('modalImage');
+        const modalInfo = document.getElementById('modalInfo');
+        const closeModal = document.getElementById('closeModal');
+
+        // Função para abrir modal
+        function openLogoModal(imageSrc, logoName) {
+            modalImage.src = imageSrc;
+            modalInfo.textContent = logoName;
+            logoModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Função para fechar modal
+        function closeLogoModal() {
+            logoModal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // Event listener para botão de fechar
+        if (closeModal) {
+            closeModal.addEventListener('click', closeLogoModal);
+        }
+
+        // Fechar modal ao clicar fora da imagem
+        if (logoModal) {
+            logoModal.addEventListener('click', (e) => {
+                if (e.target === logoModal) {
+                    closeLogoModal();
+                }
+            });
+        }
+
+        // Fechar modal com tecla ESC
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && logoModal.classList.contains('active')) {
+                closeLogoModal();
+            }
+        });
 
         // Lógica do Filtro do Portfólio
         document.addEventListener('DOMContentLoaded', () => {
@@ -645,6 +961,47 @@ fbq('track', 'PageView');
                     });
                 });
             }
+
+            // Configurar botões "Ver Logo" para abrir modal
+            const btnVerLogos = document.querySelectorAll('.btn-ver-logo');
+            
+            btnVerLogos.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const logoSrc = btn.getAttribute('data-logo');
+                    const logoName = btn.getAttribute('data-nome');
+                    openLogoModal(logoSrc, logoName);
+                });
+            });
+        });
+
+        // Fechar menu ao clicar em um link
+        document.querySelectorAll('nav a').forEach(link => {
+            link.addEventListener('click', () => {
+                if (nav.classList.contains('active')) {
+                    nav.classList.remove('active');
+                    const icon = menuToggle.querySelector('i');
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-bars');
+                }
+            });
+        });
+
+        // Scroll suave
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                const href = this.getAttribute('href');
+                if (href && href !== '#') {
+                    e.preventDefault();
+                    const target = document.querySelector(href);
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                }
+            });
         });
     </script>
 </body>
