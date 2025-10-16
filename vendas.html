@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dev Digital BR - Sistema de Vendas</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBvos9nCRithcUX768xuwQZ70p1_xgmKOg",
+      authDomain: "gestao-financeira-9e033.firebaseapp.com",
+      projectId: "gestao-financeira-9e033",
+      storageBucket: "gestao-financeira-9e033.firebasestorage.app",
+      messagingSenderId: "694364024644",
+      appId: "1:694364024644:web:1758bd0d4a47b71b93b111",
+      measurementId: "G-PNL027GT4B"
+    };
+
+    let db, auth;
+
+    try {
+      firebase.initializeApp(firebaseConfig);
+      db = firebase.firestore();
+      auth = firebase.auth();
+      
+      db.settings({
+        cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED
+      });
+      
+      console.log("✅ Firebase inicializado com sucesso!");
+        
+    } catch (error) {
+      console.error("❌ Erro na inicialização do Firebase:", error);
+    }
+  </script>
+
+  <style>
+    :root {
+      --primary-color: #00d4ff;
+      --primary-dark: #0099cc;
+      --secondary-color: #0a0a0a;
+      --text-light: #ffffff;
+      --text-gray: #a0a0a0;
+      --gradient-1: linear-gradient(135deg, #00d4ff 0%, #0099cc 50%, #0066aa 100%);
+      --gradient-2: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+      --gradient-bg: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%);
+      --border-radius: 15px;
+      --box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      --transition: all 0.3s ease;
+      --success-color: #25d366;
+      --danger-color: #dc3545;
+      --warning-color: #ffc107;
+      --info-color: #17a2b8;
+      --pending-color: #ffc107;
+      --paid-color: #25d366;
+      --late-color: #dc3545;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--gradient-bg);
+      color: var(--text-light);
+      overflow-x: hidden;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    .hidden { display: none !important; }
+
+    .toast-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .toast {
+      min-width: 350px;
+      padding: 15px 20px;
+      border-radius: 12px;
+      color: white;
+      font-weight: 600;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+      backdrop-filter: blur(10px);
+      transform: translateX(400px);
+      opacity: 0;
+      transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-left: 4px solid;
+    }
+
+    .toast.show { transform: translateX(0); opacity: 1; }
+    .toast.success { background: linear-gradient(135deg, rgba(37, 211, 102, 0.95), rgba(25, 135, 84, 0.95)); border-left-color: var(--success-color); }
+    .toast.error { background: linear-gradient(135deg, rgba(220, 53, 69, 0.95), rgba(176, 42, 55, 0.95)); border-left-color: var(--danger-color); }
+    .toast.warning { background: linear-gradient(135deg, rgba(255, 193, 7, 0.95), rgba(255, 143, 0, 0.95)); border-left-color: var(--warning-color); color: var(--secondary-color); }
+    .toast.info { background: linear-gradient(135deg, rgba(23, 162, 184, 0.95), rgba(13, 110, 253, 0.95)); border-left-color: var(--info-color); }
+    .toast .toast-icon { font-size: 1.2rem; }
+    .toast .toast-close {
+      margin-left: auto; background: none; border: none; color: inherit;
+      font-size: 1.1rem; cursor: pointer; opacity: 0.7; padding: 0;
+      width: 20px; height: 20px; display: flex; align-items: center;
+      justify-content: center; transition: opacity 0.2s;
+    }
+    .toast .toast-close:hover { opacity: 1; }
+
+    .loading { display: flex; justify-content: center; align-items: center; padding: 2rem; color: var(--text-gray); }
+    .loading i { animation: spin 1s linear infinite; margin-right: 0.5rem; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+    .header {
+      background: rgba(10,10,10,0.95);
+      backdrop-filter: blur(10px);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      box-shadow: 0 2px 20px rgba(0,0,0,0.3);
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .logo-container { 
+      display: flex; 
+      align-items: center; 
+      gap: 1rem;
+    }
+    
+    .logo-image {
+      width: 60px;
+      height: 60px;
+      border-radius: var(--border-radius);
+      background: var(--gradient-1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 15px rgba(0,212,255,0.3);
+      overflow: hidden;
+    }
+    
+    .logo-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+    
+    .logo-text {
+      font-size: 1.3rem;
+      font-weight: 700;
+      background: var(--gradient-1);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.5rem 1rem;
+      background: rgba(0,212,255,0.1);
+      border-radius: 50px;
+      border: 1px solid rgba(0,212,255,0.2);
+    }
+
+    .user-info i { color: var(--primary-color); }
+    .user-email { color: var(--text-light); font-weight: 600; }
+
+    .container { max-width: 1400px; margin: 2rem auto; padding: 0 1rem; }
+    .card {
+      background: var(--gradient-2);
+      border-radius: 20px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      border: 1px solid rgba(255,255,255,0.1);
+      box-shadow: var(--box-shadow);
+      backdrop-filter: blur(10px);
+    }
+
+    .login-container { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem; }
+    .login-card {
+      background: var(--gradient-2);
+      padding: 3rem;
+      border-radius: 25px;
+      border: 1px solid rgba(255,255,255,0.1);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+      backdrop-filter: blur(20px);
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+    }
+
+    .login-title {
+      font-size: 2rem; font-weight: 700; margin-bottom: 2rem;
+      background: var(--gradient-1);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+    }
+
+    .form-group { margin-bottom: 1.5rem; text-align: left; }
+    .form-group label { display: block; margin-bottom: 0.5rem; color: var(--text-light); font-weight: 600; }
+    .form-group label .optional { color: var(--text-gray); font-weight: 400; font-size: 0.9rem; }
+    .form-control {
+      width: 100%; padding: 1rem;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 12px;
+      background: rgba(255,255,255,0.05);
+      color: var(--text-light);
+      font-size: 1rem;
+      transition: var(--transition);
+      backdrop-filter: blur(10px);
+    }
+    .form-control:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 2px rgba(0,212,255,0.2);
+      background: rgba(255,255,255,0.08);
+    }
+    .form-control::placeholder { color: var(--text-gray); }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; }
+    .form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; }
+
+    .btn {
+      padding: 1rem 2rem;
+      border: none;
+      border-radius: 50px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      text-decoration: none;
+    }
+
+    .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .btn-primary { background: var(--gradient-1); color: var(--secondary-color); }
+    .btn-danger { background: var(--danger-color); color: var(--text-light); }
+    .btn-success { background: var(--success-color); color: var(--text-light); }
+    .btn-small { padding: 0.5rem 1rem; font-size: 0.9rem; border-radius: 20px; }
+    .btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+
+    .page-title { 
+      text-align:center; 
+      font-size:2.5rem; 
+      font-weight:700; 
+      margin-bottom:2rem; 
+      display:flex; 
+      align-items:center; 
+      justify-content:center; 
+      gap:1rem;
+      flex-wrap: wrap;
+    }
+    .page-title .highlight { 
+      background: var(--gradient-1); 
+      -webkit-background-clip: text; 
+      background-clip: text; 
+      -webkit-text-fill-color: transparent; 
+    }
+
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+    .stat-card {
+      background: var(--gradient-2);
+      padding: 1.5rem;
+      border-radius: 20px;
+      text-align: center;
+      border: 1px solid rgba(255,255,255,0.1);
+      position: relative;
+      overflow: hidden;
+      transition: var(--transition);
+    }
+    .stat-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; }
+    .stat-card:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+    
+    .stat-card.vendas::before { background: var(--info-color); }
+    .stat-card.comissoes::before { background: var(--success-color); }
+    .stat-card.pendentes::before { background: var(--warning-color); }
+    .stat-card.pagas::before { background: var(--paid-color); }
+
+    .stat-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+    .stat-card.vendas .stat-icon { color: var(--info-color); }
+    .stat-card.comissoes .stat-icon { color: var(--success-color); }
+    .stat-card.pendentes .stat-icon { color: var(--warning-color); }
+    .stat-card.pagas .stat-icon { color: var(--paid-color); }
+
+    .stat-label { font-size: 0.9rem; color: var(--text-gray); margin-bottom: 0.5rem; }
+    .stat-value { font-size: 1.8rem; font-weight: 700; color: var(--text-light); }
+
+    .table-container { overflow-x: auto; border-radius: var(--border-radius); }
+    .table { width: 100%; border-collapse: collapse; background: rgba(255,255,255,0.02); border-radius: var(--border-radius); overflow: hidden; }
+    .table thead { background: var(--gradient-1); }
+    .table th { padding: 1rem; text-align: center; font-weight: 600; color: var(--secondary-color); font-size: 0.95rem; }
+    .table td { padding: 1rem; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); color: var(--text-light); }
+    .table tbody tr { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+    .table tbody tr:hover { background: rgba(0,212,255,0.08); transform: translateX(5px); }
+
+    .status-badge {
+      padding: 0.4rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+    .status-badge.pendente { background: rgba(255,193,7,0.2); color: var(--pending-color); border: 1px solid rgba(255,193,7,0.3); }
+    .status-badge.paga { background: rgba(37,211,102,0.2); color: var(--paid-color); border: 1px solid rgba(37,211,102,0.3); }
+    .status-badge.atrasada { background: rgba(220,53,69,0.2); color: var(--late-color); border: 1px solid rgba(220,53,69,0.3); }
+
+    .empty-state { text-align: center; padding: 3rem; color: var(--text-gray); }
+    .empty-state i { font-size: 4rem; margin-bottom: 1rem; color: var(--primary-color); opacity: 0.5; }
+
+    .chart-container {
+      position: relative;
+      height: 300px;
+      margin: 2rem 0;
+    }
+
+    .filters-section {
+      background: var(--gradient-2);
+      padding: 1.5rem;
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.1);
+      margin-bottom: 2rem;
+      display: flex;
+      gap: 1rem;
+      align-items: end;
+      flex-wrap: wrap;
+    }
+
+    .filter-group { flex: 1; min-width: 200px; }
+    .filter-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: var(--text-light);
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .service-info {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+      text-align: left;
+    }
+    .service-name { font-weight: 600; }
+    .service-details { font-size: 0.85rem; color: var(--text-gray); }
+
+    @media (max-width: 768px) {
+      .header { padding: 0.8rem 1rem; }
+      .logo-text { font-size: 1.1rem; }
+      .logo-image { width: 50px; height: 50px; }
+      .user-info { font-size: 0.85rem; }
+      .container { padding: 0 0.8rem; margin: 1rem auto; }
+      .card { padding: 1.2rem; }
+      .page-title { font-size: 1.8rem; }
+      .form-row, .form-row-3 { grid-template-columns: 1fr; }
+      .stats-grid { grid-template-columns: 1fr; }
+      .filters-section { flex-direction: column; }
+      .filter-group { min-width: 100%; }
+      .table th, .table td { padding: 0.6rem 0.4rem; font-size: 0.8rem; }
+      .chart-container { height: 250px; }
+    }
+
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    .fade-in { animation: fadeInUp 0.6s ease-out; }
+  </style>
+</head>
+<body>
+  <div class="toast-container" id="toast-container"></div>
+
+  <div id="login-container" class="login-container">
+    <div class="login-card fade-in">
+      <div class="login-title"><i class="fas fa-user-lock"></i> Acesso Vendedor</div>
+      <form id="login-form">
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" class="form-control" placeholder="seuemail@exemplo.com" required>
+        </div>
+        <div class="form-group">
+          <label for="password">Senha</label>
+          <input type="password" id="password" class="form-control" placeholder="Digite sua senha" required>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width:100%;" id="login-btn">
+          <i class="fas fa-sign-in-alt"></i> Entrar
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <div id="app-container" class="hidden">
+    <div class="header">
+      <div class="logo-container">
+        <div class="logo-image">
+          <img src="logo_nome.png" alt="Dev Digital BR Logo">
+        </div>
+        <div class="logo-text">Sistema de Vendas</div>
+      </div>
+      <div class="user-info">
+        <i class="fas fa-user-circle"></i>
+        <span class="user-email" id="user-email"></span>
+      </div>
+      <button class="btn btn-danger btn-small" id="logout">
+        <i class="fas fa-sign-out-alt"></i> Sair
+      </button>
+    </div>
+
+    <div class="container">
+      <h1 class="page-title fade-in">
+        <i class="fas fa-chart-line"></i> Minhas <span class="highlight">Vendas</span>
+      </h1>
+
+      <div class="stats-grid fade-in">
+        <div class="stat-card vendas">
+          <i class="fas fa-shopping-cart stat-icon"></i>
+          <div class="stat-label">Total de Vendas</div>
+          <div class="stat-value"><span id="total-vendas">0</span></div>
+        </div>
+        <div class="stat-card comissoes">
+          <i class="fas fa-dollar-sign stat-icon"></i>
+          <div class="stat-label">Total em Comissões</div>
+          <div class="stat-value">R$ <span id="total-comissoes">0,00</span></div>
+        </div>
+        <div class="stat-card pendentes">
+          <i class="fas fa-clock stat-icon"></i>
+          <div class="stat-label">Comissões Pendentes</div>
+          <div class="stat-value">R$ <span id="comissoes-pendentes">0,00</span></div>
+        </div>
+        <div class="stat-card pagas">
+          <i class="fas fa-check-circle stat-icon"></i>
+          <div class="stat-label">Comissões Pagas</div>
+          <div class="stat-value">R$ <span id="comissoes-pagas">0,00</span></div>
+        </div>
+      </div>
+
+      <div class="card fade-in">
+        <h3 style="font-size:1.5rem; font-weight:600; margin-bottom:1.5rem; display:flex; align-items:center; gap:0.5rem;">
+          <i class="fas fa-chart-bar"></i> Desempenho de Vendas
+        </h3>
+        <div class="chart-container">
+          <canvas id="salesChart"></canvas>
+        </div>
+      </div>
+
+      <div class="card fade-in">
+        <h3 style="font-size:1.5rem; font-weight:600; margin-bottom:1.5rem; display:flex; align-items:center; gap:0.5rem;">
+          <i class="fas fa-plus-circle"></i> Registrar Nova Venda
+        </h3>
+        <form id="sale-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="cliente">Nome do Cliente</label>
+              <input type="text" id="cliente" class="form-control" placeholder="Nome completo" required>
+            </div>
+            <div class="form-group">
+              <label for="empresa">Empresa <span class="optional">(opcional)</span></label>
+              <input type="text" id="empresa" class="form-control" placeholder="Nome da empresa">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="email-cliente">Email do Cliente</label>
+              <input type="email" id="email-cliente" class="form-control" placeholder="email@cliente.com" required>
+            </div>
+            <div class="form-group">
+              <label for="telefone">Telefone</label>
+              <input type="tel" id="telefone" class="form-control" placeholder="(00) 00000-0000" required>
+            </div>
+          </div>
+          <div class="form-row-3">
+            <div class="form-group">
+              <label for="categoria">Categoria</label>
+              <select id="categoria" class="form-control" required>
+                <option value="">Selecione...</option>
+                <option value="identidade-visual">Criação de Logos</option>
+                <option value="prompts-ia">Prompts para IA</option>
+                <option value="desenvolvimento-web">Desenvolvimento Web</option>
+                <option value="manutencao">Manutenção de Sites</option>
+                <option value="posts">Posts para Instagram</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="servico">Serviço</label>
+              <select id="servico" class="form-control" required disabled>
+                <option value="">Selecione categoria primeiro</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Valor / Comissão</label>
+              <input type="text" id="valor-info" class="form-control" readonly style="cursor: not-allowed;">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="observacoes">Observações <span class="optional">(opcional)</span></label>
+            <textarea id="observacoes" class="form-control" rows="3" placeholder="Anotações sobre a venda, detalhes do cliente, etc."></textarea>
+          </div>
+          <button type="submit" class="btn btn-success" id="add-sale-btn" style="width:100%;">
+            <i class="fas fa-plus"></i> Registrar Venda
+          </button>
+        </form>
+      </div>
+
+      <div class="filters-section fade-in">
+        <div class="filter-group">
+          <label for="filter-status">Filtrar por Status</label>
+          <select id="filter-status" class="form-control">
+            <option value="">Todos os status</option>
+            <option value="pendente">Pendentes</option>
+            <option value="paga">Pagas</option>
+            <option value="atrasada">Atrasadas</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label for="filter-categoria">Filtrar por Categoria</label>
+          <select id="filter-categoria" class="form-control">
+            <option value="">Todas as categorias</option>
+            <option value="identidade-visual">Criação de Logos</option>
+            <option value="prompts-ia">Prompts para IA</option>
+            <option value="desenvolvimento-web">Desenvolvimento Web</option>
+            <option value="manutencao">Manutenção de Sites</option>
+            <option value="posts">Posts para Instagram</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label for="filter-month">Filtrar por Mês</label>
+          <select id="filter-month" class="form-control">
+            <option value="">Todos os meses</option>
+          </select>
+        </div>
+        <button class="btn btn-primary btn-small" id="clear-filters" style="background: rgba(220, 53, 69, 0.8);">
+          <i class="fas fa-times-circle"></i> Limpar
+        </button>
+      </div>
+
+      <div class="card fade-in">
+        <h3 style="font-size:1.5rem; font-weight:600; margin-bottom:1.5rem; display:flex; align-items:center; gap:0.5rem;">
+          <i class="fas fa-list"></i> Histórico de Vendas
+        </h3>
+        <div class="table-container">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Data</th>
+                <th>Cliente</th>
+                <th>Serviço</th>
+                <th>Valor</th>
+                <th>Comissão</th>
+                <th>Status</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="sales-table-body"></tbody>
+          </table>
+          <div id="loading-state" class="loading hidden"><i class="fas fa-spinner"></i> Carregando...</div>
+          <div id="empty-state" class="empty-state hidden">
+            <i class="fas fa-shopping-basket"></i>
+            <h3>Nenhuma venda encontrada</h3>
+            <p>Registre sua primeira venda ou ajuste os filtros.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const SERVICES = {
+      "identidade-visual": {
+        name: "Criação de Logos",
+        items: [
+          { id: "essencial", name: "Essencial", value: 35, commission: 5, percent: 14 },
+          { id: "social", name: "Social (Mais Popular)", value: 50, commission: 10, percent: 20 },
+          { id: "digital-completo", name: "Digital Completo", value: 60, commission: 15, percent: 25 }
+        ]
+      },
+      "prompts-ia": {
+        name: "Prompts para IA",
+        items: [
+          { id: "impulso-criativo", name: "Impulso Criativo", value: 25, commission: 5, percent: 20 },
+          { id: "produtividade", name: "Produtividade", value: 50, commission: 10, percent: 20 },
+          { id: "estrategico", name: "Estratégico", value: 80, commission: 15, percent: 19 }
+        ]
+      },
+      "desenvolvimento-web": {
+        name: "Desenvolvimento Web",
+        items: [
+          { id: "landing-page-anual", name: "Landing Page de Impacto (Anual)", value: 450, commission: 100, percent: 22 },
+          { id: "landing-page-mensal", name: "Landing Page de Impacto (Mensal)", value: 60, commission: 20, percent: 33 },
+          { id: "site-institucional", name: "Site Institucional Profissional", value: 720, commission: 180, percent: 25 }
+        ]
+      },
+      "manutencao": {
+        name: "Manutenção de Sites",
+        items: [
+          { id: "ajustes-rapidos", name: "Ajustes Rápidos e Simples", value: 80, commission: 15, percent: 19 },
+          { id: "plano-essencial", name: "Plano Essencial (Mensal)", value: 70, commission: 15, percent: 21 },
+          { id: "plano-crescimento", name: "Plano Crescimento (Mais Popular)", value: 150, commission: 30, percent: 20 }
+        ]
+      },
+      "posts": {
+        name: "Posts para Instagram",
+        items: [
+          { id: "plano-mensal", name: "Plano Mensal (6 posts/mês)", value: 30, commission: 5, percent: 17 },
+          { id: "pacote-5", name: "Pacote 5 Posts", value: 30, commission: 5, percent: 17 },
+          { id: "pacote-10", name: "Pacote 10 Posts", value: 55, commission: 10, percent: 18 },
+          { id: "pacote-15", name: "Pacote 15 Posts", value: 75, commission: 15, percent: 20 }
+        ]
+      }
+    };
+
+    // --- ELEMENTOS DO DOM ---
+    const loginContainer = document.getElementById('login-container');
+    const appContainer = document.getElementById('app-container');
+    const loginForm = document.getElementById('login-form');
+    const saleForm = document.getElementById('sale-form');
+    const logoutBtn = document.getElementById('logout');
+    const userEmailSpan = document.getElementById('user-email');
+    const salesTableBody = document.getElementById('sales-table-body');
+    const categoriaSelect = document.getElementById('categoria');
+    const servicoSelect = document.getElementById('servico');
+    const valorInfoInput = document.getElementById('valor-info');
+    const emptyState = document.getElementById('empty-state');
+    const loadingState = document.getElementById('loading-state');
+    
+    let currentUser = null;
+    let allSales = [];
+    let salesChartInstance = null;
+    
+    // --- FUNÇÕES AUXILIARES ---
+    const formatCurrency = (value) => value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    const showToast = (message, type = 'info') => {
+        const container = document.getElementById('toast-container');
+        const toast = document.createElement('div');
+        const icons = { success: 'fa-check-circle', error: 'fa-times-circle', warning: 'fa-exclamation-triangle', info: 'fa-info-circle' };
+        
+        toast.className = `toast ${type}`;
+        toast.innerHTML = `<i class="fas ${icons[type]} toast-icon"></i> <span>${message}</span> <button class="toast-close">&times;</button>`;
+        
+        container.appendChild(toast);
+        setTimeout(() => toast.classList.add('show'), 10);
+        
+        const closeBtn = toast.querySelector('.toast-close');
+        const removeToast = () => {
+            toast.classList.remove('show');
+            setTimeout(() => toast.remove(), 400);
+        };
+        closeBtn.addEventListener('click', removeToast);
+        setTimeout(removeToast, 5000);
+    };
+
+    // --- LÓGICA DE SERVIÇOS ---
+    categoriaSelect.addEventListener('change', () => {
+        const categoryId = categoriaSelect.value;
+        servicoSelect.innerHTML = '<option value="">Selecione...</option>';
+        valorInfoInput.value = '';
+        if (categoryId && SERVICES[categoryId]) {
+            servicoSelect.disabled = false;
+            SERVICES[categoryId].items.forEach(item => {
+                const option = document.createElement('option');
+                option.value = item.id;
+                option.textContent = item.name;
+                servicoSelect.appendChild(option);
+            });
+        } else {
+            servicoSelect.disabled = true;
+        }
+    });
+
+    servicoSelect.addEventListener('change', () => {
+        const categoryId = categoriaSelect.value;
+        const serviceId = servicoSelect.value;
+        if (categoryId && serviceId) {
+            const service = SERVICES[categoryId].items.find(item => item.id === serviceId);
+            if (service) {
+                valorInfoInput.value = `Valor: ${formatCurrency(service.value)} / Comissão: ${formatCurrency(service.commission)}`;
+            }
+        } else {
+            valorInfoInput.value = '';
+        }
+    });
+
+    // --- AUTENTICAÇÃO ---
+    auth.onAuthStateChanged(user => {
+        if (user) {
+            currentUser = user;
+            loginContainer.classList.add('hidden');
+            appContainer.classList.remove('hidden');
+            userEmailSpan.textContent = user.email;
+            fetchSales();
+        } else {
+            currentUser = null;
+            loginContainer.classList.remove('hidden');
+            appContainer.classList.add('hidden');
+            allSales = [];
+            renderSales([]);
+        }
+    });
+
+    loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = e.target.email.value;
+        const password = e.target.password.value;
+        const loginBtn = document.getElementById('login-btn');
+        loginBtn.disabled = true;
+        loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Entrando...';
+
+        try {
+            await auth.signInWithEmailAndPassword(email, password);
+            showToast('Login bem-sucedido!', 'success');
+        } catch (error) {
+            showToast(error.message, 'error');
+        } finally {
+            loginBtn.disabled = false;
+            loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Entrar';
+        }
+    });
+
+    logoutBtn.addEventListener('click', () => {
+        auth.signOut();
+        showToast('Você saiu da sua conta.', 'info');
+    });
+
+    // --- LÓGICA DE VENDAS (FIRESTORE) ---
+    const fetchSales = () => {
+        if (!currentUser) return;
+        
+        loadingState.classList.remove('hidden');
+        salesTableBody.innerHTML = '';
+        emptyState.classList.add('hidden');
+
+        db.collection('sales').where('sellerId', '==', currentUser.uid)
+          .orderBy('saleDate', 'desc')
+          .onSnapshot(snapshot => {
+            allSales = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            loadingState.classList.add('hidden');
+            populateMonthFilter();
+            applyFilters();
+          }, error => {
+            console.error("Erro ao buscar vendas: ", error);
+            showToast('Erro ao carregar vendas.', 'error');
+            loadingState.classList.add('hidden');
+          });
+    };
+    
+    saleForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const categoryId = categoria.value;
+        const serviceId = servico.value;
+        const serviceData = SERVICES[categoryId].items.find(item => item.id === serviceId);
+
+        const newSale = {
+            clientName: document.getElementById('cliente').value,
+            company: document.getElementById('empresa').value,
+            clientEmail: document.getElementById('email-cliente').value,
+            clientPhone: document.getElementById('telefone').value,
+            category: SERVICES[categoryId].name,
+            serviceName: serviceData.name,
+            value: serviceData.value,
+            commission: serviceData.commission,
+            observations: document.getElementById('observacoes').value,
+            status: 'pendente', // Status inicial
+            saleDate: firebase.firestore.Timestamp.now(),
+            sellerId: currentUser.uid,
+            sellerEmail: currentUser.email,
+        };
+        
+        const addBtn = document.getElementById('add-sale-btn');
+        addBtn.disabled = true;
+        addBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Registrando...';
+
+        try {
+            await db.collection('sales').add(newSale);
+            showToast('Venda registrada com sucesso!', 'success');
+            saleForm.reset();
+            servicoSelect.innerHTML = '<option value="">Selecione categoria primeiro</option>';
+            servicoSelect.disabled = true;
+            valorInfoInput.value = '';
+        } catch (error) {
+            showToast('Erro ao registrar venda.', 'error');
+            console.error("Erro: ", error);
+        } finally {
+            addBtn.disabled = false;
+            addBtn.innerHTML = '<i class="fas fa-plus"></i> Registrar Venda';
+        }
+    });
+    
+    const deleteSale = async (saleId) => {
+      if (confirm('Tem certeza que deseja excluir esta venda? Esta ação não pode ser desfeita.')) {
+        try {
+          await db.collection('sales').doc(saleId).delete();
+          showToast('Venda excluída com sucesso.', 'success');
+        } catch (error) {
+          showToast('Erro ao excluir venda.', 'error');
+          console.error("Erro ao excluir: ", error);
+        }
+      }
+    };
+
+    // --- RENDERIZAÇÃO E DASHBOARD ---
+    const renderSales = (sales) => {
+        salesTableBody.innerHTML = '';
+        if (sales.length === 0) {
+            emptyState.classList.remove('hidden');
+        } else {
+            emptyState.classList.add('hidden');
+        }
+
+        sales.forEach(sale => {
+            const tr = document.createElement('tr');
+            const saleDate = sale.saleDate.toDate();
+            tr.innerHTML = `
+                <td>${saleDate.toLocaleDateString('pt-BR')}</td>
+                <td>
+                    <div class="service-info">
+                        <span class="service-name">${sale.clientName}</span>
+                        <span class="service-details">${sale.company || ''}</span>
+                    </div>
+                </td>
+                <td>
+                    <div class="service-info">
+                        <span class="service-name">${sale.serviceName}</span>
+                        <span class="service-details">${sale.category}</span>
+                    </div>
+                </td>
+                <td>${formatCurrency(sale.value)}</td>
+                <td>${formatCurrency(sale.commission)}</td>
+                <td><span class="status-badge ${sale.status}">${sale.status}</span></td>
+                <td>
+                    <button class="btn btn-danger btn-small" onclick="deleteSale('${sale.id}')">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            `;
+            salesTableBody.appendChild(tr);
+        });
+        updateDashboard(sales);
+        updateChart(sales);
+    };
+
+    const updateDashboard = (sales) => {
+        const totalVendas = sales.length;
+        const totalComissoes = sales.reduce((sum, sale) => sum + sale.commission, 0);
+        const comissoesPagas = sales.filter(s => s.status === 'paga').reduce((sum, sale) => sum + sale.commission, 0);
+        const comissoesPendentes = sales.filter(s => s.status === 'pendente').reduce((sum, sale) => sum + sale.commission, 0);
+
+        document.getElementById('total-vendas').textContent = totalVendas;
+        document.getElementById('total-comissoes').textContent = totalComissoes.toFixed(2).replace('.', ',');
+        document.getElementById('comissoes-pendentes').textContent = comissoesPendentes.toFixed(2).replace('.', ',');
+        document.getElementById('comissoes-pagas').textContent = comissoesPagas.toFixed(2).replace('.', ',');
+    };
+
+    const updateChart = (sales) => {
+        const salesByMonth = {};
+        const monthNames = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
+
+        sales.forEach(sale => {
+            const month = sale.saleDate.toDate().getMonth();
+            if (!salesByMonth[month]) {
+                salesByMonth[month] = 0;
+            }
+            salesByMonth[month]++;
+        });
+
+        const labels = monthNames;
+        const data = labels.map((_, index) => salesByMonth[index] || 0);
+
+        const chartCtx = document.getElementById('salesChart').getContext('2d');
+        if (salesChartInstance) {
+            salesChartInstance.destroy();
+        }
+
+        salesChartInstance = new Chart(chartCtx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Vendas por Mês',
+                    data: data,
+                    backgroundColor: 'rgba(0, 212, 255, 0.6)',
+                    borderColor: 'rgba(0, 212, 255, 1)',
+                    borderWidth: 1,
+                    borderRadius: 5,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: { beginAtZero: true, ticks: { color: '#a0a0a0' }, grid: { color: 'rgba(255,255,255,0.1)' } },
+                    x: { ticks: { color: '#a0a0a0' }, grid: { color: 'rgba(255,255,255,0.1)' } }
+                },
+                plugins: { legend: { labels: { color: '#ffffff' } } }
+            }
+        });
+    };
+    
+    // --- FILTROS ---
+    const populateMonthFilter = () => {
+      const monthFilter = document.getElementById('filter-month');
+      const existingMonths = new Set();
+      allSales.forEach(sale => {
+        const date = sale.saleDate.toDate();
+        const monthYear = `${date.getMonth()}_${date.getFullYear()}`;
+        existingMonths.add(monthYear);
+      });
+      
+      monthFilter.innerHTML = '<option value="">Todos os meses</option>';
+      const monthNames = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+      
+      Array.from(existingMonths).sort().forEach(my => {
+        const [month, year] = my.split('_');
+        const option = document.createElement('option');
+        option.value = my;
+        option.textContent = `${monthNames[parseInt(month)]} de ${year}`;
+        monthFilter.appendChild(option);
+      });
+    };
+
+    const applyFilters = () => {
+        const statusFilter = document.getElementById('filter-status').value;
+        const categoryFilter = document.getElementById('filter-categoria').value;
+        const monthFilter = document.getElementById('filter-month').value;
+        
+        let filteredSales = allSales;
+        
+        if(statusFilter) {
+          filteredSales = filteredSales.filter(s => s.status === statusFilter);
+        }
+
+        if(categoryFilter) {
+          const categoryName = SERVICES[categoryFilter].name;
+          filteredSales = filteredSales.filter(s => s.category === categoryName);
+        }
+
+        if(monthFilter) {
+          const [month, year] = monthFilter.split('_').map(Number);
+          filteredSales = filteredSales.filter(s => {
+            const saleDate = s.saleDate.toDate();
+            return saleDate.getMonth() === month && saleDate.getFullYear() === year;
+          });
+        }
+        
+        renderSales(filteredSales);
+    };
+
+    document.getElementById('filter-status').addEventListener('change', applyFilters);
+    document.getElementById('filter-categoria').addEventListener('change', applyFilters);
+    document.getElementById('filter-month').addEventListener('change', applyFilters);
+    
+    document.getElementById('clear-filters').addEventListener('click', () => {
+      document.getElementById('filter-status').value = '';
+      document.getElementById('filter-categoria').value = '';
+      document.getElementById('filter-month').value = '';
+      applyFilters();
+    });
+
+  </script>
+</body>
+</html>
