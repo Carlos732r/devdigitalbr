@@ -83,17 +83,19 @@
       display: flex;
       flex-direction: column;
       gap: 10px;
+      width: 350px;
+      max-width: 90%;
     }
 
     .toast {
-      min-width: 350px;
+      width: 100%;
       padding: 15px 20px;
       border-radius: 12px;
       color: white;
       font-weight: 600;
       box-shadow: 0 8px 32px rgba(0,0,0,0.3);
       backdrop-filter: blur(10px);
-      transform: translateX(400px);
+      transform: translateX(120%);
       opacity: 0;
       transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
       display: flex;
@@ -107,13 +109,6 @@
     .toast.error { background: linear-gradient(135deg, rgba(220, 53, 69, 0.95), rgba(176, 42, 55, 0.95)); border-left-color: var(--danger-color); }
     .toast.info { background: linear-gradient(135deg, rgba(23, 162, 184, 0.95), rgba(13, 110, 253, 0.95)); border-left-color: var(--info-color); }
     .toast .toast-icon { font-size: 1.2rem; }
-    .toast .toast-close {
-      margin-left: auto; background: none; border: none; color: inherit;
-      font-size: 1.1rem; cursor: pointer; opacity: 0.7; padding: 0;
-      width: 20px; height: 20px; display: flex; align-items: center;
-      justify-content: center; transition: opacity 0.2s;
-    }
-    .toast .toast-close:hover { opacity: 1; }
 
     .loading { display: flex; justify-content: center; align-items: center; padding: 2rem; color: var(--text-gray); }
     .loading i { animation: spin 1s linear infinite; margin-right: 0.5rem; }
@@ -132,120 +127,61 @@
       gap: 1rem;
     }
 
-    .logo-container { 
-      display: flex; 
-      align-items: center; 
-      gap: 1rem;
-    }
-    
+    .logo-container { display: flex; align-items: center; gap: 1rem; }
     .logo-image {
-      width: 60px;
-      height: 60px;
-      border-radius: var(--border-radius);
-      background: var(--gradient-1);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 4px 15px rgba(0,212,255,0.3);
-      overflow: hidden;
+      width: 60px; height: 60px; border-radius: var(--border-radius); background: var(--gradient-1);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 15px rgba(0,212,255,0.3); overflow: hidden;
     }
-    
-    .logo-image img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-    }
-    
+    .logo-image img { width: 100%; height: 100%; object-fit: contain; }
     .logo-text {
-      font-size: 1.3rem;
-      font-weight: 700;
-      background: var(--gradient-1);
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
+      font-size: 1.3rem; font-weight: 700; background: var(--gradient-1);
+      -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
     }
 
     .admin-badge {
       background: linear-gradient(135deg, #dc3545, #c82333);
-      padding: 0.4rem 1rem;
-      border-radius: 20px;
-      font-size: 0.85rem;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
+      padding: 0.4rem 1rem; border-radius: 20px; font-size: 0.85rem; font-weight: 600;
+      display: flex; align-items: center; gap: 0.5rem;
       box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
     }
 
     .container { max-width: 1600px; margin: 2rem auto; padding: 0 1rem; }
     .card {
-      background: var(--gradient-2);
-      border-radius: 20px;
-      padding: 2rem;
-      margin-bottom: 2rem;
-      border: 1px solid rgba(255,255,255,0.1);
-      box-shadow: var(--box-shadow);
-      backdrop-filter: blur(10px);
+      background: var(--gradient-2); border-radius: 20px; padding: 2rem; margin-bottom: 2rem;
+      border: 1px solid rgba(255,255,255,0.1); box-shadow: var(--box-shadow); backdrop-filter: blur(10px);
     }
 
     .login-container { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem; }
     .login-card {
-      background: var(--gradient-2);
-      padding: 3rem;
-      border-radius: 25px;
-      border: 1px solid rgba(255,255,255,0.1);
-      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
-      backdrop-filter: blur(20px);
-      width: 100%;
-      max-width: 400px;
-      text-align: center;
+      background: var(--gradient-2); padding: 3rem; border-radius: 25px; border: 1px solid rgba(255,255,255,0.1);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4); backdrop-filter: blur(20px);
+      width: 100%; max-width: 400px; text-align: center;
     }
 
     .login-title {
-      font-size: 2rem; font-weight: 700; margin-bottom: 2rem;
-      background: var(--gradient-1);
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
+      font-size: 2rem; font-weight: 700; margin-bottom: 2rem; background: var(--gradient-1);
+      -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
       display: flex; align-items: center; justify-content: center; gap: 0.5rem;
     }
 
     .form-group { margin-bottom: 1.5rem; text-align: left; }
     .form-group label { display: block; margin-bottom: 0.5rem; color: var(--text-light); font-weight: 600; }
     .form-control {
-      width: 100%; padding: 1rem;
-      border: 1px solid rgba(255,255,255,0.2);
-      border-radius: 12px;
-      background: rgba(255,255,255,0.05);
-      color: var(--text-light);
-      font-size: 1rem;
-      transition: var(--transition);
-      backdrop-filter: blur(10px);
+      width: 100%; padding: 1rem; border: 1px solid rgba(255,255,255,0.2); border-radius: 12px;
+      background: rgba(255,255,255,0.05); color: var(--text-light); font-size: 1rem;
+      transition: var(--transition); backdrop-filter: blur(10px);
     }
     .form-control:focus {
-      outline: none;
-      border-color: var(--primary-color);
-      box-shadow: 0 0 0 2px rgba(0,212,255,0.2);
+      outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 2px rgba(0,212,255,0.2);
       background: rgba(255,255,255,0.08);
     }
-    .form-control option {
-      background: white;
-      color: var(--secondary-color);
-    }
+    .form-control option { background: white; color: var(--secondary-color); }
 
     .btn {
-      padding: 1rem 2rem;
-      border: none;
-      border-radius: 50px;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: var(--transition);
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      text-decoration: none;
+      padding: 1rem 2rem; border: none; border-radius: 50px; font-size: 1rem; font-weight: 600;
+      cursor: pointer; transition: var(--transition); display: inline-flex;
+      align-items: center; justify-content: center; gap: 0.5rem; text-decoration: none;
     }
 
     .btn:disabled { opacity: 0.6; cursor: not-allowed; }
@@ -255,33 +191,15 @@
     .btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
 
     .page-title { 
-      text-align:center; 
-      font-size:2.5rem; 
-      font-weight:700; 
-      margin-bottom:2rem; 
-      display:flex; 
-      align-items:center; 
-      justify-content:center; 
-      gap:1rem;
-      flex-wrap: wrap;
+      text-align:center; font-size:2.5rem; font-weight:700; margin-bottom:2rem; 
+      display:flex; align-items:center; justify-content:center; gap:1rem; flex-wrap: wrap;
     }
-    .page-title .highlight { 
-      background: var(--gradient-1); 
-      -webkit-background-clip: text; 
-      background-clip: text; 
-      -webkit-text-fill-color: transparent; 
-    }
+    .page-title .highlight { background: var(--gradient-1); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
 
-    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
     .stat-card {
-      background: var(--gradient-2);
-      padding: 1.5rem;
-      border-radius: 20px;
-      text-align: center;
-      border: 1px solid rgba(255,255,255,0.1);
-      position: relative;
-      overflow: hidden;
-      transition: var(--transition);
+      background: var(--gradient-2); padding: 1.5rem; border-radius: 20px; text-align: center;
+      border: 1px solid rgba(255,255,255,0.1); position: relative; overflow: hidden; transition: var(--transition);
     }
     .stat-card:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
     
@@ -304,34 +222,35 @@
     .table th { padding: 1rem; text-align: center; font-weight: 600; color: var(--secondary-color); font-size: 0.95rem; }
     .table td { padding: 1rem; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); }
     .table tbody tr:hover { background: rgba(0,212,255,0.08); }
-    .table .form-control { padding: 0.5rem; background: rgba(0,0,0,0.2); }
+    .table .form-control { padding: 0.5rem; background: rgba(0,0,0,0.2); border-radius: 8px; font-size: 0.9rem; }
     .table .form-control option { background: #333; color: white; }
 
     .empty-state { text-align: center; padding: 3rem; color: var(--text-gray); }
     .empty-state i { font-size: 4rem; margin-bottom: 1rem; color: var(--primary-color); opacity: 0.5; }
 
     .filters-section {
-      background: var(--gradient-2);
-      padding: 1.5rem;
-      border-radius: 20px;
-      border: 1px solid rgba(255,255,255,0.1);
-      margin-bottom: 2rem;
-      display: flex;
-      gap: 1rem;
-      align-items: end;
-      flex-wrap: wrap;
+      background: var(--gradient-2); padding: 1.5rem; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1);
+      margin-bottom: 2rem; display: flex; gap: 1rem; align-items: end; flex-wrap: wrap;
     }
     .filter-group { flex: 1; min-width: 180px; }
 
     @media (max-width: 1200px) {
       .charts-grid { grid-template-columns: 1fr; }
     }
+    @media (max-width: 992px) {
+        .stats-grid { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+        .table .column-hide-tablet { display: none; }
+    }
     @media (max-width: 768px) {
-      .header, .container { padding: 1rem; }
+      .header { flex-direction: column; align-items: stretch; padding: 1rem; }
+      .admin-badge { justify-content: center; }
+      .container { padding: 0 1rem; }
       .page-title { font-size: 1.8rem; }
-      .stats-grid { grid-template-columns: 1fr; }
+      .stats-grid, .charts-grid { grid-template-columns: 1fr; }
       .filters-section { flex-direction: column; align-items: stretch; }
-      .table th, .table td { padding: 0.6rem 0.4rem; font-size: 0.8rem; }
+      .table th, .table td { padding: 0.8rem 0.5rem; font-size: 0.9rem; }
+      .table .column-hide-mobile { display: none; }
+      .toast-container { top: 10px; right: 10px; left: 10px; width: auto; }
     }
   </style>
 </head>
@@ -341,6 +260,12 @@
   <div id="login-container" class="login-container">
     <div class="login-card fade-in">
       <div class="login-title"><i class="fas fa-user-shield"></i> Painel Admin</div>
+
+      <div style="background: rgba(220, 53, 69, 0.1); border: 1px solid rgba(220, 53, 69, 0.3); border-radius: 10px; padding: 1rem; margin-bottom: 1.5rem; color: #dc3545; font-size: 0.9rem; text-align: left;">
+        <i class="fas fa-exclamation-triangle"></i> <strong>Acesso Ultra Restrito</strong><br>
+        Somente o administrador principal pode acessar este painel.
+      </div>
+
       <form id="login-form">
         <div class="form-group">
           <label for="email">Email de Administrador</label>
@@ -376,10 +301,10 @@
       <h1 class="page-title"><i class="fas fa-tachometer-alt"></i> Dashboard <span class="highlight">Geral</span></h1>
       
       <div class="stats-grid">
-        <div class="stat-card"><div class="stat-label">Total de Vendas</div><div class="stat-value" id="total-vendas">0</div></div>
-        <div class="stat-card"><div class="stat-label">Faturamento Total</div><div class="stat-value" id="total-faturamento">R$ 0,00</div></div>
-        <div class="stat-card"><div class="stat-label">Comissões a Pagar</div><div class="stat-value" id="comissoes-pendentes">R$ 0,00</div></div>
-        <div class="stat-card"><div class="stat-label">Total de Vendedores</div><div class="stat-value" id="total-vendedores">0</div></div>
+        <div class="stat-card"><div class="stat-label">Faturamento Bruto</div><div class="stat-value" id="total-faturamento">R$ 0,00</div></div>
+        <div class="stat-card"><div class="stat-label">Comissões Pagas</div><div class="stat-value" id="comissoes-pagas">R$ 0,00</div></div>
+        <div class="stat-card"><div class="stat-label">Lucro Líquido</div><div class="stat-value" id="total-lucro" style="color: var(--success-color);">R$ 0,00</div></div>
+        <div class="stat-card"><div class="stat-label">Comissões a Pagar</div><div class="stat-value" id="comissoes-pendentes" style="color: var(--warning-color);">R$ 0,00</div></div>
       </div>
       
       <div class="charts-grid">
@@ -391,7 +316,7 @@
             <h3><i class="fas fa-trophy"></i> Ranking de Vendedores</h3>
             <div id="ranking-container">
                 <ul class="ranking-list" id="ranking-list"></ul>
-                <div id="ranking-empty" class="empty-state hidden"><i class="fas fa-users"></i><p>Nenhum dado para o ranking.</p></div>
+                <div id="ranking-empty" class="empty-state hidden"><i class="fas fa-users"></i><p>Nenhum dado.</p></div>
             </div>
         </div>
       </div>
@@ -410,13 +335,20 @@
           <table class="table">
             <thead>
               <tr>
-                <th>Data</th><th>Vendedor</th><th>Cliente</th><th>Serviço</th><th>Valor</th><th>Comissão</th><th>Status</th><th>Ações</th>
+                <th class="column-hide-mobile">Data</th>
+                <th>Vendedor</th>
+                <th>Cliente</th>
+                <th class="column-hide-tablet">Serviço</th>
+                <th>Valor</th>
+                <th>Comissão</th>
+                <th>Status</th>
+                <th>Ações</th>
               </tr>
             </thead>
             <tbody id="sales-table-body"></tbody>
           </table>
           <div id="loading-state" class="loading hidden"><i class="fas fa-spinner"></i> Carregando...</div>
-          <div id="empty-state" class="empty-state hidden"><i class="fas fa-file-invoice-dollar"></i><h3>Nenhuma venda encontrada</h3><p>Aguardando registros dos vendedores ou ajuste os filtros.</p></div>
+          <div id="empty-state" class="empty-state hidden"><i class="fas fa-file-invoice-dollar"></i><h3>Nenhuma venda encontrada</h3><p>Aguardando registros ou ajuste os filtros.</p></div>
         </div>
       </div>
     </div>
@@ -435,7 +367,6 @@
 
     let allSales = [];
     let salesChartInstance = null;
-    let categoryChartInstance = null;
 
     // --- FUNÇÕES AUXILIARES ---
     const formatCurrency = (value) => value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
@@ -456,9 +387,20 @@
         }, 5000);
     };
 
-    // --- AUTENTICAÇÃO ---
+    // --- AUTENTICAÇÃO ATUALIZADA ---
+    const ADMIN_EMAIL = 'borgescarlos030@gmail.com'; // SEU EMAIL ADMIN
     auth.onAuthStateChanged(user => {
         if (user) {
+            // 🔒 BLOQUEIO: Verifica se é você (admin)
+            if (user.email !== ADMIN_EMAIL) {
+                console.warn('🚫 Acesso negado para:', user.email);
+                // Faz logout imediatamente
+                auth.signOut().then(() => {
+                    showToast('🚫 Acesso negado! Apenas administradores podem acessar este painel.', 'error');
+                });
+                return; // Para aqui
+            }
+            // ✅ É você - carrega o painel
             loginContainer.classList.add('hidden');
             appContainer.classList.remove('hidden');
             document.getElementById('admin-email').textContent = user.email;
@@ -540,10 +482,10 @@
             const tr = document.createElement('tr');
             const saleDate = sale.saleDate.toDate();
             tr.innerHTML = `
-                <td>${saleDate.toLocaleDateString('pt-BR')}</td>
-                <td>${sale.sellerEmail}</td>
+                <td class="column-hide-mobile">${saleDate.toLocaleDateString('pt-BR')}</td>
+                <td>${sale.sellerEmail.split('@')[0]}</td>
                 <td>${sale.clientName}</td>
-                <td>${sale.serviceName}</td>
+                <td class="column-hide-tablet">${sale.serviceName}</td>
                 <td>${formatCurrency(sale.value)}</td>
                 <td>${formatCurrency(sale.commission)}</td>
                 <td>
@@ -559,19 +501,19 @@
         });
         updateDashboard(sales);
         updateCharts(sales);
-        updateRanking(sales);
+        updateRanking(allSales);
     };
 
     const updateDashboard = (sales) => {
-        const totalVendas = sales.length;
         const totalFaturamento = sales.reduce((sum, s) => sum + s.value, 0);
+        const comissoesPagas = sales.filter(s => s.status === 'paga').reduce((sum, s) => sum + s.commission, 0);
+        const lucroLiquido = totalFaturamento - comissoesPagas;
         const comissoesPendentes = sales.filter(s => s.status !== 'paga').reduce((sum, s) => sum + s.commission, 0);
-        const totalVendedores = new Set(sales.map(s => s.sellerId)).size;
 
-        document.getElementById('total-vendas').textContent = totalVendas;
         document.getElementById('total-faturamento').textContent = formatCurrency(totalFaturamento);
+        document.getElementById('comissoes-pagas').textContent = formatCurrency(comissoesPagas);
+        document.getElementById('total-lucro').textContent = formatCurrency(lucroLiquido);
         document.getElementById('comissoes-pendentes').textContent = formatCurrency(comissoesPendentes);
-        document.getElementById('total-vendedores').textContent = totalVendedores;
     };
     
     const updateRanking = (sales) => {
@@ -638,17 +580,29 @@
         const months = [...new Set(allSales.map(s => {
             const d = s.saleDate.toDate();
             return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
-        }))];
+        }))].sort().reverse();
+        
+        const monthNames = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
 
-        const populate = (elId, data, defaultLabel) => {
+        const populate = (elId, data, defaultLabel, isMonth = false) => {
             const select = document.getElementById(elId);
             select.innerHTML = `<option value="">${defaultLabel}</option>`;
-            data.forEach(item => select.innerHTML += `<option value="${item}">${item}</option>`);
+            data.forEach(item => {
+                const option = document.createElement('option');
+                option.value = item;
+                if(isMonth) {
+                    const [year, monthNum] = item.split('-');
+                    option.textContent = `${monthNames[parseInt(monthNum)-1]} de ${year}`;
+                } else {
+                    option.textContent = item;
+                }
+                select.appendChild(option);
+            });
         };
 
         populate('filter-seller', sellers, 'Todos Vendedores');
         populate('filter-category', categories, 'Todas Categorias');
-        populate('filter-month', months, 'Todos os Meses');
+        populate('filter-month', months, 'Todos os Meses', true);
     };
 
     const applyFilters = () => {
