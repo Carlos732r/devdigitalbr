@@ -232,6 +232,13 @@
     }
     .form-control::placeholder { color: var(--text-gray); }
 
+    /* --- CORREÇÃO APLICADA AQUI --- */
+    .form-control option {
+      background: white;
+      color: var(--secondary-color);
+    }
+    /* --- FIM DA CORREÇÃO --- */
+
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; }
     .form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; }
 
