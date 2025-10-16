@@ -626,6 +626,8 @@
     let currentUser = null;
     let allSales = [];
     let salesChartInstance = null;
+    // NOVA VARIÁVEL DE CONTROLE
+    let welcomeMessageShown = false;
     
     // --- FUNÇÕES AUXILIARES ---
     const formatCurrency = (value) => value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
@@ -687,6 +689,16 @@
             loginContainer.classList.add('hidden');
             appContainer.classList.remove('hidden');
             userEmailSpan.textContent = user.email;
+
+            // --- LÓGICA DE BOAS-VINDAS ---
+            if (!welcomeMessageShown) {
+                const userName = user.email.split('@')[0];
+                const capitalizedUserName = userName.charAt(0).toUpperCase() + userName.slice(1);
+                showToast(`Bem-vindo, ${capitalizedUserName}! 👋`, 'info');
+                welcomeMessageShown = true; // Marca que a mensagem foi exibida
+            }
+            // --- FIM DA NOVA LÓGICA ---
+
             fetchSales();
         } else {
             currentUser = null;
@@ -694,6 +706,7 @@
             appContainer.classList.add('hidden');
             allSales = [];
             renderSales([]);
+            welcomeMessageShown = false; // Reseta a flag no logout
         }
     });
 
@@ -707,7 +720,7 @@
 
         try {
             await auth.signInWithEmailAndPassword(email, password);
-            showToast('Login bem-sucedido!', 'success');
+            // O toast de "login bem-sucedido" foi removido para dar lugar ao de boas-vindas
         } catch (error) {
             showToast(error.message, 'error');
         } finally {
