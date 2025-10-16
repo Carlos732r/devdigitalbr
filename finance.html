@@ -520,24 +520,29 @@
 
   <div id="login-container" class="login-container">
     <div class="login-card fade-in">
-      <div class="login-title"><i class="fas fa-lock"></i> Acesso Seguro</div>
-      <form id="login-form">
-        <div class="form-group">
-          <label for="email">Email</label>
-          <input type="email" id="email" class="form-control" placeholder="seuemail@exemplo.com" required>
+        <div class="login-title">
+            <i class="fas fa-shield-alt"></i> Área Administrativa
         </div>
-        <div class="form-group">
-          <label for="password">Senha</label>
-          <input type="password" id="password" class="form-control" placeholder="Digite sua senha" required>
+        <div style="background: rgba(255,193,7,0.1); border: 1px solid rgba(255,193,7,0.3); border-radius: 10px; padding: 1rem; margin-bottom: 1.5rem; color: #ffc107; font-size: 0.9rem;">
+            <i class="fas fa-exclamation-triangle"></i> <strong>Acesso Restrito</strong><br>
+            Apenas administradores autorizados
         </div>
-        <button type="submit" class="btn btn-primary" style="width:100%;" id="login-btn"><i class="fas fa-sign-in-alt"></i> Entrar</button> 
-     <br> <br>
-       <p><a href="vendas.html" style="color: var(--primary-color); text-decoration: none; transition: var(--transition);" onmouseover="this.style.color='var(--text-light)'" onmouseout="this.style.color='var(--primary-color)'">Acesso Vendas</a></p>
-     <br>
-      <p><a href="admin_vendas.html" style="color: var(--primary-color); text-decoration: none; transition: var(--transition);" onmouseover="this.style.color='var(--text-light)'" onmouseout="this.style.color='var(--primary-color)'">Administração</a></p>
-      <br>
-      </form>
-    
+        <form id="login-form">
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" class="form-control" placeholder="seuemail@exemplo.com" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Senha</label>
+                <input type="password" id="password" class="form-control" placeholder="Digite sua senha" required>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width:100%;" id="login-btn"><i class="fas fa-sign-in-alt"></i> Entrar</button> 
+            <br> <br>
+            <p><a href="vendas.html" style="color: var(--primary-color); text-decoration: none; transition: var(--transition);" onmouseover="this.style.color='var(--text-light)'" onmouseout="this.style.color='var(--primary-color)'">Acesso Vendas</a></p>
+            <br>
+            <p><a href="admin_vendas.html" style="color: var(--primary-color); text-decoration: none; transition: var(--transition);" onmouseover="this.style.color='var(--text-light)'" onmouseout="this.style.color='var(--primary-color)'">Administração</a></p>
+            <br>
+        </form>
     </div>
   </div>
 
@@ -691,7 +696,7 @@
     const logoutBtn = document.getElementById("logout");
     const loadingState = document.getElementById("loading-state");
     const tableBody = document.getElementById("transaction-table-body");
-    const transactionForm = document.getElementById("transaction-form"); // <-- LINHA ADICIONADA
+    const transactionForm = document.getElementById("transaction-form"); 
     const emptyState = document.getElementById("empty-state");
     const totalReceitasEl = document.getElementById("total-receitas");
     const totalDespesasEl = document.getElementById("total-despesas");
@@ -706,6 +711,47 @@
     const monthDespesasEl = document.getElementById("month-despesas");
     const monthProfitEl = document.getElementById("month-profit");
 
+    // --- NOVO CÓDIGO DE PROTEÇÃO ---
+    const ADMIN_EMAIL = 'borgescarlos030@gmail.com'; // Seu email único
+
+    auth.onAuthStateChanged(async (user) => {
+        if (!user) {
+            // Não logado - mostra tela de login
+            loginContainer.classList.remove('hidden');
+            appContainer.classList.add('hidden');
+            return;
+        }
+
+        // BLOQUEIO: Se não for você, expulsa imediatamente
+        if (user.email !== ADMIN_EMAIL) {
+            console.warn('🚫 Tentativa de acesso não autorizado:', user.email);
+            
+            // Esconde tudo
+            loginContainer.classList.add('hidden');
+            appContainer.classList.add('hidden');
+            
+            // Mostra alerta e redireciona
+            alert('🚫 ACESSO NEGADO\n\nEste sistema é exclusivo для administradores.\n\nVocê será redirecionado.');
+            
+            auth.signOut().then(() => {
+                window.location.href = 'vendas.html';
+            });
+            
+            return; // Para tudo aqui
+        }
+
+        // ✅ É VOCÊ - Carrega o sistema normalmente
+        currentUser = user;
+        loginContainer.classList.add('hidden');
+        appContainer.classList.remove('hidden');
+        
+        // Carrega suas transações
+        const connected = await testFirebaseConnection();
+        if (connected) {
+            await loadTransactions();
+        }
+    });
+    // --- FIM DO NOVO CÓDIGO ---
 
     function showToast(message, type = 'success', duration = 4000) {
         const toastContainer = document.getElementById('toast-container');
@@ -749,25 +795,6 @@
             }, 2000);
         }
     }
-
-    auth.onAuthStateChanged(async (user) => {
-        if (user) {
-            currentUser = user;
-            loginContainer.classList.add("hidden");
-            appContainer.classList.remove("hidden");
-            
-            const connected = await testFirebaseConnection();
-            if (connected) {
-                await loadTransactions();
-            }
-        } else {
-            currentUser = null;
-            loginContainer.classList.remove("hidden");
-            appContainer.classList.add("hidden");
-            transactions = [];
-            filteredTransactions = [];
-        }
-    });
 
     loginForm.addEventListener("submit", async (e) => {
         e.preventDefault();
@@ -1026,7 +1053,7 @@
             }
         }
     }
-  
+ 
     function updateMonthlyProfitCard() {
         const selectedMonth = filterMonthEl.value;
         
