@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dev Digital BR - Painel Admin Vendas</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBvos9nCRithcUX768xuwQZ70p1_xgmKOg",
+      authDomain: "gestao-financeira-9e033.firebaseapp.com",
+      projectId: "gestao-financeira-9e033",
+      storageBucket: "gestao-financeira-9e033.firebasestorage.app",
+      messagingSenderId: "694364024644",
+      appId: "1:694364024644:web:1758bd0d4a47b71b93b111",
+      measurementId: "G-PNL027GT4B"
+    };
+
+    let db, auth;
+
+    try {
+      firebase.initializeApp(firebaseConfig);
+      db = firebase.firestore();
+      auth = firebase.auth();
+      
+      db.settings({
+        cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED
+      });
+      
+      console.log("✅ Firebase (Admin) inicializado com sucesso!");
+        
+    } catch (error) {
+      console.error("❌ Erro na inicialização do Firebase (Admin):", error);
+    }
+  </script>
+
+  <style>
+    :root {
+      --primary-color: #00d4ff;
+      --primary-dark: #0099cc;
+      --secondary-color: #0a0a0a;
+      --text-light: #ffffff;
+      --text-gray: #a0a0a0;
+      --gradient-1: linear-gradient(135deg, #00d4ff 0%, #0099cc 50%, #0066aa 100%);
+      --gradient-2: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+      --gradient-bg: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%);
+      --border-radius: 15px;
+      --box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      --transition: all 0.3s ease;
+      --success-color: #25d366;
+      --danger-color: #dc3545;
+      --warning-color: #ffc107;
+      --info-color: #17a2b8;
+      --pending-color: #ffc107;
+      --paid-color: #25d366;
+      --late-color: #dc3545;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--gradient-bg);
+      color: var(--text-light);
+      overflow-x: hidden;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    .hidden { display: none !important; }
+
+    .toast-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .toast {
+      min-width: 350px;
+      padding: 15px 20px;
+      border-radius: 12px;
+      color: white;
+      font-weight: 600;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+      backdrop-filter: blur(10px);
+      transform: translateX(400px);
+      opacity: 0;
+      transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-left: 4px solid;
+    }
+
+    .toast.show { transform: translateX(0); opacity: 1; }
+    .toast.success { background: linear-gradient(135deg, rgba(37, 211, 102, 0.95), rgba(25, 135, 84, 0.95)); border-left-color: var(--success-color); }
+    .toast.error { background: linear-gradient(135deg, rgba(220, 53, 69, 0.95), rgba(176, 42, 55, 0.95)); border-left-color: var(--danger-color); }
+    .toast.info { background: linear-gradient(135deg, rgba(23, 162, 184, 0.95), rgba(13, 110, 253, 0.95)); border-left-color: var(--info-color); }
+    .toast .toast-icon { font-size: 1.2rem; }
+    .toast .toast-close {
+      margin-left: auto; background: none; border: none; color: inherit;
+      font-size: 1.1rem; cursor: pointer; opacity: 0.7; padding: 0;
+      width: 20px; height: 20px; display: flex; align-items: center;
+      justify-content: center; transition: opacity 0.2s;
+    }
+    .toast .toast-close:hover { opacity: 1; }
+
+    .loading { display: flex; justify-content: center; align-items: center; padding: 2rem; color: var(--text-gray); }
+    .loading i { animation: spin 1s linear infinite; margin-right: 0.5rem; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+    .header {
+      background: rgba(10,10,10,0.95);
+      backdrop-filter: blur(10px);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      box-shadow: 0 2px 20px rgba(0,0,0,0.3);
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .logo-container { 
+      display: flex; 
+      align-items: center; 
+      gap: 1rem;
+    }
+    
+    .logo-image {
+      width: 60px;
+      height: 60px;
+      border-radius: var(--border-radius);
+      background: var(--gradient-1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 15px rgba(0,212,255,0.3);
+      overflow: hidden;
+    }
+    
+    .logo-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+    
+    .logo-text {
+      font-size: 1.3rem;
+      font-weight: 700;
+      background: var(--gradient-1);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .admin-badge {
+      background: linear-gradient(135deg, #dc3545, #c82333);
+      padding: 0.4rem 1rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+    }
+
+    .container { max-width: 1600px; margin: 2rem auto; padding: 0 1rem; }
+    .card {
+      background: var(--gradient-2);
+      border-radius: 20px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      border: 1px solid rgba(255,255,255,0.1);
+      box-shadow: var(--box-shadow);
+      backdrop-filter: blur(10px);
+    }
+
+    .login-container { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem; }
+    .login-card {
+      background: var(--gradient-2);
+      padding: 3rem;
+      border-radius: 25px;
+      border: 1px solid rgba(255,255,255,0.1);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+      backdrop-filter: blur(20px);
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+    }
+
+    .login-title {
+      font-size: 2rem; font-weight: 700; margin-bottom: 2rem;
+      background: var(--gradient-1);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+    }
+
+    .form-group { margin-bottom: 1.5rem; text-align: left; }
+    .form-group label { display: block; margin-bottom: 0.5rem; color: var(--text-light); font-weight: 600; }
+    .form-control {
+      width: 100%; padding: 1rem;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 12px;
+      background: rgba(255,255,255,0.05);
+      color: var(--text-light);
+      font-size: 1rem;
+      transition: var(--transition);
+      backdrop-filter: blur(10px);
+    }
+    .form-control:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 2px rgba(0,212,255,0.2);
+      background: rgba(255,255,255,0.08);
+    }
+    .form-control option {
+      background: white;
+      color: var(--secondary-color);
+    }
+
+    .btn {
+      padding: 1rem 2rem;
+      border: none;
+      border-radius: 50px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      text-decoration: none;
+    }
+
+    .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .btn-primary { background: var(--gradient-1); color: var(--secondary-color); }
+    .btn-danger { background: var(--danger-color); color: var(--text-light); }
+    .btn-small { padding: 0.5rem 1rem; font-size: 0.9rem; border-radius: 20px; }
+    .btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+
+    .page-title { 
+      text-align:center; 
+      font-size:2.5rem; 
+      font-weight:700; 
+      margin-bottom:2rem; 
+      display:flex; 
+      align-items:center; 
+      justify-content:center; 
+      gap:1rem;
+      flex-wrap: wrap;
+    }
+    .page-title .highlight { 
+      background: var(--gradient-1); 
+      -webkit-background-clip: text; 
+      background-clip: text; 
+      -webkit-text-fill-color: transparent; 
+    }
+
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+    .stat-card {
+      background: var(--gradient-2);
+      padding: 1.5rem;
+      border-radius: 20px;
+      text-align: center;
+      border: 1px solid rgba(255,255,255,0.1);
+      position: relative;
+      overflow: hidden;
+      transition: var(--transition);
+    }
+    .stat-card:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+    
+    .stat-label { font-size: 0.9rem; color: var(--text-gray); margin-bottom: 0.5rem; }
+    .stat-value { font-size: 1.8rem; font-weight: 700; color: var(--text-light); }
+    
+    .charts-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; margin-bottom: 2rem; }
+    .chart-container { position: relative; height: 350px; }
+    
+    .ranking-list { list-style: none; padding: 0; }
+    .ranking-item { display: flex; align-items: center; justify-content: space-between; padding: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    .ranking-item:last-child { border-bottom: none; }
+    .ranking-info { display: flex; align-items: center; gap: 1rem; }
+    .ranking-pos { font-size: 1.2rem; font-weight: 700; color: var(--primary-color); width: 30px; text-align: center; }
+    .ranking-value { font-weight: 600; font-size: 1.1rem; }
+
+    .table-container { overflow-x: auto; border-radius: var(--border-radius); }
+    .table { width: 100%; border-collapse: collapse; background: rgba(255,255,255,0.02); border-radius: var(--border-radius); overflow: hidden; }
+    .table thead { background: var(--gradient-1); }
+    .table th { padding: 1rem; text-align: center; font-weight: 600; color: var(--secondary-color); font-size: 0.95rem; }
+    .table td { padding: 1rem; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    .table tbody tr:hover { background: rgba(0,212,255,0.08); }
+    .table .form-control { padding: 0.5rem; background: rgba(0,0,0,0.2); }
+    .table .form-control option { background: #333; color: white; }
+
+    .empty-state { text-align: center; padding: 3rem; color: var(--text-gray); }
+    .empty-state i { font-size: 4rem; margin-bottom: 1rem; color: var(--primary-color); opacity: 0.5; }
+
+    .filters-section {
+      background: var(--gradient-2);
+      padding: 1.5rem;
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.1);
+      margin-bottom: 2rem;
+      display: flex;
+      gap: 1rem;
+      align-items: end;
+      flex-wrap: wrap;
+    }
+    .filter-group { flex: 1; min-width: 180px; }
+
+    @media (max-width: 1200px) {
+      .charts-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 768px) {
+      .header, .container { padding: 1rem; }
+      .page-title { font-size: 1.8rem; }
+      .stats-grid { grid-template-columns: 1fr; }
+      .filters-section { flex-direction: column; align-items: stretch; }
+      .table th, .table td { padding: 0.6rem 0.4rem; font-size: 0.8rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="toast-container" id="toast-container"></div>
+
+  <div id="login-container" class="login-container">
+    <div class="login-card fade-in">
+      <div class="login-title"><i class="fas fa-user-shield"></i> Painel Admin</div>
+      <form id="login-form">
+        <div class="form-group">
+          <label for="email">Email de Administrador</label>
+          <input type="email" id="email" class="form-control" placeholder="seuemail@exemplo.com" required>
+        </div>
+        <div class="form-group">
+          <label for="password">Senha</label>
+          <input type="password" id="password" class="form-control" placeholder="Digite sua senha" required>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width:100%;" id="login-btn">
+          <i class="fas fa-sign-in-alt"></i> Entrar
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <div id="app-container" class="hidden">
+    <div class="header">
+      <div class="logo-container">
+        <div class="logo-image"><img src="logo_nome.png" alt="Logo"></div>
+        <div class="logo-text">Painel de Vendas</div>
+      </div>
+      <div class="admin-badge">
+        <i class="fas fa-user-shield"></i>
+        <span id="admin-email"></span>
+      </div>
+      <button class="btn btn-danger btn-small" id="logout">
+        <i class="fas fa-sign-out-alt"></i> Sair
+      </button>
+    </div>
+
+    <div class="container">
+      <h1 class="page-title"><i class="fas fa-tachometer-alt"></i> Dashboard <span class="highlight">Geral</span></h1>
+      
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-label">Total de Vendas</div><div class="stat-value" id="total-vendas">0</div></div>
+        <div class="stat-card"><div class="stat-label">Faturamento Total</div><div class="stat-value" id="total-faturamento">R$ 0,00</div></div>
+        <div class="stat-card"><div class="stat-label">Comissões a Pagar</div><div class="stat-value" id="comissoes-pendentes">R$ 0,00</div></div>
+        <div class="stat-card"><div class="stat-label">Total de Vendedores</div><div class="stat-value" id="total-vendedores">0</div></div>
+      </div>
+      
+      <div class="charts-grid">
+        <div class="card">
+            <h3><i class="fas fa-chart-bar"></i> Vendas por Mês (Todos)</h3>
+            <div class="chart-container"><canvas id="salesChart"></canvas></div>
+        </div>
+        <div class="card">
+            <h3><i class="fas fa-trophy"></i> Ranking de Vendedores</h3>
+            <div id="ranking-container">
+                <ul class="ranking-list" id="ranking-list"></ul>
+                <div id="ranking-empty" class="empty-state hidden"><i class="fas fa-users"></i><p>Nenhum dado para o ranking.</p></div>
+            </div>
+        </div>
+      </div>
+
+      <div class="filters-section">
+        <div class="filter-group"><label>Vendedor</label><select id="filter-seller" class="form-control"></select></div>
+        <div class="filter-group"><label>Status</label><select id="filter-status" class="form-control"><option value="">Todos</option><option value="pendente">Pendente</option><option value="paga">Paga</option><option value="atrasada">Atrasada</option></select></div>
+        <div class="filter-group"><label>Categoria</label><select id="filter-category" class="form-control"></select></div>
+        <div class="filter-group"><label>Mês</label><select id="filter-month" class="form-control"></select></div>
+        <button class="btn btn-danger btn-small" id="clear-filters"><i class="fas fa-times"></i> Limpar</button>
+      </div>
+
+      <div class="card">
+        <h3><i class="fas fa-list-alt"></i> Todas as Vendas</h3>
+        <div class="table-container">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Data</th><th>Vendedor</th><th>Cliente</th><th>Serviço</th><th>Valor</th><th>Comissão</th><th>Status</th><th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="sales-table-body"></tbody>
+          </table>
+          <div id="loading-state" class="loading hidden"><i class="fas fa-spinner"></i> Carregando...</div>
+          <div id="empty-state" class="empty-state hidden"><i class="fas fa-file-invoice-dollar"></i><h3>Nenhuma venda encontrada</h3><p>Aguardando registros dos vendedores ou ajuste os filtros.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    Chart.register(ChartDataLabels);
+    // --- ELEMENTOS DO DOM ---
+    const loginContainer = document.getElementById('login-container');
+    const appContainer = document.getElementById('app-container');
+    const loginForm = document.getElementById('login-form');
+    const logoutBtn = document.getElementById('logout');
+    const salesTableBody = document.getElementById('sales-table-body');
+    const emptyState = document.getElementById('empty-state');
+    const loadingState = document.getElementById('loading-state');
+
+    let allSales = [];
+    let salesChartInstance = null;
+    let categoryChartInstance = null;
+
+    // --- FUNÇÕES AUXILIARES ---
+    const formatCurrency = (value) => value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    const showToast = (message, type = 'info') => {
+        const container = document.getElementById('toast-container');
+        const toast = document.createElement('div');
+        const icons = { success: 'fa-check-circle', error: 'fa-times-circle', info: 'fa-info-circle' };
+        
+        toast.className = `toast ${type}`;
+        toast.innerHTML = `<i class="fas ${icons[type]} toast-icon"></i> <span>${message}</span>`;
+        
+        container.appendChild(toast);
+        setTimeout(() => toast.classList.add('show'), 10);
+        
+        setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => toast.remove(), 400);
+        }, 5000);
+    };
+
+    // --- AUTENTICAÇÃO ---
+    auth.onAuthStateChanged(user => {
+        if (user) {
+            loginContainer.classList.add('hidden');
+            appContainer.classList.remove('hidden');
+            document.getElementById('admin-email').textContent = user.email;
+            fetchAllSales();
+        } else {
+            loginContainer.classList.remove('hidden');
+            appContainer.classList.add('hidden');
+            allSales = [];
+            renderSales([]);
+        }
+    });
+
+    loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const [email, password] = [e.target.email.value, e.target.password.value];
+        const loginBtn = document.getElementById('login-btn');
+        loginBtn.disabled = true;
+        loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Entrando...';
+
+        try {
+            await auth.signInWithEmailAndPassword(email, password);
+            showToast('Login de admin bem-sucedido!', 'success');
+        } catch (error) {
+            showToast(error.message, 'error');
+        } finally {
+            loginBtn.disabled = false;
+            loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Entrar';
+        }
+    });
+
+    logoutBtn.addEventListener('click', () => auth.signOut());
+
+    // --- LÓGICA DE DADOS (FIRESTORE) ---
+    const fetchAllSales = () => {
+        loadingState.classList.remove('hidden');
+        salesTableBody.innerHTML = '';
+        emptyState.classList.add('hidden');
+
+        db.collection('sales').orderBy('saleDate', 'desc').onSnapshot(snapshot => {
+            allSales = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            loadingState.classList.add('hidden');
+            populateFilters();
+            applyFilters();
+        }, error => {
+            console.error("Erro ao buscar vendas:", error);
+            showToast('Erro ao carregar vendas.', 'error');
+            loadingState.classList.add('hidden');
+        });
+    };
+    
+    const updateSaleStatus = async (saleId, newStatus) => {
+      try {
+        await db.collection('sales').doc(saleId).update({ status: newStatus });
+        showToast('Status da venda atualizado!', 'success');
+      } catch (error) {
+        showToast('Erro ao atualizar status.', 'error');
+        console.error("Erro ao atualizar:", error);
+      }
+    };
+    
+    const deleteSale = async (saleId) => {
+      if (confirm('Tem certeza que deseja EXCLUIR esta venda? Esta ação é irreversível.')) {
+        try {
+          await db.collection('sales').doc(saleId).delete();
+          showToast('Venda excluída permanentemente.', 'success');
+        } catch (error) {
+          showToast('Erro ao excluir venda.', 'error');
+          console.error("Erro ao excluir:", error);
+        }
+      }
+    };
+
+    // --- RENDERIZAÇÃO E DASHBOARD ---
+    const renderSales = (sales) => {
+        salesTableBody.innerHTML = '';
+        emptyState.classList.toggle('hidden', sales.length > 0);
+
+        sales.forEach(sale => {
+            const tr = document.createElement('tr');
+            const saleDate = sale.saleDate.toDate();
+            tr.innerHTML = `
+                <td>${saleDate.toLocaleDateString('pt-BR')}</td>
+                <td>${sale.sellerEmail}</td>
+                <td>${sale.clientName}</td>
+                <td>${sale.serviceName}</td>
+                <td>${formatCurrency(sale.value)}</td>
+                <td>${formatCurrency(sale.commission)}</td>
+                <td>
+                    <select class="form-control" onchange="updateSaleStatus('${sale.id}', this.value)">
+                        <option value="pendente" ${sale.status === 'pendente' ? 'selected' : ''}>Pendente</option>
+                        <option value="paga" ${sale.status === 'paga' ? 'selected' : ''}>Paga</option>
+                        <option value="atrasada" ${sale.status === 'atrasada' ? 'selected' : ''}>Atrasada</option>
+                    </select>
+                </td>
+                <td><button class="btn btn-danger btn-small" onclick="deleteSale('${sale.id}')"><i class="fas fa-trash"></i></button></td>
+            `;
+            salesTableBody.appendChild(tr);
+        });
+        updateDashboard(sales);
+        updateCharts(sales);
+        updateRanking(sales);
+    };
+
+    const updateDashboard = (sales) => {
+        const totalVendas = sales.length;
+        const totalFaturamento = sales.reduce((sum, s) => sum + s.value, 0);
+        const comissoesPendentes = sales.filter(s => s.status !== 'paga').reduce((sum, s) => sum + s.commission, 0);
+        const totalVendedores = new Set(sales.map(s => s.sellerId)).size;
+
+        document.getElementById('total-vendas').textContent = totalVendas;
+        document.getElementById('total-faturamento').textContent = formatCurrency(totalFaturamento);
+        document.getElementById('comissoes-pendentes').textContent = formatCurrency(comissoesPendentes);
+        document.getElementById('total-vendedores').textContent = totalVendedores;
+    };
+    
+    const updateRanking = (sales) => {
+      const rankingList = document.getElementById('ranking-list');
+      const rankingEmpty = document.getElementById('ranking-empty');
+      rankingList.innerHTML = '';
+      
+      const salesBySeller = sales.reduce((acc, sale) => {
+        acc[sale.sellerEmail] = (acc[sale.sellerEmail] || 0) + sale.value;
+        return acc;
+      }, {});
+
+      const sortedSellers = Object.entries(salesBySeller).sort((a, b) => b[1] - a[1]);
+      
+      rankingEmpty.classList.toggle('hidden', sortedSellers.length > 0);
+      
+      sortedSellers.slice(0, 5).forEach(([email, total], index) => {
+        const li = document.createElement('li');
+        li.className = 'ranking-item';
+        li.innerHTML = `
+          <div class="ranking-info">
+            <span class="ranking-pos">#${index + 1}</span>
+            <span>${email.split('@')[0]}</span>
+          </div>
+          <span class="ranking-value">${formatCurrency(total)}</span>
+        `;
+        rankingList.appendChild(li);
+      });
+    };
+
+    const updateCharts = (sales) => {
+        const salesByMonth = {};
+        const monthNames = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
+        sales.forEach(sale => {
+            const month = sale.saleDate.toDate().getMonth();
+            salesByMonth[month] = (salesByMonth[month] || 0) + 1;
+        });
+        
+        const salesData = monthNames.map((_, index) => salesByMonth[index] || 0);
+
+        if (salesChartInstance) salesChartInstance.destroy();
+        salesChartInstance = new Chart(document.getElementById('salesChart').getContext('2d'), {
+            type: 'line',
+            data: {
+                labels: monthNames,
+                datasets: [{
+                    label: 'Vendas por Mês',
+                    data: salesData,
+                    backgroundColor: 'rgba(0, 212, 255, 0.2)',
+                    borderColor: 'rgba(0, 212, 255, 1)',
+                    borderWidth: 2,
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } }
+        });
+    };
+    
+    // --- FILTROS ---
+    const populateFilters = () => {
+        const sellers = [...new Set(allSales.map(s => s.sellerEmail))];
+        const categories = [...new Set(allSales.map(s => s.category))];
+        const months = [...new Set(allSales.map(s => {
+            const d = s.saleDate.toDate();
+            return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+        }))];
+
+        const populate = (elId, data, defaultLabel) => {
+            const select = document.getElementById(elId);
+            select.innerHTML = `<option value="">${defaultLabel}</option>`;
+            data.forEach(item => select.innerHTML += `<option value="${item}">${item}</option>`);
+        };
+
+        populate('filter-seller', sellers, 'Todos Vendedores');
+        populate('filter-category', categories, 'Todas Categorias');
+        populate('filter-month', months, 'Todos os Meses');
+    };
+
+    const applyFilters = () => {
+        const seller = document.getElementById('filter-seller').value;
+        const status = document.getElementById('filter-status').value;
+        const category = document.getElementById('filter-category').value;
+        const month = document.getElementById('filter-month').value;
+        
+        const filteredSales = allSales.filter(s => 
+            (!seller || s.sellerEmail === seller) &&
+            (!status || s.status === status) &&
+            (!category || s.category === category) &&
+            (!month || s.saleDate.toDate().toISOString().startsWith(month))
+        );
+        renderSales(filteredSales);
+    };
+
+    document.getElementById('filter-seller').addEventListener('change', applyFilters);
+    document.getElementById('filter-status').addEventListener('change', applyFilters);
+    document.getElementById('filter-category').addEventListener('change', applyFilters);
+    document.getElementById('filter-month').addEventListener('change', applyFilters);
+    
+    document.getElementById('clear-filters').addEventListener('click', () => {
+      document.getElementById('filter-seller').value = '';
+      document.getElementById('filter-status').value = '';
+      document.getElementById('filter-category').value = '';
+      document.getElementById('filter-month').value = '';
+      applyFilters();
+    });
+  </script>
+</body>
+</html>
