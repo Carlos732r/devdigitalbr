@@ -82,17 +82,19 @@
       display: flex;
       flex-direction: column;
       gap: 10px;
+      width: 350px;
+      max-width: 90%;
     }
 
     .toast {
-      min-width: 350px;
+      width: 100%;
       padding: 15px 20px;
       border-radius: 12px;
       color: white;
       font-weight: 600;
       box-shadow: 0 8px 32px rgba(0,0,0,0.3);
       backdrop-filter: blur(10px);
-      transform: translateX(400px);
+      transform: translateX(120%);
       opacity: 0;
       transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
       display: flex;
@@ -150,11 +152,7 @@
       overflow: hidden;
     }
     
-    .logo-image img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-    }
+    .logo-image img { width: 100%; height: 100%; object-fit: contain; }
     
     .logo-text {
       font-size: 1.3rem;
@@ -168,15 +166,21 @@
     .user-info {
       display: flex;
       align-items: center;
-      gap: 1rem;
+      gap: 0.75rem;
       padding: 0.5rem 1rem;
       background: rgba(0,212,255,0.1);
       border-radius: 50px;
       border: 1px solid rgba(0,212,255,0.2);
     }
-
     .user-info i { color: var(--primary-color); }
-    .user-email { color: var(--text-light); font-weight: 600; }
+    .user-email { 
+        color: var(--text-light); 
+        font-weight: 600;
+        max-width: 150px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
 
     .container { max-width: 1400px; margin: 2rem auto; padding: 0 1rem; }
     .card {
@@ -231,13 +235,7 @@
       background: rgba(255,255,255,0.08);
     }
     .form-control::placeholder { color: var(--text-gray); }
-
-    /* --- CORREÇÃO APLICADA AQUI --- */
-    .form-control option {
-      background: white;
-      color: var(--secondary-color);
-    }
-    /* --- FIM DA CORREÇÃO --- */
+    .form-control option { background: white; color: var(--secondary-color); }
 
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; }
     .form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; }
@@ -265,33 +263,15 @@
     .btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
 
     .page-title { 
-      text-align:center; 
-      font-size:2.5rem; 
-      font-weight:700; 
-      margin-bottom:2rem; 
-      display:flex; 
-      align-items:center; 
-      justify-content:center; 
-      gap:1rem;
-      flex-wrap: wrap;
+      text-align:center; font-size:2.5rem; font-weight:700; margin-bottom:2rem; 
+      display:flex; align-items:center; justify-content:center; gap:1rem; flex-wrap: wrap;
     }
-    .page-title .highlight { 
-      background: var(--gradient-1); 
-      -webkit-background-clip: text; 
-      background-clip: text; 
-      -webkit-text-fill-color: transparent; 
-    }
+    .page-title .highlight { background: var(--gradient-1); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
 
     .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
     .stat-card {
-      background: var(--gradient-2);
-      padding: 1.5rem;
-      border-radius: 20px;
-      text-align: center;
-      border: 1px solid rgba(255,255,255,0.1);
-      position: relative;
-      overflow: hidden;
-      transition: var(--transition);
+      background: var(--gradient-2); padding: 1.5rem; border-radius: 20px; text-align: center;
+      border: 1px solid rgba(255,255,255,0.1); position: relative; overflow: hidden; transition: var(--transition);
     }
     .stat-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; }
     .stat-card:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
@@ -315,18 +295,11 @@
     .table thead { background: var(--gradient-1); }
     .table th { padding: 1rem; text-align: center; font-weight: 600; color: var(--secondary-color); font-size: 0.95rem; }
     .table td { padding: 1rem; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); color: var(--text-light); }
-    .table tbody tr { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-    .table tbody tr:hover { background: rgba(0,212,255,0.08); transform: translateX(5px); }
+    .table tbody tr:hover { background: rgba(0,212,255,0.08); }
 
     .status-badge {
-      padding: 0.4rem 0.8rem;
-      border-radius: 20px;
-      font-size: 0.8rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.3rem;
+      padding: 0.4rem 0.8rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600;
+      text-transform: uppercase; display: inline-flex; align-items: center; gap: 0.3rem;
     }
     .status-badge.pendente { background: rgba(255,193,7,0.2); color: var(--pending-color); border: 1px solid rgba(255,193,7,0.3); }
     .status-badge.paga { background: rgba(37,211,102,0.2); color: var(--paid-color); border: 1px solid rgba(37,211,102,0.3); }
@@ -335,60 +308,62 @@
     .empty-state { text-align: center; padding: 3rem; color: var(--text-gray); }
     .empty-state i { font-size: 4rem; margin-bottom: 1rem; color: var(--primary-color); opacity: 0.5; }
 
-    .chart-container {
-      position: relative;
-      height: 300px;
-      margin: 2rem 0;
-    }
+    .chart-container { position: relative; height: 300px; margin: 2rem 0; }
 
     .filters-section {
-      background: var(--gradient-2);
-      padding: 1.5rem;
-      border-radius: 20px;
-      border: 1px solid rgba(255,255,255,0.1);
-      margin-bottom: 2rem;
-      display: flex;
-      gap: 1rem;
-      align-items: end;
-      flex-wrap: wrap;
+      background: var(--gradient-2); padding: 1.5rem; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1);
+      margin-bottom: 2rem; display: flex; gap: 1rem; align-items: end; flex-wrap: wrap;
     }
-
     .filter-group { flex: 1; min-width: 200px; }
-    .filter-group label {
-      display: block;
-      margin-bottom: 0.5rem;
-      color: var(--text-light);
-      font-weight: 600;
-      font-size: 0.9rem;
-    }
+    .filter-group label { display: block; margin-bottom: 0.5rem; color: var(--text-light); font-weight: 600; font-size: 0.9rem; }
 
-    .service-info {
-      display: flex;
-      flex-direction: column;
-      gap: 0.3rem;
-      text-align: left;
-    }
+    .service-info { display: flex; flex-direction: column; gap: 0.3rem; text-align: left; }
     .service-name { font-weight: 600; }
     .service-details { font-size: 0.85rem; color: var(--text-gray); }
 
-    @media (max-width: 768px) {
-      .header { padding: 0.8rem 1rem; }
-      .logo-text { font-size: 1.1rem; }
-      .logo-image { width: 50px; height: 50px; }
-      .user-info { font-size: 0.85rem; }
-      .container { padding: 0 0.8rem; margin: 1rem auto; }
-      .card { padding: 1.2rem; }
-      .page-title { font-size: 1.8rem; }
-      .form-row, .form-row-3 { grid-template-columns: 1fr; }
-      .stats-grid { grid-template-columns: 1fr; }
-      .filters-section { flex-direction: column; }
-      .filter-group { min-width: 100%; }
-      .table th, .table td { padding: 0.6rem 0.4rem; font-size: 0.8rem; }
-      .chart-container { height: 250px; }
-    }
-
     @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
     .fade-in { animation: fadeInUp 0.6s ease-out; }
+
+    /* --- AJUSTES DE RESPONSIVIDADE --- */
+    @media (max-width: 768px) {
+      .header {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 1rem;
+      }
+      .logo-text { font-size: 1.2rem; }
+      .logo-image { width: 50px; height: 50px; }
+      .user-info { font-size: 0.9rem; width: 100%; justify-content: space-between; }
+      .user-email { max-width: 70%; }
+      #logout { width: 100%; margin-top: 0.5rem; }
+
+      .container { padding: 0 1rem; margin: 1.5rem auto; }
+      .card { padding: 1.5rem; }
+      .page-title { font-size: 2rem; }
+      .form-row, .form-row-3 { grid-template-columns: 1fr; gap: 0; }
+      .form-group { margin-bottom: 1rem; }
+      .stats-grid { grid-template-columns: 1fr; }
+      .filters-section { flex-direction: column; align-items: stretch; }
+      .filter-group { min-width: 100%; }
+
+      .table th, .table td { padding: 0.8rem 0.5rem; font-size: 0.9rem; }
+      .chart-container { height: 250px; }
+      
+      .toast-container {
+        top: 10px; right: 10px; left: 10px; width: auto;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .table .column-valor,
+      .table .column-servico {
+        display: none;
+      }
+      .user-email { max-width: 60%; font-size: 0.9rem; }
+      .page-title { font-size: 1.8rem; }
+      .card { padding: 1rem; }
+      .login-card { padding: 2rem; }
+    }
   </style>
 </head>
 <body>
@@ -422,12 +397,14 @@
         <div class="logo-text">Sistema de Vendas</div>
       </div>
       <div class="user-info">
-        <i class="fas fa-user-circle"></i>
-        <span class="user-email" id="user-email"></span>
+        <div>
+          <i class="fas fa-user-circle"></i>
+          <span class="user-email" id="user-email"></span>
+        </div>
+        <button class="btn btn-danger btn-small" id="logout">
+          <i class="fas fa-sign-out-alt"></i> Sair
+        </button>
       </div>
-      <button class="btn btn-danger btn-small" id="logout">
-        <i class="fas fa-sign-out-alt"></i> Sair
-      </button>
     </div>
 
     <div class="container">
@@ -484,8 +461,8 @@
           </div>
           <div class="form-row">
             <div class="form-group">
-              <label for="email-cliente">Email do Cliente</label>
-              <input type="email" id="email-cliente" class="form-control" placeholder="email@cliente.com" required>
+              <label for="email-cliente">Email do Cliente <span class="optional">(opcional)</span></label>
+              <input type="email" id="email-cliente" class="form-control" placeholder="email@cliente.com">
             </div>
             <div class="form-group">
               <label for="telefone">Telefone</label>
@@ -567,8 +544,8 @@
               <tr>
                 <th>Data</th>
                 <th>Cliente</th>
-                <th>Serviço</th>
-                <th>Valor</th>
+                <th class="column-servico">Serviço</th>
+                <th class="column-valor">Valor</th>
                 <th>Comissão</th>
                 <th>Status</th>
                 <th>Ações</th>
@@ -841,13 +818,13 @@
                         <span class="service-details">${sale.company || ''}</span>
                     </div>
                 </td>
-                <td>
+                <td class="column-servico">
                     <div class="service-info">
                         <span class="service-name">${sale.serviceName}</span>
                         <span class="service-details">${sale.category}</span>
                     </div>
                 </td>
-                <td>${formatCurrency(sale.value)}</td>
+                <td class="column-valor">${formatCurrency(sale.value)}</td>
                 <td>${formatCurrency(sale.commission)}</td>
                 <td><span class="status-badge ${sale.status}">${sale.status}</span></td>
                 <td>
