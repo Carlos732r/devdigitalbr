@@ -55,13 +55,26 @@
         }
 
         .header p {
-            font-size: 16px;
+            /* --- MODIFICADO --- Aumentado de 16px para 18px */
+            font-size: 18px; 
             opacity: 0.95;
         }
 
         .progress-container {
             padding: 20px 30px;
             background: #f8f9fa;
+        }
+        
+        /* --- ADICIONADO --- Estilo para a nova mensagem de progresso */
+        .progress-message-dynamic {
+            text-align: center;
+            font-size: 16px;
+            font-weight: 600;
+            color: #0077aa; /* Cor alinhada ao tema */
+            margin-bottom: 12px;
+            height: 20px; /* Reserva espaço para evitar "pulo" na tela */
+            transition: opacity 0.4s ease;
+            opacity: 0; /* Começa invisível */
         }
 
         .progress-text {
@@ -414,9 +427,11 @@
         </div>
 
         <div class="progress-container">
+            <div id="progressMessage" class="progress-message-dynamic"></div>
+            
             <div class="progress-text">
-                <span id="progressLabel">Pergunta 1 de 5</span>
-                <span id="progressPercent">20%</span>
+                <span id="progressLabel">Pergunta 1 de 6</span>
+                <span id="progressPercent">17%</span>
             </div>
             <div class="progress-bar">
                 <div class="progress-fill" id="progressFill"></div>
@@ -424,7 +439,6 @@
         </div>
 
         <div class="content">
-            <!-- Pergunta 1 -->
             <div class="question active" id="q1">
                 <h2 class="question-title">Qual tipo de site você precisa?</h2>
                 <div class="options">
@@ -436,17 +450,12 @@
                         <div class="radio"></div>
                         <div class="option-text">Site Institucional</div>
                     </div>
-                    <div class="option" data-value="loja">
-                        <div class="radio"></div>
-                        <div class="option-text">Loja Online</div>
-                    </div>
                 </div>
                 <div class="buttons">
                     <button class="btn btn-next" id="next1" disabled>Próxima</button>
                 </div>
             </div>
 
-            <!-- Pergunta 2 -->
             <div class="question" id="q2">
                 <h2 class="question-title">Você já tem domínio próprio?</h2>
                 <div class="options">
@@ -465,7 +474,6 @@
                 </div>
             </div>
 
-            <!-- Pergunta 3 -->
             <div class="question" id="q3">
                 <h2 class="question-title">Você já tem logotipo ou identidade visual?</h2>
                 <div class="options">
@@ -484,7 +492,6 @@
                 </div>
             </div>
 
-            <!-- Pergunta 4 -->
             <div class="question" id="q4">
                 <h2 class="question-title">Qual o segmento do seu negócio?</h2>
                 <div class="input-group">
@@ -496,7 +503,6 @@
                 </div>
             </div>
 
-            <!-- Pergunta 5 -->
             <div class="question" id="q5">
                 <h2 class="question-title">Qual seu nome?</h2>
                 <div class="input-group">
@@ -508,7 +514,6 @@
                 </div>
             </div>
 
-            <!-- Pergunta 6 -->
             <div class="question" id="q6">
                 <h2 class="question-title">Qual seu número de WhatsApp?</h2>
                 <div class="input-group">
@@ -520,7 +525,6 @@
                 </div>
             </div>
 
-            <!-- Resultado -->
             <div class="result" id="result">
                 <div class="success-icon"></div>
                 <h2 class="result-title">Perfeito! Temos o plano ideal pro seu site.</h2>
@@ -568,6 +572,26 @@
             document.getElementById('progressFill').style.width = percent + '%';
             document.getElementById('progressLabel').textContent = `Pergunta ${currentQuestion} de ${totalQuestions}`;
             document.getElementById('progressPercent').textContent = Math.round(percent) + '%';
+            
+            // --- MODIFICADO --- Lógica da Mensagem de Progresso ---
+            const messageEl = document.getElementById('progressMessage');
+            let message = '';
+
+            if (currentQuestion >= 2 && currentQuestion <= 4) {
+                message = 'Continue assim!';
+            } else if (currentQuestion === 5) {
+                message = 'Estamos quase lá!';
+            } else if (currentQuestion === 6) {
+                message = 'Última pergunta!';
+            }
+
+            if (message) {
+                messageEl.textContent = message;
+                messageEl.style.opacity = 1;
+            } else {
+                messageEl.style.opacity = 0;
+            }
+            // --- Fim da Lógica da Mensagem ---
         }
 
         // Navegação entre questões
