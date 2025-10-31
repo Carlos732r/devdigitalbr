@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Descubra seu Site Ideal - Dev Digital BR</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #00d4ff 0%, #0099cc 50%, #0066aa 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 600px;
+            width: 100%;
+            overflow: hidden;
+            animation: slideUp 0.5s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            background: linear-gradient(135deg, #00d4ff 0%, #0099cc 50%, #0066aa 100%);
+            padding: 40px 30px;
+            text-align: center;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 16px;
+            opacity: 0.95;
+        }
+
+        .progress-container {
+            padding: 20px 30px;
+            background: #f8f9fa;
+        }
+
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00d4ff 0%, #0099cc 50%, #0066aa 100%);
+            transition: width 0.4s ease;
+            border-radius: 10px;
+        }
+
+        .content {
+            padding: 40px 30px;
+        }
+
+        .question {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .question.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .question-title {
+            font-size: 24px;
+            margin-bottom: 30px;
+            color: #333;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .option {
+            padding: 18px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: white;
+        }
+
+        .option:hover {
+            border-color: #00d4ff;
+            background: #f0fbff;
+            transform: translateX(5px);
+        }
+
+        .option.selected {
+            border-color: #00d4ff;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.08) 0%, rgba(0, 153, 204, 0.08) 50%, rgba(0, 102, 170, 0.08) 100%);
+        }
+
+        .radio {
+            width: 24px;
+            height: 24px;
+            border: 2px solid #ccc;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .option.selected .radio {
+            border-color: #00d4ff;
+        }
+
+        .radio::after {
+            content: '';
+            width: 12px;
+            height: 12px;
+            background: #00d4ff;
+            border-radius: 50%;
+            transform: scale(0);
+            transition: transform 0.2s ease;
+        }
+
+        .option.selected .radio::after {
+            transform: scale(1);
+        }
+
+        .option-text {
+            font-size: 16px;
+            color: #333;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #00d4ff;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-back {
+            background: #f0f0f0;
+            color: #666;
+        }
+
+        .btn-back:hover {
+            background: #e0e0e0;
+        }
+
+        .btn-next {
+            background: linear-gradient(135deg, #00d4ff 0%, #0099cc 50%, #0066aa 100%);
+            color: white;
+        }
+
+        .btn-next:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 212, 255, 0.4);
+        }
+
+        .btn-next:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .result {
+            display: none;
+            text-align: center;
+        }
+
+        .result.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #48d448 0%, #2ca02c 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            animation: scaleIn 0.5s ease;
+        }
+
+        @keyframes scaleIn {
+            from { transform: scale(0); }
+            to { transform: scale(1); }
+        }
+
+        .success-icon::after {
+            content: '✓';
+            font-size: 50px;
+            color: white;
+        }
+
+        .result-title {
+            font-size: 28px;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .result-subtitle {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .plan-card {
+            background: linear-gradient(135deg, #f0fbff 0%, #e6f7ff 100%);
+            border: 3px solid #00d4ff;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .plan-badge {
+            background: #00d4ff;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+
+        .plan-name {
+            font-size: 26px;
+            color: #0099cc;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .plan-price {
+            font-size: 42px;
+            color: #333;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .plan-period {
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .plan-description {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .plan-features {
+            text-align: left;
+            margin: 20px 0;
+        }
+
+        .feature {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .feature::before {
+            content: '✓';
+            color: #48d448;
+            font-weight: bold;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .cta-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .btn-whatsapp {
+            background: linear-gradient(135deg, #00d4ff 0%, #0099cc 50%, #0066aa 100%);
+            color: white;
+            padding: 18px;
+            border-radius: 10px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-whatsapp:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 212, 255, 0.4);
+        }
+
+        .btn-whatsapp.secondary {
+            background: white;
+            color: #0099cc;
+            border: 2px solid #00d4ff;
+        }
+
+        .btn-whatsapp.secondary:hover {
+            background: #f0fbff;
+        }
+
+        .emoji {
+            font-size: 24px;
+        }
+
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .question-title {
+                font-size: 20px;
+            }
+
+            .plan-price {
+                font-size: 36px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Crie seu site profissional em até 48h</h1>
+            <p>sem complicação e com design de alto nível.</p>
+            <p style="opacity: 0.9; margin-top: 10px;">Responda 6 perguntas rápidas e veja a melhor opção pro seu negócio.</p>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-text">
+                <span id="progressLabel">Pergunta 1 de 5</span>
+                <span id="progressPercent">20%</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+        </div>
+
+        <div class="content">
+            <!-- Pergunta 1 -->
+            <div class="question active" id="q1">
+                <h2 class="question-title">Qual tipo de site você precisa?</h2>
+                <div class="options">
+                    <div class="option" data-value="landing">
+                        <div class="radio"></div>
+                        <div class="option-text">Landing Page</div>
+                    </div>
+                    <div class="option" data-value="institucional">
+                        <div class="radio"></div>
+                        <div class="option-text">Site Institucional</div>
+                    </div>
+                    <div class="option" data-value="loja">
+                        <div class="radio"></div>
+                        <div class="option-text">Loja Online</div>
+                    </div>
+                </div>
+                <div class="buttons">
+                    <button class="btn btn-next" id="next1" disabled>Próxima</button>
+                </div>
+            </div>
+
+            <!-- Pergunta 2 -->
+            <div class="question" id="q2">
+                <h2 class="question-title">Você já tem domínio próprio?</h2>
+                <div class="options">
+                    <div class="option" data-value="sim">
+                        <div class="radio"></div>
+                        <div class="option-text">Sim</div>
+                    </div>
+                    <div class="option" data-value="nao">
+                        <div class="radio"></div>
+                        <div class="option-text">Não</div>
+                    </div>
+                </div>
+                <div class="buttons">
+                    <button class="btn btn-back" id="back2">Voltar</button>
+                    <button class="btn btn-next" id="next2" disabled>Próxima</button>
+                </div>
+            </div>
+
+            <!-- Pergunta 3 -->
+            <div class="question" id="q3">
+                <h2 class="question-title">Você já tem logotipo ou identidade visual?</h2>
+                <div class="options">
+                    <div class="option" data-value="sim">
+                        <div class="radio"></div>
+                        <div class="option-text">Sim</div>
+                    </div>
+                    <div class="option" data-value="nao">
+                        <div class="radio"></div>
+                        <div class="option-text">Não</div>
+                    </div>
+                </div>
+                <div class="buttons">
+                    <button class="btn btn-back" id="back3">Voltar</button>
+                    <button class="btn btn-next" id="next3" disabled>Próxima</button>
+                </div>
+            </div>
+
+            <!-- Pergunta 4 -->
+            <div class="question" id="q4">
+                <h2 class="question-title">Qual o segmento do seu negócio?</h2>
+                <div class="input-group">
+                    <input type="text" id="segmento" placeholder="Ex: Tecnologia, Saúde, Educação...">
+                </div>
+                <div class="buttons">
+                    <button class="btn btn-back" id="back4">Voltar</button>
+                    <button class="btn btn-next" id="next4" disabled>Próxima</button>
+                </div>
+            </div>
+
+            <!-- Pergunta 5 -->
+            <div class="question" id="q5">
+                <h2 class="question-title">Qual seu nome?</h2>
+                <div class="input-group">
+                    <input type="text" id="nome" placeholder="Digite seu nome">
+                </div>
+                <div class="buttons">
+                    <button class="btn btn-back" id="back5">Voltar</button>
+                    <button class="btn btn-next" id="next5" disabled>Próxima</button>
+                </div>
+            </div>
+
+            <!-- Pergunta 6 -->
+            <div class="question" id="q6">
+                <h2 class="question-title">Qual seu número de WhatsApp?</h2>
+                <div class="input-group">
+                    <input type="tel" id="whatsapp" placeholder="(15) 99999-9999">
+                </div>
+                <div class="buttons">
+                    <button class="btn btn-back" id="back6">Voltar</button>
+                    <button class="btn btn-next" id="next6" disabled>Ver Resultado</button>
+                </div>
+            </div>
+
+            <!-- Resultado -->
+            <div class="result" id="result">
+                <div class="success-icon"></div>
+                <h2 class="result-title">Perfeito! Temos o plano ideal pro seu site.</h2>
+                <p class="result-subtitle">Seu site completo, moderno e entregue em até 48h.</p>
+
+                <div class="plan-card">
+                    <div class="plan-badge">RECOMENDADO PARA VOCÊ</div>
+                    <div class="plan-name" id="planName"></div>
+                    <div class="plan-price" id="planPrice"></div>
+                    <div class="plan-period" id="planPeriod"></div>
+                    <div class="plan-description" id="planDescription"></div>
+                    <div class="plan-features" id="planFeatures"></div>
+                </div>
+
+                <div class="cta-buttons">
+                    <a href="#" class="btn-whatsapp" id="btnHireNow">
+                        <span class="emoji">🚀</span>
+                        Quero meu site agora
+                    </a>
+                    <a href="#" class="btn-whatsapp secondary" id="btnChatFirst">
+                        <span class="emoji">💬</span>
+                        Prefiro conversar no WhatsApp antes
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const answers = {
+            tipoSite: '',
+            temDominio: '',
+            temLogo: '',
+            segmento: '',
+            nome: '',
+            whatsapp: ''
+        };
+
+        let currentQuestion = 1;
+        const totalQuestions = 6;
+
+        // Atualizar progresso
+        function updateProgress() {
+            const percent = (currentQuestion / totalQuestions) * 100;
+            document.getElementById('progressFill').style.width = percent + '%';
+            document.getElementById('progressLabel').textContent = `Pergunta ${currentQuestion} de ${totalQuestions}`;
+            document.getElementById('progressPercent').textContent = Math.round(percent) + '%';
+        }
+
+        // Navegação entre questões
+        function showQuestion(num) {
+            document.querySelectorAll('.question').forEach(q => q.classList.remove('active'));
+            document.getElementById('q' + num).classList.add('active');
+            currentQuestion = num;
+            updateProgress();
+        }
+
+        // Seleção de opções
+        document.querySelectorAll('.option').forEach(option => {
+            option.addEventListener('click', function() {
+                const parent = this.closest('.question');
+                parent.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+                this.classList.add('selected');
+                
+                const questionId = parent.id;
+                const nextBtn = document.getElementById('next' + questionId.slice(1));
+                nextBtn.disabled = false;
+            });
+        });
+
+        // Pergunta 1
+        document.querySelectorAll('#q1 .option').forEach(opt => {
+            opt.addEventListener('click', function() {
+                answers.tipoSite = this.dataset.value;
+            });
+        });
+
+        document.getElementById('next1').addEventListener('click', () => showQuestion(2));
+
+        // Pergunta 2
+        document.querySelectorAll('#q2 .option').forEach(opt => {
+            opt.addEventListener('click', function() {
+                answers.temDominio = this.dataset.value;
+            });
+        });
+
+        document.getElementById('back2').addEventListener('click', () => showQuestion(1));
+        document.getElementById('next2').addEventListener('click', () => showQuestion(3));
+
+        // Pergunta 3
+        document.querySelectorAll('#q3 .option').forEach(opt => {
+            opt.addEventListener('click', function() {
+                answers.temLogo = this.dataset.value;
+            });
+        });
+
+        document.getElementById('back3').addEventListener('click', () => showQuestion(2));
+        document.getElementById('next3').addEventListener('click', () => showQuestion(4));
+
+        // Pergunta 4
+        const segmentoInput = document.getElementById('segmento');
+        segmentoInput.addEventListener('input', function() {
+            answers.segmento = this.value;
+            document.getElementById('next4').disabled = this.value.trim() === '';
+        });
+
+        document.getElementById('back4').addEventListener('click', () => showQuestion(3));
+        document.getElementById('next4').addEventListener('click', () => showQuestion(5));
+
+        // Pergunta 5
+        const nomeInput = document.getElementById('nome');
+        nomeInput.addEventListener('input', function() {
+            answers.nome = this.value;
+            document.getElementById('next5').disabled = this.value.trim() === '';
+        });
+
+        document.getElementById('back5').addEventListener('click', () => showQuestion(4));
+        document.getElementById('next5').addEventListener('click', () => showQuestion(6));
+
+        // Pergunta 6
+        const whatsappInput = document.getElementById('whatsapp');
+        whatsappInput.addEventListener('input', function() {
+            let value = this.value.replace(/\D/g, '');
+            if (value.length > 0) {
+                if (value.length <= 2) {
+                    value = '(' + value;
+                } else if (value.length <= 7) {
+                    value = '(' + value.slice(0, 2) + ') ' + value.slice(2);
+                } else {
+                    value = '(' + value.slice(0, 2) + ') ' + value.slice(2, 7) + '-' + value.slice(7, 11);
+                }
+            }
+            this.value = value;
+            answers.whatsapp = value.replace(/\D/g, '');
+            document.getElementById('next6').disabled = answers.whatsapp.length < 10;
+        });
+
+        document.getElementById('back6').addEventListener('click', () => showQuestion(5));
+        document.getElementById('next6').addEventListener('click', showResult);
+
+        // Enviar dados para Google Sheets
+        async function sendToGoogleSheets(data) {
+            const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzMZEi0tuXgVkQDu4W9azKaE1h_SaPUJGhZ83K1cpINAE3uGdNNmWpQCqM-7zjTU60g/exec';
+            
+            try {
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                console.log('Dados enviados com sucesso!');
+            } catch (error) {
+                console.error('Erro ao enviar dados:', error);
+            }
+        }
+
+        // Calcular e mostrar resultado
+        function showResult() {
+            document.querySelectorAll('.question').forEach(q => q.classList.remove('active'));
+            document.querySelector('.progress-container').style.display = 'none';
+            
+            let planName, priceMonthly, priceYearly, description, features;
+
+            // Determinar pacote baseado nas respostas
+            const temDominio = answers.temDominio === 'sim';
+            const temLogo = answers.temLogo === 'sim';
+            const isLanding = answers.tipoSite === 'landing';
+
+            if (temDominio && temLogo) {
+                planName = 'Pacote Presença Digital';
+                priceMonthly = isLanding ? 68 : 100;
+                priceYearly = isLanding ? 570 : 1000;
+            } else if (temDominio || temLogo) {
+                planName = 'Pacote Profissional';
+                priceMonthly = isLanding ? 75 : 105;
+                priceYearly = isLanding ? 583 : 1050;
+            } else {
+                planName = 'Pacote Impacto Total';
+                priceMonthly = isLanding ? 85 : 115;
+                priceYearly = isLanding ? 600 : 1100;
+            }
+
+            // Definir descrição
+            if (isLanding) {
+                description = 'Ideal pra quem quer presença online com custo acessível e design profissional.';
+                features = [
+                    'Site responsivo (mobile, tablet e desktop)',
+                    'Design moderno e profissional',
+                    'Até 5 páginas/seções',
+                    'Formulário de contato integrado',
+                    'Integração com WhatsApp',
+                    'Integração com Redes Sociais e Mapa do Google',
+                    'SEO básico configurado',
+                    '1 mudança grátis por mês',
+                    'Hospedagem inclusa',
+                    'Entrega em até 48 horas'
+                ];
+            } else {
+                description = 'Ideal para empresas que precisam de presença digital completa e profissional.';
+                features = [
+                    'Até 5 Páginas (Início, Sobre, Serviços, Portfólio e Contato)',
+                    'Design coeso e estrutura profissional',
+                    'Navegação intuitiva e organizada',
+                    'Site responsivo (mobile, tablet e desktop)',
+                    'Formulário de contato integrado',
+                    'Integração com WhatsApp',
+                    'Integração com Redes Sociais e Mapa do Google',
+                    'SEO básico configurado',
+                    '1 mudança grátis por mês',
+                    'Hospedagem inclusa',
+                    'Entrega em até 48 horas'
+                ];
+            }
+
+            // Preencher informações do plano
+            document.getElementById('planName').textContent = planName;
+            document.getElementById('planPrice').textContent = `R$ ${priceMonthly}`;
+            document.getElementById('planPeriod').textContent = `/mês ou R$ ${priceYearly}/ano`;
+            document.getElementById('planDescription').textContent = description;
+
+            const featuresHTML = features.map(f => `<div class="feature">${f}</div>`).join('');
+            document.getElementById('planFeatures').innerHTML = featuresHTML;
+
+            // Links WhatsApp
+            const whatsNumber = '5515992710295';
+            const tipoSiteNome = answers.tipoSite === 'landing' ? 'Landing Page' : answers.tipoSite === 'institucional' ? 'Site Institucional' : 'Loja Online';
+            
+            const messageHire = `Olá! Meu nome é *${answers.nome}* e acabei de fazer o quiz no site. Quero contratar o *${planName}* para ${tipoSiteNome} no valor de *R$ ${priceMonthly}/mês*. Meu segmento é: ${answers.segmento}`;
+            const messageChat = `Olá! Meu nome é *${answers.nome}* e acabei de fazer o quiz no site. Gostaria de saber mais sobre o *${planName}* para ${tipoSiteNome}. Meu segmento é: ${answers.segmento}`;
+
+            document.getElementById('btnHireNow').href = `https://wa.me/${whatsNumber}?text=${encodeURIComponent(messageHire)}`;
+            document.getElementById('btnChatFirst').href = `https://wa.me/${whatsNumber}?text=${encodeURIComponent(messageChat)}`;
+
+            document.getElementById('result').classList.add('active');
+
+            // Enviar dados para Google Sheets
+            const dataToSend = {
+                timestamp: new Date().toLocaleString('pt-BR'),
+                nome: answers.nome,
+                whatsapp: answers.whatsapp,
+                tipoSite: tipoSiteNome,
+                temDominio: answers.temDominio === 'sim' ? 'Sim' : 'Não',
+                temLogo: answers.temLogo === 'sim' ? 'Sim' : 'Não',
+                segmento: answers.segmento,
+                planoRecomendado: planName,
+                valorMensal: priceMonthly,
+                valorAnual: priceYearly
+            };
+
+            sendToGoogleSheets(dataToSend);
+        }
+
+        // Inicializar
+        updateProgress();
+    </script>
+</body>
+</html>
