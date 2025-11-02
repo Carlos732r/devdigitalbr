@@ -1392,6 +1392,77 @@ fbq('track', 'PageView');
                 grid-template-columns: 1fr;
             }
         }
+    
+        /* ========== QUIZ HERO STYLES (DEV DIGITAL BR) ========== */
+        .quiz-hero-section {
+            position: relative;
+            padding: 4rem 5%;
+            overflow: hidden;
+            background: linear-gradient(180deg, rgba(0,0,0,0.02), rgba(0,0,0,0));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .quiz-background-effects { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+
+        .quiz-circle { position: absolute; border-radius: 50%; opacity: 0.12; filter: blur(18px); transform: translate3d(0,0,0); }
+        .quiz-circle-1 { width: 420px; height: 420px; background: radial-gradient(circle, rgba(0,212,255,0.9) 0%, transparent 60%); top: -180px; right: -120px; }
+        .quiz-circle-2 { width: 340px; height: 340px; background: radial-gradient(circle, rgba(0,153,204,0.85) 0%, transparent 60%); bottom: -160px; left: -100px; }
+        .quiz-circle-3 { width: 280px; height: 280px; background: radial-gradient(circle, rgba(0,212,255,0.6) 0%, transparent 60%); top: 30%; left: 20%; }
+
+        .quiz-floating-icon { position: absolute; width: 56px; height: 56px; border-radius: 12px; display:flex; align-items:center; justify-content:center; background: rgba(255,255,255,0.04); color: var(--primary-color); box-shadow: 0 8px 30px rgba(0,212,255,0.06); }
+        .quiz-icon-1 { top: 12%; left: 8%; transform: rotate(-8deg); }
+        .quiz-icon-2 { top: 8%; right: 14%; transform: rotate(6deg); }
+        .quiz-icon-3 { bottom: 18%; right: 8%; transform: rotate(-4deg); }
+        .quiz-icon-4 { bottom: 22%; left: 12%; transform: rotate(8deg); }
+
+        .quiz-hero-content { position: relative; z-index: 2; max-width: 1100px; width: 100%; display: grid; grid-template-columns: 1fr 420px; gap: 2rem; align-items: center; }
+
+        .quiz-badge { display:inline-flex; gap:0.6rem; align-items:center; background: rgba(255,255,255,0.03); color:var(--primary-color); padding:0.45rem 0.8rem; border-radius: 999px; font-weight:700; border:1px solid rgba(0,212,255,0.06); }
+        .quiz-badge i { background: #00121a; color:var(--primary-color); padding:0.45rem; border-radius:8px; }
+
+        .quiz-hero-title { margin: 0 0 0.6rem 0; }
+        .quiz-title-small { display:block; color:var(--text-gray); font-weight:600; }
+        .quiz-title-big { display:block; font-size: clamp(1.6rem, 3.8vw, 2.6rem); font-weight:900; background: var(--gradient-1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        .quiz-hero-subtitle { color:var(--text-gray); margin-bottom:1rem; }
+
+        .quiz-stats-mini { display:flex; gap:1rem; margin-bottom:1.2rem; }
+        .quiz-stat-mini { display:flex; gap:0.6rem; align-items:center; color:var(--text-gray); font-weight:700; }
+        .quiz-stat-mini i { color: var(--primary-color); font-size:1.1rem; }
+
+    .quiz-cta-button { position:relative; overflow:hidden; display:inline-flex; align-items:center; gap:1rem; padding:0.9rem 1.1rem; background: linear-gradient(90deg,var(--primary-color),var(--primary-dark)); color:#00121a; font-weight:800; border-radius:14px; text-decoration:none; box-shadow: 0 18px 40px rgba(0,212,255,0.15); animation: quiz-pulse 2s ease-in-out infinite; }
+        .quiz-cta-button:hover { animation: none; transform: translateY(-5px) scale(1.08); box-shadow: 0 30px 70px rgba(0,212,255,0.5); }
+        .quiz-cta-button .quiz-btn-bg { position:absolute; inset:0; background: radial-gradient(circle at 10% 30%, rgba(255,255,255,0.06), transparent 30%); opacity:0.6; }
+        .quiz-cta-button .quiz-btn-content { position:relative; display:flex; align-items:center; gap:0.8rem; }
+        .quiz-cta-button i { font-size:1.2rem; }
+        .quiz-btn-text small { display:block; font-size:0.8rem; font-weight:600; color: rgba(0,0,0,0.6); }
+
+        .quiz-trust-badges { display:flex; gap:0.8rem; margin-top:1rem; }
+        .trust-badge { display:flex; gap:0.6rem; align-items:center; color:var(--text-gray); background: rgba(255,255,255,0.02); padding:0.55rem 0.8rem; border-radius:10px; }
+
+        @keyframes float-slide { 0%{ transform: translateY(0) } 50%{ transform: translateY(-10px) } 100%{ transform: translateY(0) } }
+        .quiz-floating-icon { animation: float-slide 6s ease-in-out infinite; }
+
+        /* Pulsating CTA */
+        @keyframes quiz-pulse {
+            0% { 
+                transform: translateY(0) scale(1); 
+                box-shadow: 0 18px 40px rgba(0,212,255,0.15); 
+            }
+            50% { 
+                transform: translateY(-3px) scale(1.05); 
+                box-shadow: 0 26px 60px rgba(0,212,255,0.35); 
+            }
+            100% { 
+                transform: translateY(0) scale(1); 
+                box-shadow: 0 18px 40px rgba(0,212,255,0.15); 
+            }
+        }
+
+        @media (max-width: 980px) { .quiz-hero-content { grid-template-columns: 1fr; text-align: left; } .quiz-hero-section { padding: 2.5rem 4%; } }
+
     </style>
 </head>
 <body class="loading">
@@ -1486,6 +1557,76 @@ fbq('track', 'PageView');
                     <p>Conteúdo visual criativo e estratégico para Instagram que engaja e converte seguidores em clientes.</p>
                     <a href="https://wa.me/5515992710295?text=Olá! Gostaria de posts promocionais para Instagram." class="service-btn" target="_blank" rel="noopener">Solicitar Orçamento</a>
                 </div>
+            </div>
+        </section>
+
+        <!-- Quiz Hero Section -->
+        <section class="quiz-hero-section">
+            <div class="quiz-background-effects">
+                <div class="quiz-circle quiz-circle-1"></div>
+                <div class="quiz-circle quiz-circle-2"></div>
+                <div class="quiz-circle quiz-circle-3"></div>
+                <div class="quiz-floating-icon quiz-icon-1"><i class="fas fa-rocket" aria-hidden="true"></i></div>
+                <div class="quiz-floating-icon quiz-icon-2"><i class="fas fa-star" aria-hidden="true"></i></div>
+                <div class="quiz-floating-icon quiz-icon-3"><i class="fas fa-magic" aria-hidden="true"></i></div>
+                <div class="quiz-floating-icon quiz-icon-4"><i class="fas fa-crown" aria-hidden="true"></i></div>
+            </div>
+            
+            <div class="quiz-hero-content">
+                <div>
+                    <div class="quiz-badge">
+                        <i class="fas fa-gift" aria-hidden="true"></i>
+                        <span>100% GRATUITO</span>
+                    </div>
+                    
+                    <h2 class="quiz-hero-title">
+                        <span class="quiz-title-small">Não sabe qual plano escolher?</span>
+                        <span class="quiz-title-big">Descubra em 60 Segundos!</span>
+                    </h2>
+                    
+                    <p class="quiz-hero-subtitle">
+                        Responda um <strong>quiz rápido e personalizado</strong> e receba a recomendação perfeita do plano ideal para transformar seu negócio!
+                    </p>
+                    
+                    <div class="quiz-stats-mini">
+                        <div class="quiz-stat-mini">
+                            <i class="fas fa-clock" aria-hidden="true"></i>
+                            <span>Apenas <strong>8 perguntas</strong></span>
+                        </div>
+                        <div class="quiz-stat-mini">
+                            <i class="fas fa-chart-line" aria-hidden="true"></i>
+                            <span><strong>Resultado</strong> na hora</span>
+                        </div>
+                    </div>
+                    
+                    <a href="quiz.html" class="quiz-cta-button">
+                        <span class="quiz-btn-bg"></span>
+                        <span class="quiz-btn-content">
+                            <i class="fas fa-magic" aria-hidden="true"></i>
+                            <span class="quiz-btn-text">
+                                <strong>FAZER QUIZ AGORA</strong>
+                                <small>E descubra seu plano ideal</small>
+                            </span>
+                            <i class="fas fa-arrow-right" aria-hidden="true"></i>
+                        </span>
+                    </a>
+                    
+                    <div class="quiz-trust-badges">
+                        <div class="trust-badge">
+                            <i class="fas fa-shield-alt" aria-hidden="true"></i>
+                            <span>Sem cadastro</span>
+                        </div>
+                        <div class="trust-badge">
+                            <i class="fas fa-lock" aria-hidden="true"></i>
+                            <span>100% seguro</span>
+                        </div>
+                        <div class="trust-badge">
+                            <i class="fas fa-bolt" aria-hidden="true"></i>
+                            <span>Resultado instantâneo</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Ilustração removida por solicitação do usuário -->
             </div>
         </section>
 
