@@ -1424,7 +1424,7 @@ fbq('track', 'PageView');
 
         .quiz-hero-title { margin: 0 0 0.6rem 0; }
         .quiz-title-small { display:block; color:var(--text-gray); font-weight:600; }
-        .quiz-title-big { display:block; font-size: clamp(1.6rem, 3.8vw, 2.6rem); font-weight:900; background: var(--gradient-1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .quiz-title-big { display:block; font-size: clamp(1.6rem, 3.8vw, 2.6rem); font-weight:900; background: var(--gradient-1); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
 
         .quiz-hero-subtitle { color:var(--text-gray); margin-bottom:1rem; }
 
@@ -1432,7 +1432,7 @@ fbq('track', 'PageView');
         .quiz-stat-mini { display:flex; gap:0.6rem; align-items:center; color:var(--text-gray); font-weight:700; }
         .quiz-stat-mini i { color: var(--primary-color); font-size:1.1rem; }
 
-    .quiz-cta-button { position:relative; overflow:hidden; display:inline-flex; align-items:center; gap:1rem; padding:0.9rem 1.1rem; background: linear-gradient(90deg,var(--primary-color),var(--primary-dark)); color:#00121a; font-weight:800; border-radius:14px; text-decoration:none; box-shadow: 0 18px 40px rgba(0,212,255,0.15); animation: quiz-pulse 2s ease-in-out infinite; }
+        .quiz-cta-button { position:relative; overflow:hidden; display:inline-flex; align-items:center; gap:1rem; padding:0.9rem 1.1rem; background: linear-gradient(90deg,var(--primary-color),var(--primary-dark)); color:#00121a; font-weight:800; border-radius:14px; text-decoration:none; box-shadow: 0 18px 40px rgba(0,212,255,0.15); animation: quiz-pulse 2s ease-in-out infinite; }
         .quiz-cta-button:hover { animation: none; transform: translateY(-5px) scale(1.08); box-shadow: 0 30px 70px rgba(0,212,255,0.5); }
         .quiz-cta-button .quiz-btn-bg { position:absolute; inset:0; background: radial-gradient(circle at 10% 30%, rgba(255,255,255,0.06), transparent 30%); opacity:0.6; }
         .quiz-cta-button .quiz-btn-content { position:relative; display:flex; align-items:center; gap:0.8rem; }
@@ -1591,7 +1591,7 @@ fbq('track', 'PageView');
                     <div class="quiz-stats-mini">
                         <div class="quiz-stat-mini">
                             <i class="fas fa-clock" aria-hidden="true"></i>
-                            <span>Apenas <strong>8 perguntas</strong></span>
+                            <span>Apenas <strong>6 perguntas</strong></span>
                         </div>
                         <div class="quiz-stat-mini">
                             <i class="fas fa-chart-line" aria-hidden="true"></i>
