@@ -172,6 +172,12 @@ fbq('track', 'PageView');
             transition: var(--transition);
             position: relative;
             padding: 0.5rem 0;
+            outline: none;
+        }
+
+        nav a:focus {
+            outline: none;
+            box-shadow: none;
         }
 
         nav a::after {
@@ -1119,8 +1125,7 @@ fbq('track', 'PageView');
         .service-btn:focus,
         .portfolio-btn:focus,
         .whatsapp-btn:focus,
-        .form-submit-btn:focus,
-        nav a:focus {
+        .form-submit-btn:focus {
             outline: 2px solid var(--primary-color);
             outline-offset: 2px;
         }
@@ -1463,6 +1468,36 @@ fbq('track', 'PageView');
 
         @media (max-width: 980px) { .quiz-hero-content { grid-template-columns: 1fr; text-align: left; } .quiz-hero-section { padding: 2.5rem 4%; } }
 
+        /* Efeito Cascata de Revelação */
+        .cascade-reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .cascade-reveal.revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .service-card.cascade-reveal,
+        .portfolio-item.cascade-reveal,
+        .testimonial-card.cascade-reveal,
+        .mvv-card.cascade-reveal,
+        .process-step.cascade-reveal {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .service-card.cascade-reveal.revealed,
+        .portfolio-item.cascade-reveal.revealed,
+        .testimonial-card.cascade-reveal.revealed,
+        .mvv-card.cascade-reveal.revealed,
+        .process-step.cascade-reveal.revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
     </style>
 </head>
 <body class="loading">
@@ -1523,35 +1558,35 @@ fbq('track', 'PageView');
             <p class="section-subtitle">Soluções digitais completas para impulsionar seu negócio</p>
             
             <div class="services-grid">
-                <div class="service-card" tabindex="0" role="button" aria-label="Solicitar orçamento para criação de logos">
+                <div class="service-card cascade-reveal" tabindex="0" role="button" aria-label="Solicitar orçamento para criação de logos">
                     <div class="service-icon"><i class="fas fa-palette" aria-hidden="true"></i></div>
                     <h3>Criação de Logos</h3>
                     <p>Identidade visual profissional e marcante para sua marca se destacar no mercado.</p>
                     <a href="https://wa.me/5515992710295?text=Olá! Gostaria de solicitar a criação de uma logo profissional." class="service-btn" target="_blank" rel="noopener">Solicitar Orçamento</a>
                 </div>
                 
-                <div class="service-card" tabindex="0" role="button" aria-label="Solicitar orçamento para prompts de IA">
+                <div class="service-card cascade-reveal" tabindex="0" role="button" aria-label="Solicitar orçamento para prompts de IA">
                     <div class="service-icon"><i class="fas fa-robot" aria-hidden="true"></i></div>
                     <h3>Prompts para IA</h3>
                     <p>Prompts otimizados para ChatGPT, Midjourney e outras ferramentas de inteligência artificial.</p>
                     <a href="https://wa.me/5515992710295?text=Olá! Preciso de prompts otimizados para IA." class="service-btn" target="_blank" rel="noopener">Solicitar Orçamento</a>
                 </div>
                 
-                <div class="service-card" tabindex="0" role="button" aria-label="Solicitar orçamento para desenvolvimento web">
+                <div class="service-card cascade-reveal" tabindex="0" role="button" aria-label="Solicitar orçamento para desenvolvimento web">
                     <div class="service-icon"><i class="fas fa-code" aria-hidden="true"></i></div>
                     <h3>Desenvolvimento Web</h3>
                     <p>Sites responsivos, landing pages e plataformas digitais modernas e funcionais.</p>
                     <a href="https://wa.me/5515992710295?text=Olá! Gostaria de desenvolver um site profissional." class="service-btn" target="_blank" rel="noopener">Solicitar Orçamento</a>
                 </div>
                 
-                <div class="service-card" tabindex="0" role="button" aria-label="Solicitar orçamento para manutenção de sites">
+                <div class="service-card cascade-reveal" tabindex="0" role="button" aria-label="Solicitar orçamento para manutenção de sites">
                     <div class="service-icon"><i class="fas fa-wrench" aria-hidden="true"></i></div>
                     <h3>Manutenção de Sites</h3>
                     <p>Atualizações, correções de bugs e otimizações para manter seu site sempre funcionando perfeitamente.</p>
                     <a href="https://wa.me/5515992710295?text=Olá! Preciso de manutenção para meu site." class="service-btn" target="_blank" rel="noopener">Solicitar Orçamento</a>
                 </div>
 
-                <div class="service-card" tabindex="0" role="button" aria-label="Solicitar orçamento para posts promocionais">
+                <div class="service-card cascade-reveal" tabindex="0" role="button" aria-label="Solicitar orçamento para posts promocionais">
                     <div class="service-icon"><i class="fab fa-instagram" aria-hidden="true"></i></div>
                     <h3>Posts Promocionais</h3>
                     <p>Conteúdo visual criativo e estratégico para Instagram que engaja e converte seguidores em clientes.</p>
@@ -1970,15 +2005,22 @@ fbq('track', 'PageView');
             menuOverlay.addEventListener('click', closeMenu);
         }
 
-        // Close menu on navigation link click
-        document.querySelectorAll('nav a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function(e) {
+        // Scroll suave para todos os links com âncoras
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
                 const href = this.getAttribute('href');
-                if (href.startsWith('#')) {
+                // Só previne comportamento padrão se for um link de âncora válido
+                if (href && href !== '#' && href.length > 1) {
                     const target = document.querySelector(href);
                     if (target) {
                         e.preventDefault();
-                        closeMenu();
+                        
+                        // Se estiver no menu mobile, fecha primeiro
+                        if (nav.classList.contains('active')) {
+                            closeMenu();
+                        }
+                        
+                        // Aguarda um pouco para o menu fechar e depois faz o scroll
                         setTimeout(() => {
                             target.scrollIntoView({
                                 behavior: 'smooth',
@@ -2149,10 +2191,29 @@ fbq('track', 'PageView');
             elements.forEach(element => observer.observe(element));
         }
 
+        // Efeito cascata de revelação
+        function handleCascadeReveal() {
+            const cascadeElements = document.querySelectorAll('.cascade-reveal');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry, index) => {
+                    if (entry.isIntersecting && !entry.target.classList.contains('revealed')) {
+                        setTimeout(() => {
+                            entry.target.classList.add('revealed');
+                        }, index * 250);
+                    }
+                });
+            }, {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            });
+            cascadeElements.forEach(element => observer.observe(element));
+        }
+
         // Inicializar quando o DOM carregar
         document.addEventListener('DOMContentLoaded', function() {
             createParticles();
             handleScrollAnimations();
+            handleCascadeReveal();
 
             // Smooth page load
             setTimeout(() => {
