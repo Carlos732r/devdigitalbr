@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Site institucional vs Landing Page: qual escolher? | Dev Digital BR</title>
+    <meta name="description" content="Compare as diferenças e descubra qual solução é ideal para seu negócio. Guia completo de decisão.">
+    <meta name="keywords" content="site institucional, landing page, diferença site landing page, qual escolher site ou landing page">
+    <meta name="robots" content="index, follow">
+    <meta name="author" content="Dev Digital BR">
+    <meta property="og:title" content="Site institucional vs Landing Page: qual escolher?">
+    <meta property="og:description" content="Compare as diferenças e descubra qual solução é ideal para seu negócio.">
+    <meta property="og:image" content="https://www.devdigitalbr.com.br/imagens/fototech.jpg">
+    <meta property="og:url" content="https://www.devdigitalbr.com.br/artigo3.html">
+    <meta property="og:type" content="article">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <style>
+        :root {
+            --primary-color: #00d4ff;
+            --primary-dark: #0099cc;
+            --secondary-color: #0a0a0a;
+            --accent-color: #1a1a1a;
+            --text-light: #ffffff;
+            --text-gray: #a0a0a0;
+            --gradient-1: linear-gradient(135deg, #00d4ff 0%, #0099cc 50%, #0066aa 100%);
+            --gradient-2: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+            --gradient-bg: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%);
+            --border-radius: 15px;
+            --transition: all 0.3s ease;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--gradient-bg); color: var(--text-light); line-height: 1.6; }
+        header { position: fixed; top: 0; width: 100%; background: rgba(10, 10, 10, 0.95); backdrop-filter: blur(10px); padding: 1rem 5%; display: flex; justify-content: space-between; align-items: center; z-index: 1000; height: 110px; box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3); }
+        header.hidden { transform: translateY(-100%); }
+        .logo-link { text-decoration: none; color: inherit; }
+        .logo-container { display: flex; align-items: center; gap: 1rem; }
+        .logo-image { width: 80px; height: 80px; border-radius: var(--border-radius); background: var(--gradient-1); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3); transition: var(--transition); }
+        .logo-image:hover { transform: scale(1.05) rotate(5deg); }
+        .logo-image img { width: 100%; height: 100%; object-fit: contain; border-radius: calc(var(--border-radius) - 2px); }
+        .logo { font-size: 1.9rem; font-weight: 700; background: var(--gradient-1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        nav { display: flex; gap: 2rem; }
+        nav a { color: var(--text-light); text-decoration: none; font-weight: 500; transition: var(--transition); position: relative; padding: 0.5rem 0; }
+        nav a::after { content: ''; position: absolute; bottom: -5px; left: 0; width: 0; height: 2px; background: var(--gradient-1); transition: width 0.3s ease; }
+        nav a:hover::after { width: 100%; }
+        .menu-toggle { display: none; font-size: 1.5rem; color: var(--primary-color); cursor: pointer; background: none; border: none; position: relative; z-index: 1002; }
+        .article-container { max-width: 900px; margin: 0 auto; padding: 10rem 5% 4rem; }
+        .back-to-blog { display: inline-flex; align-items: center; gap: 0.5rem; color: var(--primary-color); text-decoration: none; font-weight: 600; margin-bottom: 3rem; transition: var(--transition); font-size: 1.1rem; }
+        .back-to-blog:hover { transform: translateX(-5px); }
+        .article-header { text-align: center; margin-bottom: 3rem; }
+        .article-title { font-size: clamp(1.5rem, 3vw, 2.5rem); font-weight: 900; margin-bottom: 1.5rem; line-height: 1.3; }
+        .article-meta { display: flex; justify-content: center; gap: 2rem; color: var(--text-gray); margin-bottom: 2rem; flex-wrap: wrap; font-size: 1rem; }
+        .article-meta i { color: var(--primary-color); margin-right: 0.3rem; }
+        .social-share { display: flex; justify-content: center; gap: 1rem; margin: 2.5rem 0; }
+        .share-btn { display: flex; align-items: center; justify-content: center; width: 50px; height: 50px; border-radius: 50%; background: var(--gradient-2); color: var(--text-light); text-decoration: none; transition: var(--transition); border: 1px solid rgba(255, 255, 255, 0.1); font-size: 1.2rem; }
+        .share-btn:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0, 212, 255, 0.3); }
+        .share-btn.facebook:hover { background: #1877f2; border-color: #1877f2; }
+        .share-btn.twitter:hover { background: #1da1f2; border-color: #1da1f2; }
+        .share-btn.linkedin:hover { background: #0077b5; border-color: #0077b5; }
+        .share-btn.whatsapp:hover { background: #25d366; border-color: #25d366; }
+        .article-content h2 { color: var(--primary-color); font-size: 2rem; margin: 3rem 0 1.5rem; font-weight: 700; }
+        .article-content h3 { color: var(--text-light); font-size: 1.5rem; margin: 2rem 0 1rem; font-weight: 600; }
+        .article-content p { color: var(--text-gray); line-height: 1.9; margin-bottom: 1.5rem; font-size: 1.1rem; }
+        .article-content ul, .article-content ol { margin: 1.5rem 0 1.5rem 2rem; color: var(--text-gray); }
+        .article-content li { margin-bottom: 1rem; line-height: 1.8; font-size: 1.05rem; }
+        .article-content strong { color: var(--primary-color); font-weight: 700; }
+        .highlight-box { background: rgba(0, 212, 255, 0.05); border-left: 4px solid var(--primary-color); padding: 1.8rem; margin: 2.5rem 0; border-radius: 10px; }
+        .highlight-box p { margin-bottom: 0; }
+        .cta-box { background: var(--gradient-1); padding: 3rem; border-radius: 20px; text-align: center; margin: 4rem 0; }
+        .cta-box h3 { color: var(--secondary-color); font-size: 2rem; margin-bottom: 1rem; font-weight: 700; }
+        .cta-box p { color: rgba(0, 0, 0, 0.8); margin-bottom: 1.8rem; font-size: 1.1rem; }
+        .cta-btn { display: inline-flex; align-items: center; gap: 0.8rem; background: var(--secondary-color); color: var(--primary-color); padding: 1.2rem 2.5rem; border-radius: 50px; text-decoration: none; font-weight: 700; transition: var(--transition); font-size: 1.1rem; }
+        .cta-btn:hover { transform: scale(1.05); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); }
+        .comments-section { margin-top: 5rem; padding-top: 3rem; border-top: 2px solid rgba(255, 255, 255, 0.1); }
+        .comments-section h3 { font-size: 2rem; margin-bottom: 2rem; color: var(--text-light); }
+        .comment-form { background: rgba(255, 255, 255, 0.02); padding: 2rem; border-radius: 15px; margin-bottom: 3rem; border: 1px solid rgba(255, 255, 255, 0.05); }
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label { display: block; margin-bottom: 0.5rem; color: var(--text-light); font-weight: 500; }
+        .form-group input, .form-group textarea { width: 100%; padding: 1rem; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 10px; color: var(--text-light); font-size: 1rem; font-family: inherit; transition: var(--transition); }
+        .form-group input:focus, .form-group textarea:focus { outline: none; border-color: var(--primary-color); background: rgba(255, 255, 255, 0.08); }
+        .form-group textarea { min-height: 120px; resize: vertical; }
+        .submit-comment-btn { background: var(--gradient-1); color: var(--secondary-color); padding: 1rem 2rem; border: none; border-radius: 50px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: var(--transition); }
+        .submit-comment-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0, 212, 255, 0.4); }
+        .comments-list { display: flex; flex-direction: column; gap: 1.5rem; }
+        .comment-item { background: rgba(255, 255, 255, 0.02); padding: 1.5rem; border-radius: 15px; border: 1px solid rgba(255, 255, 255, 0.05); }
+        .comment-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; }
+        .comment-avatar { width: 50px; height: 50px; border-radius: 50%; background: var(--gradient-1); display: flex; align-items: center; justify-content: center; color: var(--secondary-color); font-weight: 700; font-size: 1.2rem; }
+        .comment-info h4 { color: var(--text-light); font-size: 1rem; margin-bottom: 0.2rem; }
+        .comment-date { color: var(--text-gray); font-size: 0.85rem; }
+        .comment-text { color: var(--text-gray); line-height: 1.6; }
+        footer { background: var(--secondary-color); padding: 3rem 8%; text-align: center; border-top: 1px solid rgba(255, 255, 255, 0.1); margin-top: 4rem; }
+        .social-links { display: flex; justify-content: center; gap: 1rem; margin-bottom: 1.5rem; }
+        .social-links a { width: 45px; height: 45px; background: var(--gradient-2); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--primary-color); text-decoration: none; transition: var(--transition); font-size: 1.2rem; }
+        .social-links a:hover { background: var(--primary-color); color: var(--secondary-color); transform: translateY(-3px); }
+        footer p { color: var(--text-gray); font-size: 0.9rem; margin-bottom: 0.5rem; }
+        footer a { color: var(--primary-color); text-decoration: none; transition: var(--transition); }
+        footer a:hover { color: var(--text-light); }
+        .whatsapp-flutuante { position: fixed; width: 70px; height: 70px; bottom: 30px; right: 30px; background-color: #25d366; border-radius: 50px; box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4); z-index: 1000; transition: all 0.3s ease-in-out; display: flex; align-items: center; justify-content: center; animation: pulse 2s infinite; }
+        .whatsapp-flutuante:hover { transform: scale(1.15); box-shadow: 0 6px 20px rgba(37, 211, 102, 0.6); }
+        .whatsapp-flutuante img { width: 100%; height: 100%; border-radius: 50%; padding: 12px; }
+        @keyframes pulse { 0% { box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4), 0 0 0 0 rgba(37, 211, 102, 0.7); } 70% { box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4), 0 0 0 10px rgba(37, 211, 102, 0); } 100% { box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4), 0 0 0 0 rgba(37, 211, 102, 0); } }
+        @media (max-width: 768px) {
+            header { height: 80px; padding: 1rem 5%; }
+            .logo-container { flex-grow: 1; }
+            .logo-image { width: 60px; height: 60px; }
+            .logo { font-size: 1.4rem; }
+            .menu-toggle { display: block; margin-left: auto; }
+            nav { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: rgba(10, 10, 10, 0.98); backdrop-filter: blur(20px); flex-direction: column; justify-content: center; align-items: center; gap: 2rem; transition: all 0.4s ease; z-index: 1001; opacity: 0; visibility: hidden; transform: translateY(-100%); }
+            nav.active { opacity: 1; visibility: visible; transform: translateY(0); }
+            nav a { font-size: 1.3rem; padding: 1rem 2rem; width: 250px; text-align: center; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.1); }
+            .article-container { padding: 8rem 5% 4rem; }
+            .whatsapp-flutuante { width: 60px; height: 60px; bottom: 20px; right: 20px; }
+            .social-share { flex-wrap: wrap; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="index.html" class="logo-link">
+            <div class="logo-container">
+                <div class="logo-image">
+                    <img src="logo_nome.png" alt="DevDigital Logo">
+                </div>
+                <div class="logo">Dev Digital BR</div>
+            </div>
+        </a>
+        <nav id="nav">
+            <a href="index.html">Início</a>
+            <a href="index.html#servicos">Serviços</a>
+            <a href="portifolio.html">Portfólio</a>
+            <a href="blog.html">Blog</a>
+            <a href="index.html#contato">Contato</a>
+        </nav>
+        <button class="menu-toggle" id="menu-toggle">
+            <i class="fas fa-bars"></i>
+        </button>
+    </header>
+
+    <main>
+        <article class="article-container">
+            <a href="blog.html" class="back-to-blog">
+                <i class="fas fa-arrow-left"></i> Voltar ao Blog
+            </a>
+            
+         
+
+            <div class="social-share">
+                <a href="#" class="share-btn facebook" onclick="shareOnSocial('facebook'); return false;" title="Compartilhar no Facebook">
+                    <i class="fab fa-facebook-f"></i>
+                </a>
+                <a href="#" class="share-btn twitter" onclick="shareOnSocial('twitter'); return false;" title="Compartilhar no Twitter">
+                    <i class="fab fa-twitter"></i>
+                </a>
+                <a href="#" class="share-btn linkedin" onclick="shareOnSocial('linkedin'); return false;" title="Compartilhar no LinkedIn">
+                    <i class="fab fa-linkedin-in"></i>
+                </a>
+                <a href="#" class="share-btn whatsapp" onclick="shareOnSocial('whatsapp'); return false;" title="Compartilhar no WhatsApp">
+                    <i class="fab fa-whatsapp"></i>
+                </a>
+            </div>
+            <h1>Site institucional vs Landing Page: qual escolher?</h1>
+            <br>
+            <div class="article-content">
+                <p>Essa dúvida é MUITO comum entre empresários: devo investir em um site institucional completo ou uma landing page focada? A resposta pode mudar completamente seus resultados e seu ROI. Vamos descomplicar!</p>
+
+                <h2>🏢 O que é um Site Institucional?</h2>
+                <p>Um site institucional é como um <strong>catálogo digital completo</strong> da sua empresa. Ele tem múltiplas páginas e seções:</p>
+
+                <ul>
+                    <li><strong>Página inicial:</strong> Apresentação geral</li>
+                    <li><strong>Sobre nós:</strong> História, missão, valores</li>
+                    <li><strong>Serviços/Produtos:</strong> Catálogo completo</li>
+                    <li><strong>Portfólio:</strong> Casos de sucesso</li>
+                    <li><strong>Blog:</strong> Artigos e conteúdos</li>
+                    <li><strong>Contato:</strong> Formulários e informações</li>
+                </ul>
+
+                <h3>✅ Vantagens do Site Institucional</h3>
+                <ul>
+                    <li><strong>Credibilidade:</strong> Empresas estabelecidas precisam mostrar solidez</li>
+                    <li><strong>SEO robusto:</strong> Múltiplas páginas = mais oportunidades de ranquear</li>
+                    <li><strong>Informação completa:</strong> Cliente encontra tudo sobre sua empresa</li>
+                    <li><strong>Múltiplos objetivos:</strong> Serve para vender, informar, educar</li>
+                </ul>
+
+                <h3>❌ Desvantagens</h3>
+                <ul>
+                    <li><strong>Custo maior:</strong> Desenvolvimento mais complexo</li>
+                    <li><strong>Manutenção contínua:</strong> Mais páginas = mais trabalho</li>
+                    <li><strong>Conversão diluída:</strong> Visitante pode se perder nas várias opções</li>
+                    <li><strong>Prazo maior:</strong> Leva mais tempo para ficar pronto</li>
+                </ul>
+
+                <h2>🎯 O que é uma Landing Page?</h2>
+                <p>Landing page é uma <strong>página única e focada</strong> com um objetivo específico. Sem menu lateral, sem distrações, apenas:</p>
+
+                <ul>
+                    <li>Título impactante</li>
+                    <li>Benefícios claros</li>
+                    <li>Prova social (depoimentos)</li>
+                    <li>Call-to-action (botão de ação)</li>
+                </ul>
+
+                <h3>✅ Vantagens da Landing Page</h3>
+                <ul>
+                    <li><strong>Foco total:</strong> Uma página, uma ação, máxima conversão</li>
+                    <li><strong>Investimento menor:</strong> Mais barato que site completo</li>
+                    <li><strong>Lançamento rápido:</strong> Pode estar no ar em dias</li>
+                    <li><strong>Ideal para campanhas:</strong> Perfeita para Google Ads e Facebook Ads</li>
+                    <li><strong>Taxa de conversão alta:</strong> Até 5x mais que sites tradicionais</li>
+                </ul>
+
+                <h3>❌ Desvantagens</h3>
+                <ul>
+                    <li><strong>Limitada:</strong> Serve apenas para um objetivo</li>
+                    <li><strong>SEO limitado:</strong> Uma página = menos palavras-chave</li>
+                    <li><strong>Menos autoridade:</strong> Não mostra todo o histórico da empresa</li>
+                </ul>
+
+                <h2>📊 Comparação Lado a Lado</h2>
+
+                <h3>Custo</h3>
+                <ul>
+                    <li><strong>Site Institucional:</strong> R$ 2.000 - R$ 5.000</li>
+                    <li><strong>Landing Page:</strong> R$ 500 - R$ 1.500</li>
+                    <li><strong>Vencedor:</strong> Landing Page 🏆</li>
+                </ul>
+
+                <h3>Prazo de Entrega</h3>
+                <ul>
+                    <li><strong>Site Institucional:</strong> 15-30 dias</li>
+                    <li><strong>Landing Page:</strong> 3-7 dias</li>
+                    <li><strong>Vencedor:</strong> Landing Page 🏆</li>
+                </ul>
+
+                <h3>Taxa de Conversão</h3>
+                <ul>
+                    <li><strong>Site Institucional:</strong> 1% - 3%</li>
+                    <li><strong>Landing Page:</strong> 5% - 15%</li>
+                    <li><strong>Vencedor:</strong> Landing Page 🏆</li>
+                </ul>
+
+                <h3>Credibilidade</h3>
+                <ul>
+                    <li><strong>Site Institucional:</strong> Alta (mostra tudo sobre a empresa)</li>
+                    <li><strong>Landing Page:</strong> Média (foco na oferta)</li>
+                    <li><strong>Vencedor:</strong> Site Institucional 🏆</li>
+                </ul>
+
+                <h3>SEO (Google)</h3>
+                <ul>
+                    <li><strong>Site Institucional:</strong> Melhor a longo prazo</li>
+                    <li><strong>Landing Page:</strong> Limitado</li>
+                    <li><strong>Vencedor:</strong> Site Institucional 🏆</li>
+                </ul>
+
+                <div class="highlight-box">
+                    <p><strong>💡 Insight:</strong> Não é sobre qual é melhor, mas sim qual atende seu objetivo AGORA!</p>
+                </div>
+
+                <h2>🎯 Qual escolher? GUIA DEFINITIVO</h2>
+
+                <h3>Escolha SITE INSTITUCIONAL se:</h3>
+                <ul>
+                    <li>✅ Sua empresa já está estabelecida há mais de 2 anos</li>
+                    <li>✅ Você oferece múltiplos produtos/serviços</li>
+                    <li>✅ Precisa de um blog para marketing de conteúdo</li>
+                    <li>✅ Quer investir em SEO a longo prazo</li>
+                    <li>✅ Seu orçamento está entre R$ 2.000 - R$ 5.000</li>
+                    <li>✅ Pode esperar 15-30 dias pelo lançamento</li>
+                </ul>
+
+                <h3>Escolha LANDING PAGE se:</h3>
+                <ul>
+                    <li>✅ Você vai rodar campanhas de Google/Facebook Ads</li>
+                    <li>✅ Tem um produto/serviço específico para promover</li>
+                    <li>✅ Precisa de resultados rápidos (captação de leads)</li>
+                    <li>✅ Seu orçamento é limitado (R$ 500 - R$ 1.500)</li>
+                    <li>✅ Quer testar uma oferta/ideia antes de investir pesado</li>
+                    <li>✅ Precisa estar online em menos de 1 semana</li>
+                </ul>
+
+                <h2>💰 Cenários Reais de Empresas Locais</h2>
+
+                <h3>Caso 1: Assistência Técnica em Carapicuíba</h3>
+                <ul>
+                    <li><strong>Escolha:</strong> Landing Page</li>
+                    <li><strong>Por quê:</strong> Foco em captar agendamentos urgentes via Google Ads</li>
+                    <li><strong>Resultado:</strong> 250% mais agendamentos em 2 meses</li>
+                </ul>
+
+                <h3>Caso 2: Empresa de Gás em Teodoro Sampaio</h3>
+                <ul>
+                    <li><strong>Escolha:</strong> Site Institucional</li>
+                    <li><strong>Por quê:</strong> Empresa estabelecida, múltiplos serviços, credibilidade</li>
+                    <li><strong>Resultado:</strong> Aumento de 180% em consultas orgânicas</li>
+                </ul>
+
+                <h3>Caso 3: Lançamento de Curso Online</h3>
+                <ul>
+                    <li><strong>Escolha:</strong> Landing Page</li>
+                    <li><strong>Por quê:</strong> Oferta única, prazo limitado, foco total em vendas</li>
+                    <li><strong>Resultado:</strong> 320 inscrições em 15 dias</li>
+                </ul>
+
+                <h2>🚀 E se eu quiser os DOIS?</h2>
+                <p>Essa é a estratégia IDEAL para empresas que querem dominar o mercado online:</p>
+
+                <ol>
+                    <li><strong>Fase 1:</strong> Comece com uma Landing Page (investimento menor, resultados rápidos)</li>
+                    <li><strong>Fase 2:</strong> Com os lucros da landing page, invista em um site institucional completo</li>
+                    <li><strong>Fase 3:</strong> Use o site para credibilidade e SEO, landing pages para campanhas específicas</li>
+                </ol>
+
+                <div class="highlight-box">
+                    <p><strong>💡 Dica Expert:</strong> Grandes empresas têm AMBOS! Um site institucional sólido + landing pages para cada campanha/produto.</p>
+                </div>
+
+                <h2>📋 Checklist: Tome sua decisão AGORA</h2>
+                <p>Marque as afirmações verdadeiras para você:</p>
+
+                <ul>
+                    <li>☐ Preciso de resultado em menos de 30 dias</li>
+                    <li>☐ Meu orçamento é limitado (menos de R$ 2.000)</li>
+                    <li>☐ Vou investir em tráfego pago</li>
+                    <li>☐ Tenho um produto/serviço específico para promover</li>
+                    <li>☐ Quero focar 100% em conversão</li>
+                </ul>
+
+                <p><strong>Se marcou 3 ou mais:</strong> Landing Page é sua melhor escolha!</p>
+                <p><strong>Se marcou menos de 3:</strong> Site Institucional pode ser mais adequado.</p>
+
+                <div class="cta-box">
+                    <h3>🤔 Ainda em dúvida?</h3>
+                    <p>Fale com nossos especialistas! Vamos analisar seu caso específico e recomendar a melhor solução para seus objetivos e orçamento.</p>
+                    <a href="https://wa.me/5515992710295?text=Olá! Quero ajuda para escolher entre Site Institucional e Landing Page." class="cta-btn" target="_blank">
+                        <i class="fab fa-whatsapp"></i>
+                        Falar com Especialista
+                    </a>
+                </div>
+            </div>
+
+            <div class="comments-section">
+                <h3><i class="far fa-comments"></i> Comentários</h3>
+                <form class="comment-form" id="commentForm">
+                    <div class="form-group">
+                        <label for="comment-name">Nome *</label>
+                        <input type="text" id="comment-name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="comment-email">Email *</label>
+                        <input type="email" id="comment-email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="comment-text">Comentário *</label>
+                        <textarea id="comment-text" name="comment" required></textarea>
+                    </div>
+                    <button type="submit" class="submit-comment-btn">Publicar Comentário</button>
+                </form>
+                <div class="comments-list" id="commentsList"></div>
+            </div>
+        </article>
+    </main>
+
+    <footer>
+        <div class="social-links">
+            <a href="https://www.instagram.com/oficial_dev_digital/" target="_blank" rel="noopener" aria-label="Instagram">
+                <i class="fab fa-instagram"></i>
+            </a>
+            <a href="https://www.facebook.com/profile.php?id=61580229984541" target="_blank" rel="noopener" aria-label="Facebook">
+                <i class="fab fa-facebook"></i>
+            </a>
+        </div>
+        <p>&copy; 2025 Dev Digital BR - Todos os direitos reservados.</p>
+        <p><a href="blog.html">Voltar ao Blog</a> | <a href="index.html">Site Principal</a></p>
+    </footer>
+
+    <a href="https://wa.me/5515992710295?text=Olá! Vi o artigo sobre Site vs Landing Page e quero saber mais!" class="whatsapp-flutuante" target="_blank" rel="noopener">
+        <img src="imagens/iconewhats.svg" alt="WhatsApp">
+    </a>
+
+    <script>
+        // Menu Toggle
+        const menuToggle = document.getElementById('menu-toggle');
+        const nav = document.getElementById('nav');
+        const header = document.querySelector('header');
+        let lastScrollTop = 0;
+
+        if (menuToggle) {
+            menuToggle.addEventListener('click', function() {
+                nav.classList.toggle('active');
+                const icon = this.querySelector('i');
+                if (nav.classList.contains('active')) {
+                    icon.classList.replace('fa-bars', 'fa-times');
+                    document.body.style.overflow = 'hidden';
+                } else {
+                    icon.classList.replace('fa-times', 'fa-bars');
+                    document.body.style.overflow = '';
+                }
+            });
+        }
+
+        document.querySelectorAll('nav a').forEach(link => {
+            link.addEventListener('click', function() {
+                if (nav.classList.contains('active')) {
+                    nav.classList.remove('active');
+                    menuToggle.querySelector('i').classList.replace('fa-times', 'fa-bars');
+                    document.body.style.overflow = '';
+                }
+            });
+        });
+
+        // Hide/Show header on scroll
+        window.addEventListener('scroll', function() {
+            let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            if (scrollTop > 100) {
+                header.classList.toggle('hidden', scrollTop > lastScrollTop);
+            } else {
+                header.classList.remove('hidden');
+            }
+            lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+        });
+
+        // Social share
+        function shareOnSocial(platform) {
+            const url = encodeURIComponent(window.location.href);
+            const title = encodeURIComponent(document.querySelector('.article-title').textContent);
+            let shareUrl;
+            switch(platform) {
+                case 'facebook': shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`; break;
+                case 'twitter': shareUrl = `https://twitter.com/intent/tweet?url=${url}&text=${title}`; break;
+                case 'linkedin': shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${url}`; break;
+                case 'whatsapp': shareUrl = `https://wa.me/?text=${title}%20${url}`; break;
+            }
+            if (shareUrl) window.open(shareUrl, '_blank', 'width=600,height=400');
+        }
+
+        // Comment form
+        document.getElementById('commentForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const name = document.getElementById('comment-name').value;
+            const comment = document.getElementById('comment-text').value;
+            const commentsList = document.getElementById('commentsList');
+            const newComment = document.createElement('div');
+            newComment.className = 'comment-item';
+            newComment.innerHTML = `
+                <div class="comment-header">
+                    <div class="comment-avatar">${name.charAt(0).toUpperCase()}</div>
+                    <div class="comment-info">
+                        <h4>${name}</h4>
+                        <span class="comment-date">Agora mesmo</span>
+                    </div>
+                </div>
+                <p class="comment-text">${comment}</p>
+            `;
+            commentsList.insertBefore(newComment, commentsList.firstChild);
+            this.reset();
+            alert('Comentário publicado com sucesso!');
+        });
+    </script>
+</body>
+</html>

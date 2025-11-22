@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checklist: O que seu site precisa ter para converter clientes | Dev Digital BR</title>
+    <meta name="description" content="Lista completa com 50+ elementos essenciais para um site de alta conversão em 2025.">
+    <meta name="keywords" content="checklist site, elementos site conversão, otimização de site, como converter clientes">
+    <meta name="robots" content="index, follow">
+    <meta name="author" content="Dev Digital BR">
+    <meta property="og:title" content="Checklist: O que seu site precisa ter para converter clientes">
+    <meta property="og:description" content="Lista completa com 50+ elementos essenciais para um site de alta conversão em 2025.">
+    <meta property="og:image" content="https://www.devdigitalbr.com.br/imagens/fototech.jpg">
+    <meta property="og:url" content="https://www.devdigitalbr.com.br/artigo5.html">
+    <meta property="og:type" content="article">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <style>
+        :root {
+            --primary-color: #00d4ff;
+            --primary-dark: #0099cc;
+            --secondary-color: #0a0a0a;
+            --accent-color: #1a1a1a;
+            --text-light: #ffffff;
+            --text-gray: #a0a0a0;
+            --gradient-1: linear-gradient(135deg, #00d4ff 0%, #0099cc 50%, #0066aa 100%);
+            --gradient-2: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+            --gradient-bg: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%);
+            --border-radius: 15px;
+            --transition: all 0.3s ease;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--gradient-bg); color: var(--text-light); line-height: 1.6; }
+        header { position: fixed; top: 0; width: 100%; background: rgba(10, 10, 10, 0.95); backdrop-filter: blur(10px); padding: 1rem 5%; display: flex; justify-content: space-between; align-items: center; z-index: 1000; height: 110px; box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3); }
+        header.hidden { transform: translateY(-100%); }
+        .logo-link { text-decoration: none; color: inherit; }
+        .logo-container { display: flex; align-items: center; gap: 1rem; }
+        .logo-image { width: 80px; height: 80px; border-radius: var(--border-radius); background: var(--gradient-1); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3); transition: var(--transition); }
+        .logo-image:hover { transform: scale(1.05) rotate(5deg); }
+        .logo-image img { width: 100%; height: 100%; object-fit: contain; border-radius: calc(var(--border-radius) - 2px); }
+        .logo { font-size: 1.9rem; font-weight: 700; background: var(--gradient-1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        nav { display: flex; gap: 2rem; }
+        nav a { color: var(--text-light); text-decoration: none; font-weight: 500; transition: var(--transition); position: relative; padding: 0.5rem 0; }
+        nav a::after { content: ''; position: absolute; bottom: -5px; left: 0; width: 0; height: 2px; background: var(--gradient-1); transition: width 0.3s ease; }
+        nav a:hover::after { width: 100%; }
+        .menu-toggle { display: none; font-size: 1.5rem; color: var(--primary-color); cursor: pointer; background: none; border: none; position: relative; z-index: 1002; }
+        .article-container { max-width: 900px; margin: 0 auto; padding: 10rem 5% 4rem; }
+        .back-to-blog { display: inline-flex; align-items: center; gap: 0.5rem; color: var(--primary-color); text-decoration: none; font-weight: 600; margin-bottom: 3rem; transition: var(--transition); font-size: 1.1rem; }
+        .back-to-blog:hover { transform: translateX(-5px); }
+        .article-header { text-align: center; margin-bottom: 3rem; }
+        .article-title { font-size: clamp(1.5rem, 3vw, 2.5rem); font-weight: 900; margin-bottom: 1.5rem; line-height: 1.3; }
+        .article-meta { display: flex; justify-content: center; gap: 2rem; color: var(--text-gray); margin-bottom: 2rem; flex-wrap: wrap; font-size: 1rem; }
+        .article-meta i { color: var(--primary-color); margin-right: 0.3rem; }
+        .social-share { display: flex; justify-content: center; gap: 1rem; margin: 2.5rem 0; }
+        .share-btn { display: flex; align-items: center; justify-content: center; width: 50px; height: 50px; border-radius: 50%; background: var(--gradient-2); color: var(--text-light); text-decoration: none; transition: var(--transition); border: 1px solid rgba(255, 255, 255, 0.1); font-size: 1.2rem; }
+        .share-btn:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0, 212, 255, 0.3); }
+        .share-btn.facebook:hover { background: #1877f2; border-color: #1877f2; }
+        .share-btn.twitter:hover { background: #1da1f2; border-color: #1da1f2; }
+        .share-btn.linkedin:hover { background: #0077b5; border-color: #0077b5; }
+        .share-btn.whatsapp:hover { background: #25d366; border-color: #25d366; }
+        .article-content h2 { color: var(--primary-color); font-size: 2rem; margin: 3rem 0 1.5rem; font-weight: 700; }
+        .article-content h3 { color: var(--text-light); font-size: 1.5rem; margin: 2rem 0 1rem; font-weight: 600; }
+        .article-content h4 { color: var(--text-light); font-size: 1.2rem; margin: 1.5rem 0 0.8rem; font-weight: 600; }
+        .article-content p { color: var(--text-gray); line-height: 1.9; margin-bottom: 1.5rem; font-size: 1.1rem; }
+        .article-content ul, .article-content ol { margin: 1.5rem 0 1.5rem 2rem; color: var(--text-gray); }
+        .article-content li { margin-bottom: 1rem; line-height: 1.8; font-size: 1.05rem; }
+        .article-content strong { color: var(--primary-color); font-weight: 700; }
+        .highlight-box { background: rgba(0, 212, 255, 0.05); border-left: 4px solid var(--primary-color); padding: 1.8rem; margin: 2.5rem 0; border-radius: 10px; }
+        .highlight-box p { margin-bottom: 0; }
+        .cta-box { background: var(--gradient-1); padding: 3rem; border-radius: 20px; text-align: center; margin: 4rem 0; }
+        .cta-box h3 { color: var(--secondary-color); font-size: 2rem; margin-bottom: 1rem; font-weight: 700; }
+        .cta-box p { color: rgba(0, 0, 0, 0.8); margin-bottom: 1.8rem; font-size: 1.1rem; }
+        .cta-btn { display: inline-flex; align-items: center; gap: 0.8rem; background: var(--secondary-color); color: var(--primary-color); padding: 1.2rem 2.5rem; border-radius: 50px; text-decoration: none; font-weight: 700; transition: var(--transition); font-size: 1.1rem; }
+        .cta-btn:hover { transform: scale(1.05); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); }
+        /* Checklist Interativa */
+        .checklist-item { display: flex; align-items: flex-start; gap: 1rem; padding: 1rem; margin: 0.8rem 0; background: rgba(255, 255, 255, 0.02); border-radius: 10px; cursor: pointer; transition: all 0.3s ease; border: 1px solid rgba(255, 255, 255, 0.05); }
+        .checklist-item:hover { background: rgba(0, 212, 255, 0.05); border-color: rgba(0, 212, 255, 0.2); transform: translateX(5px); }
+        .checklist-box { width: 28px; height: 28px; min-width: 28px; border: 2px solid var(--text-gray); border-radius: 6px; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; }
+        .checklist-box::before { content: '✓'; font-size: 1.2rem; color: #25d366; opacity: 0; transform: scale(0); transition: all 0.3s ease; }
+        .checklist-item:hover .checklist-box { border-color: var(--primary-color); }
+        .checklist-item.checked .checklist-box { border-color: #25d366; background: rgba(37, 211, 102, 0.1); }
+        .checklist-item.checked .checklist-box::before { opacity: 1; transform: scale(1); }
+        .checklist-item.checked { background: rgba(37, 211, 102, 0.05); border-color: rgba(37, 211, 102, 0.2); }
+        .checklist-text { flex: 1; color: var(--text-gray); line-height: 1.6; }
+        .checklist-item.checked .checklist-text { color: var(--text-light); }
+        .checklist-progress { background: var(--gradient-2); padding: 1.5rem; border-radius: 15px; margin: 2rem 0; border: 1px solid rgba(255, 255, 255, 0.1); text-align: center; }
+        .progress-bar-container { background: rgba(255, 255, 255, 0.1); border-radius: 10px; height: 20px; overflow: hidden; margin: 1rem 0; }
+        .progress-bar { height: 100%; background: var(--gradient-1); border-radius: 10px; transition: width 0.5s ease; width: 0%; }
+        .progress-text { color: var(--primary-color); font-weight: 700; font-size: 1.2rem; }
+        .progress-label { color: var(--text-gray); font-size: 0.9rem; margin-top: 0.5rem; }
+        .comments-section { margin-top: 5rem; padding-top: 3rem; border-top: 2px solid rgba(255, 255, 255, 0.1); }
+        .comments-section > h3 { font-size: 2rem; margin-bottom: 2rem; color: var(--text-light); }
+        .comment-form { background: rgba(255, 255, 255, 0.02); padding: 2rem; border-radius: 15px; margin-bottom: 3rem; border: 1px solid rgba(255, 255, 255, 0.05); }
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label { display: block; margin-bottom: 0.5rem; color: var(--text-light); font-weight: 500; }
+        .form-group input, .form-group textarea { width: 100%; padding: 1rem; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 10px; color: var(--text-light); font-size: 1rem; font-family: inherit; transition: var(--transition); }
+        .form-group input:focus, .form-group textarea:focus { outline: none; border-color: var(--primary-color); background: rgba(255, 255, 255, 0.08); }
+        .form-group textarea { min-height: 120px; resize: vertical; }
+        .submit-comment-btn { background: var(--gradient-1); color: var(--secondary-color); padding: 1rem 2rem; border: none; border-radius: 50px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: var(--transition); }
+        .submit-comment-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0, 212, 255, 0.4); }
+        .comments-list { display: flex; flex-direction: column; gap: 1.5rem; }
+        footer { background: var(--secondary-color); padding: 3rem 8%; text-align: center; border-top: 1px solid rgba(255, 255, 255, 0.1); margin-top: 4rem; }
+        .social-links { display: flex; justify-content: center; gap: 1rem; margin-bottom: 1.5rem; }
+        .social-links a { width: 45px; height: 45px; background: var(--gradient-2); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--primary-color); text-decoration: none; transition: var(--transition); font-size: 1.2rem; }
+        .social-links a:hover { background: var(--primary-color); color: var(--secondary-color); transform: translateY(-3px); }
+        footer p { color: var(--text-gray); font-size: 0.9rem; margin-bottom: 0.5rem; }
+        footer a { color: var(--primary-color); text-decoration: none; transition: var(--transition); }
+        footer a:hover { color: var(--text-light); }
+        .whatsapp-flutuante { position: fixed; width: 70px; height: 70px; bottom: 30px; right: 30px; background-color: #25d366; border-radius: 50px; box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4); z-index: 1000; transition: all 0.3s ease-in-out; display: flex; align-items: center; justify-content: center; animation: pulse 2s infinite; }
+        .whatsapp-flutuante:hover { transform: scale(1.15); box-shadow: 0 6px 20px rgba(37, 211, 102, 0.6); }
+        .whatsapp-flutuante img { width: 100%; height: 100%; border-radius: 50%; padding: 12px; }
+        @keyframes pulse { 0% { box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4), 0 0 0 0 rgba(37, 211, 102, 0.7); } 70% { box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4), 0 0 0 10px rgba(37, 211, 102, 0); } 100% { box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4), 0 0 0 0 rgba(37, 211, 102, 0); } }
+        @media (max-width: 768px) {
+            header { height: 80px; padding: 1rem 5%; }
+            .logo-container { flex-grow: 1; }
+            .logo-image { width: 60px; height: 60px; }
+            .logo { font-size: 1.4rem; }
+            .menu-toggle { display: block; margin-left: auto; }
+            nav { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: rgba(10, 10, 10, 0.98); backdrop-filter: blur(20px); flex-direction: column; justify-content: center; align-items: center; gap: 2rem; transition: all 0.4s ease; z-index: 1001; opacity: 0; visibility: hidden; transform: translateY(-100%); }
+            nav.active { opacity: 1; visibility: visible; transform: translateY(0); }
+            nav a { font-size: 1.3rem; padding: 1rem 2rem; width: 250px; text-align: center; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.1); }
+            .article-container { padding: 8rem 5% 4rem; }
+            .whatsapp-flutuante { width: 60px; height: 60px; bottom: 20px; right: 20px; }
+            .social-share { flex-wrap: wrap; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="index.html" class="logo-link">
+            <div class="logo-container">
+                <div class="logo-image">
+                    <img src="logo_nome.png" alt="DevDigital Logo">
+                </div>
+                <div class="logo">Dev Digital BR</div>
+            </div>
+        </a>
+        <nav id="nav">
+            <a href="index.html">Início</a>
+            <a href="index.html#servicos">Serviços</a>
+            <a href="portifolio.html">Portfólio</a>
+            <a href="blog.html">Blog</a>
+            <a href="index.html#contato">Contato</a>
+        </nav>
+        <button class="menu-toggle" id="menu-toggle">
+            <i class="fas fa-bars"></i>
+        </button>
+    </header>
+
+    <main>
+        <article class="article-container">
+            <a href="blog.html" class="back-to-blog">
+                <i class="fas fa-arrow-left"></i> Voltar ao Blog
+            </a>
+            
+            <header class="article-header">
+                <h1 class="article-title">Checklist: O que seu site precisa ter para converter clientes</h1>
+                <div class="article-meta">
+                    <span><i class="far fa-calendar"></i> 16 de Novembro, 2025</span>
+                    <span><i class="far fa-clock"></i> 10 minutos de leitura</span>
+                    <span><i class="fas fa-tag"></i> Guia Prático</span>
+                </div>
+            </header>
+
+            <div class="social-share">
+                <a href="#" class="share-btn facebook" onclick="shareOnSocial('facebook'); return false;" title="Compartilhar no Facebook">
+                    <i class="fab fa-facebook-f"></i>
+                </a>
+                <a href="#" class="share-btn twitter" onclick="shareOnSocial('twitter'); return false;" title="Compartilhar no Twitter">
+                    <i class="fab fa-twitter"></i>
+                </a>
+                <a href="#" class="share-btn linkedin" onclick="shareOnSocial('linkedin'); return false;" title="Compartilhar no LinkedIn">
+                    <i class="fab fa-linkedin-in"></i>
+                </a>
+                <a href="#" class="share-btn whatsapp" onclick="shareOnSocial('whatsapp'); return false;" title="Compartilhar no WhatsApp">
+                    <i class="fab fa-whatsapp"></i>
+                </a>
+            </div>
+
+            <div class="article-content">
+                <p>Ter um site bonito é bom, mas ter um site que <strong>CONVERTE visitantes em clientes</strong> é o que realmente importa. Use este checklist completo para auditar seu site atual ou garantir que seu novo site tenha tudo para gerar resultados.</p>
+
+                <div class="highlight-box">
+                    <p><strong>🎯 Como usar este checklist:</strong> Clique em cada item para marcar. Se tiver menos de 70%, seu site está perdendo vendas!</p>
+                </div>
+
+                <!-- Barra de Progresso -->
+                <div class="checklist-progress">
+                    <span class="progress-text"><span id="checkedCount">0</span> de <span id="totalCount">15</span> itens marcados</span>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" id="progressBar"></div>
+                    </div>
+                    <p class="progress-label" id="progressLabel">Comece a marcar os itens!</p>
+                </div>
+
+                <h2>📱 Design e Experiência do Usuário</h2>
+                
+                <p>O design do seu site é a primeira impressão que o visitante terá da sua empresa. Um design profissional transmite credibilidade e confiança, enquanto um design amador pode afastar clientes em potencial.</p>
+
+                <div class="checklist-item" data-id="ux-1">
+                    <div class="checklist-box"></div>
+                    <span class="checklist-text"><strong>Responsivo (Mobile-First)</strong> - Site funciona perfeitamente em celular, tablet e desktop</span>
+                </div>
+                <div class="checklist-item" data-id="ux-2">
+                    <div class="checklist-box"></div>
+                    <span class="checklist-text"><strong>Velocidade de Carregamento</strong> - Site carrega em menos de 3 segundos</span>
+                </div>
+                <div class="checklist-item" data-id="ux-3">
+                    <div class="checklist-box"></div>
+                    <span class="checklist-text"><strong>Navegação Intuitiva</strong> - Menu claro, máximo 7 itens, botão de contato visível</span>
+                </div>
+
+                <h3>Por que isso importa?</h3>
+                <p>Estudos mostram que <strong>53% dos visitantes abandonam</strong> um site se ele demora mais de 3 segundos para carregar. Além disso, mais de <strong>70% do tráfego</strong> hoje vem de dispositivos móveis. Se seu site não funciona bem no celular, você está perdendo 7 em cada 10 visitantes!</p>
+
+                <h2>🎯 Conteúdo e Copywriting</h2>
+
+                <p>O conteúdo do seu site precisa comunicar <strong>claramente</strong> o que você faz, como você pode ajudar e por que o visitante deveria escolher você em vez da concorrência.</p>
+
+                <div class="checklist-item" data-id="copy-1">
+                    <div class="checklist-box"></div>
+                    <span class="checklist-text"><strong>Headline Impactante</strong> - Título responde "o que você faz e como me beneficia"</span>
+                </div>
+                <div class="checklist-item" data-id="copy-2">
+                    <div class="checklist-box"></div>
+                    <span class="checklist-text"><strong>Proposta de Valor Clara</strong> - Visitante entende em 5 segundos o que você oferece</span>
+                </div>
+                <div class="checklist-item" data-id="copy-3">
+                    <div class="checklist-box"></div>
+                    <span class="checklist-text"><strong>Foco em Benefícios</strong> - Não apenas características, mas transformações</span>
+                </div>
+
+                <div class="highlight-box">
+                    <p><strong>💡 Dica:</strong> Pessoas não compram características, compram transformações! Em vez de "Site com 5 páginas", diga "Seus clientes encontram você 24/7, aumentando suas vendas mesmo enquanto você dorme".</p>
+                </div>
+
+                <h2>🔥 Elementos de Conversão</h2>
+
+                <p>Elementos de conversão são os componentes do seu site que <strong>guiam o visitante</strong> a tomar uma ação - seja preencher um formulário, ligar para você ou fazer uma compra.</p>
+
+                <div class="checklist-item" data-id="conv-1">
+                    <div class="checklist-box"></div>
+                    <span class="checklist-text"><strong>CTAs Visíveis e Persuasivos</strong> - Pelo menos 3 botões de ação ao longo da página</span>
+                </div>
+                <div class="checklist-item" data-id="conv-2">
+                    <div class="checklist-box"></div>
+                    <span class="checklist-text"><strong>Depoimentos de Clientes</strong> - Com foto, nome e empresa (prova social)</span>
+                </div>
+                <div class="checklist-item" data-id="conv-3">
+                    <div class="checklist-box"></div>
+                    <span class="checklist-text"><strong>Formulários Otimizados</strong> - Máximo 3-4 campos essenciais</span>
+                </div>
+                <div class="checklist-item" data-id="conv-4">
+                    <div class="checklist-box"></div>
+                    <span class="checklist-text"><strong>Garantias ou Remoção de Risco</strong> - "Satisfação garantida", "Teste grátis"</span>
+                </div>
+
+                <h3>O poder da Prova Social</h3>
+                <p>Depoimentos de clientes reais podem aumentar suas conversões em até <strong>270%</strong>. Quando um visitante vê que outras pessoas já confiaram em você e tiveram resultados positivos, a barreira de confiança diminui drasticamente.</p>
+
+                <h2>📞 Canais de Contato</h2>
+
+                <p>Facilite ao máximo o contato do cliente com você. Cada obstáculo entre o visitante e o contato é uma oportunidade perdida de venda.</p>
+
+                <div class="checklist-item" data-id="cont-1">
+                    <div class="checklist-box"></div>
+                    <span class="checklist-text"><strong>WhatsApp Flutuante</strong> - Botão visível em todas as páginas</span>
+                </div>
+                <div class="checklist-item" data-id="cont-2">
+                    <div class="checklist-box"></div>
+                    <span class="checklist-text"><strong>Telefone Clicável</strong> - Funciona no mobile com um toque</span>
+                </div>
+
+                <h2>🔍 SEO e Segurança</h2>
+
+                <p>De nada adianta ter um site incrível se ninguém consegue encontrá-lo no Google. O SEO (Search Engine Optimization) é o que faz seu site aparecer nas buscas. Já a segurança transmite confiança e é exigida por lei.</p>
+
+                <div class="checklist-item" data-id="seo-1">
+                    <div class="checklist-box"></div>
+                    <span class="checklist-text"><strong>Certificado SSL (HTTPS)</strong> - Cadeado verde no navegador (obrigatório!)</span>
+                </div>
+                <div class="checklist-item" data-id="seo-2">
+                    <div class="checklist-box"></div>
+                    <span class="checklist-text"><strong>Google Analytics Configurado</strong> - Para medir resultados</span>
+                </div>
+                <div class="checklist-item" data-id="seo-3">
+                    <div class="checklist-box"></div>
+                    <span class="checklist-text"><strong>Meta Tags Otimizadas</strong> - Title e description em todas as páginas</span>
+                </div>
+
+                <div class="highlight-box">
+                    <p><strong>⚠️ Importante:</strong> Sites sem HTTPS (certificado SSL) são marcados como "Não Seguros" pelo Google Chrome. Isso assusta visitantes e prejudica seu posicionamento no Google!</p>
+                </div>
+
+                <h2>📋 SUA PONTUAÇÃO</h2>
+
+                <p>Veja sua pontuação na barra de progresso acima! Interpretação:</p>
+
+                <ul>
+                    <li><strong>90%+ (14-15 itens):</strong> 🏆 EXCELENTE! Seu site é uma máquina de conversão!</li>
+                    <li><strong>70-89% (11-13 itens):</strong> ✅ BOM! Faça alguns ajustes para resultados ainda melhores.</li>
+                    <li><strong>50-69% (8-10 itens):</strong> ⚠️ ATENÇÃO! Seu site está deixando dinheiro na mesa.</li>
+                    <li><strong>Menos de 50% (0-7 itens):</strong> 🚨 URGENTE! Seu site precisa de reformulação completa.</li>
+                </ul>
+
+                <h2>🚀 Próximos Passos</h2>
+
+                <h3>Se você marcou MENOS de 70%:</h3>
+                <p>Seu site precisa de ajustes urgentes. Recomendamos:</p>
+                <ol>
+                    <li><strong>Auditoria completa</strong> com profissionais</li>
+                    <li><strong>Priorização</strong> dos itens mais impactantes</li>
+                    <li><strong>Implementação gradual</strong> (não precisa fazer tudo de uma vez)</li>
+                    <li><strong>Testes e medição</strong> de resultados</li>
+                </ol>
+
+                <h3>Se você marcou 70-90%:</h3>
+                <p>Você está no caminho certo! Foque em:</p>
+                <ul>
+                    <li>Otimizar os itens que faltam</li>
+                    <li>Fazer testes A/B continuamente</li>
+                    <li>Monitorar métricas semanalmente</li>
+                </ul>
+
+                <h3>Se você marcou 90%+:</h3>
+                <p>Parabéns! Agora é hora de:</p>
+                <ul>
+                    <li>Escalar tráfego (investir em anúncios)</li>
+                    <li>Criar variações da página para testes</li>
+                    <li>Expandir para novos canais</li>
+                </ul>
+
+                <div class="highlight-box">
+                    <p><strong>💡 Dica profissional:</strong> Não tente implementar tudo de uma vez! Priorize os itens de Design, Conteúdo e Conversão primeiro. São eles que trazem resultado mais rápido.</p>
+                </div>
+
+                <div class="highlight-box">
+                    <p><strong>💾 Seu progresso foi salvo!</strong> As marcações que você fez ficam salvas no seu navegador. Volte quando quiser para continuar de onde parou!</p>
+                </div>
+
+                <div class="cta-box">
+                    <h3>🎯 Precisa de Ajuda Profissional?</h3>
+                    <p>Implementar tudo isso sozinho pode ser complexo. A Dev Digital BR cria sites com TODOS esses elementos já incluídos. Deixe os especialistas cuidarem da parte técnica enquanto você foca no seu negócio!</p>
+                    <a href="https://wa.me/5515992710295?text=Vi o checklist e quero um site que converte! Podem me ajudar?" class="cta-btn" target="_blank">
+                        <i class="fab fa-whatsapp"></i>
+                        Quero um Site que Converte
+                    </a>
+                </div>
+            </div>
+
+            <div class="comments-section">
+                <h3><i class="far fa-comments"></i> Comentários</h3>
+                <form class="comment-form" id="commentForm">
+                    <div class="form-group">
+                        <label for="comment-name">Nome *</label>
+                        <input type="text" id="comment-name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="comment-email">Email *</label>
+                        <input type="email" id="comment-email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="comment-text">Comentário *</label>
+                        <textarea id="comment-text" name="comment" required></textarea>
+                    </div>
+                    <button type="submit" class="submit-comment-btn">Publicar Comentário</button>
+                </form>
+                <div class="comments-list" id="commentsList"></div>
+            </div>
+        </article>
+    </main>
+
+    <footer>
+        <div class="social-links">
+            <a href="https://www.instagram.com/oficial_dev_digital/" target="_blank" rel="noopener" aria-label="Instagram">
+                <i class="fab fa-instagram"></i>
+            </a>
+            <a href="https://www.facebook.com/profile.php?id=61580229984541" target="_blank" rel="noopener" aria-label="Facebook">
+                <i class="fab fa-facebook"></i>
+            </a>
+        </div>
+        <p>&copy; 2025 Dev Digital BR - Todos os direitos reservados.</p>
+        <p><a href="blog.html">Voltar ao Blog</a> | <a href="index.html">Site Principal</a></p>
+    </footer>
+
+    <a href="https://wa.me/5515992710295?text=Olá! Vi o checklist de conversão e quero saber mais!" class="whatsapp-flutuante" target="_blank" rel="noopener">
+        <img src="imagens/iconewhats.svg" alt="WhatsApp">
+    </a>
+
+    <script>
+        // Menu Toggle
+        const menuToggle = document.getElementById('menu-toggle');
+        const nav = document.getElementById('nav');
+        const header = document.querySelector('header');
+        let lastScrollTop = 0;
+
+        if (menuToggle) {
+            menuToggle.addEventListener('click', function() {
+                nav.classList.toggle('active');
+                const icon = this.querySelector('i');
+                if (nav.classList.contains('active')) {
+                    icon.classList.replace('fa-bars', 'fa-times');
+                    document.body.style.overflow = 'hidden';
+                } else {
+                    icon.classList.replace('fa-times', 'fa-bars');
+                    document.body.style.overflow = '';
+                }
+            });
+        }
+
+        document.querySelectorAll('nav a').forEach(link => {
+            link.addEventListener('click', function() {
+                if (nav.classList.contains('active')) {
+                    nav.classList.remove('active');
+                    menuToggle.querySelector('i').classList.replace('fa-times', 'fa-bars');
+                    document.body.style.overflow = '';
+                }
+            });
+        });
+
+        // Hide/Show header on scroll
+        window.addEventListener('scroll', function() {
+            let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            if (scrollTop > 100) {
+                header.classList.toggle('hidden', scrollTop > lastScrollTop);
+            } else {
+                header.classList.remove('hidden');
+            }
+            lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+        });
+
+        // Social share
+        function shareOnSocial(platform) {
+            const url = encodeURIComponent(window.location.href);
+            const title = encodeURIComponent(document.querySelector('.article-title').textContent);
+            let shareUrl;
+            switch(platform) {
+                case 'facebook': shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`; break;
+                case 'twitter': shareUrl = `https://twitter.com/intent/tweet?url=${url}&text=${title}`; break;
+                case 'linkedin': shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${url}`; break;
+                case 'whatsapp': shareUrl = `https://wa.me/?text=${title}%20${url}`; break;
+            }
+            if (shareUrl) window.open(shareUrl, '_blank', 'width=600,height=400');
+        }
+
+        // Comment form
+        document.getElementById('commentForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const name = document.getElementById('comment-name').value;
+            const comment = document.getElementById('comment-text').value;
+            const commentsList = document.getElementById('commentsList');
+            const newComment = document.createElement('div');
+            newComment.className = 'comment-item';
+            newComment.innerHTML = `
+                <div class="comment-header">
+                    <div class="comment-avatar">${name.charAt(0).toUpperCase()}</div>
+                    <div class="comment-info">
+                        <h4>${name}</h4>
+                        <span class="comment-date">Agora mesmo</span>
+                    </div>
+                </div>
+                <p class="comment-text">${comment}</p>
+            `;
+            commentsList.insertBefore(newComment, commentsList.firstChild);
+            this.reset();
+            alert('Comentário publicado com sucesso!');
+        });
+
+        // ========== CHECKLIST INTERATIVA ==========
+        const checklistItems = document.querySelectorAll('.checklist-item');
+        const STORAGE_KEY = 'devdigitalbr_checklist_artigo5';
+
+        function loadChecklistState() {
+            try {
+                const saved = localStorage.getItem(STORAGE_KEY);
+                if (saved) {
+                    const checkedItems = JSON.parse(saved);
+                    checkedItems.forEach(id => {
+                        const item = document.querySelector(`.checklist-item[data-id="${id}"]`);
+                        if (item) item.classList.add('checked');
+                    });
+                }
+            } catch (e) { console.log('Erro ao carregar checklist:', e); }
+            updateProgress();
+        }
+
+        function saveChecklistState() {
+            try {
+                const checkedItems = [];
+                document.querySelectorAll('.checklist-item.checked').forEach(item => {
+                    const id = item.getAttribute('data-id');
+                    if (id) checkedItems.push(id);
+                });
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(checkedItems));
+            } catch (e) { console.log('Erro ao salvar checklist:', e); }
+        }
+
+        function updateProgress() {
+            const total = document.querySelectorAll('.checklist-item').length;
+            const checked = document.querySelectorAll('.checklist-item.checked').length;
+            const percentage = total > 0 ? Math.round((checked / total) * 100) : 0;
+
+            document.getElementById('checkedCount').textContent = checked;
+            document.getElementById('totalCount').textContent = total;
+            document.getElementById('progressBar').style.width = percentage + '%';
+
+            const label = document.getElementById('progressLabel');
+            if (percentage === 0) label.textContent = 'Comece a marcar os itens!';
+            else if (percentage < 50) label.textContent = '🚨 Seu site precisa de melhorias urgentes!';
+            else if (percentage < 70) label.textContent = '⚠️ Bom começo, mas ainda há trabalho a fazer!';
+            else if (percentage < 90) label.textContent = '✅ Ótimo! Seu site está no caminho certo!';
+            else label.textContent = '🏆 Excelente! Seu site é uma máquina de conversão!';
+        }
+
+        checklistItems.forEach(item => {
+            item.addEventListener('click', function() {
+                this.classList.toggle('checked');
+                saveChecklistState();
+                updateProgress();
+            });
+        });
+
+        // Carregar estado ao iniciar
+        if (checklistItems.length > 0) loadChecklistState();
+    </script>
+</body>
+</html>
