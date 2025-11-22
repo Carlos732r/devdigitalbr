@@ -4,24 +4,56 @@
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
             http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
-<!-- created with Free Online Sitemap Generator www.xml-sitemaps.com -->
-
 
 <url>
   <loc>https://www.devdigitalbr.com.br/</loc>
-  <lastmod>2025-08-23T21:28:22+00:00</lastmod>
+  <lastmod>2025-11-22T00:00:00+00:00</lastmod>
+  <priority>1.00</priority>
+</url>
+<url>
+  <loc>https://www.devdigitalbr.com.br/index.html</loc>
+  <lastmod>2025-11-22T00:00:00+00:00</lastmod>
   <priority>1.00</priority>
 </url>
 <url>
   <loc>https://www.devdigitalbr.com.br/portifolio.html</loc>
-  <lastmod>2025-08-23T21:28:21+00:00</lastmod>
+  <lastmod>2025-11-22T00:00:00+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+
+<!-- BLOG -->
+<url>
+  <loc>https://www.devdigitalbr.com.br/blog.html</loc>
+  <lastmod>2025-11-22T00:00:00+00:00</lastmod>
+  <priority>0.90</priority>
+</url>
+<url>
+  <loc>https://www.devdigitalbr.com.br/artigo1.html</loc>
+  <lastmod>2025-11-22T00:00:00+00:00</lastmod>
   <priority>0.80</priority>
 </url>
 <url>
-  <loc>https://www.devdigitalbr.com.br/index.html</loc>
-  <lastmod>2025-08-23T21:28:22+00:00</lastmod>
-  <priority>0.64</priority>
+  <loc>https://www.devdigitalbr.com.br/artigo2.html</loc>
+  <lastmod>2025-11-22T00:00:00+00:00</lastmod>
+  <priority>0.80</priority>
 </url>
+<url>
+  <loc>https://www.devdigitalbr.com.br/artigo3.html</loc>
+  <lastmod>2025-11-22T00:00:00+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://www.devdigitalbr.com.br/artigo4.html</loc>
+  <lastmod>2025-11-22T00:00:00+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://www.devdigitalbr.com.br/artigo5.html</loc>
+  <lastmod>2025-11-22T00:00:00+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+
+<!-- LANDING PAGES DO PORTFÓLIO -->
 <url>
   <loc>https://www.devdigitalbr.com.br/segundalanding/landing.html</loc>
   <lastmod>2025-08-23T21:28:22+00:00</lastmod>
@@ -37,6 +69,5 @@
   <lastmod>2025-08-23T21:28:22+00:00</lastmod>
   <priority>0.64</priority>
 </url>
-
 
 </urlset>
