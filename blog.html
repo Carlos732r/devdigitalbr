@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog Dev Digital BR | Dicas sobre Landing Pages e Sites Profissionais</title>
+    <meta name="description" content="Aprenda tudo sobre criação de sites, landing pages e estratégias digitais. Blog especializado em soluções web para empresas de Presidente Prudente e região.">
+    <meta name="keywords" content="blog landing page, criação de sites presidente prudente, dicas marketing digital, site profissional 2025, conversão de clientes, quanto custa site, checklist site, landing page vendas">
+    <meta name="robots" content="index, follow">
+    <meta name="author" content="Dev Digital BR">
+    <meta property="og:title" content="Blog Dev Digital BR | Dicas de Landing Pages e Sites">
+    <meta property="og:description" content="Artigos exclusivos sobre criação de sites, landing pages e estratégias para aumentar suas vendas online.">
+    <meta property="og:image" content="https://www.devdigitalbr.com.br/imagens/fototech.jpg">
+    <meta property="og:url" content="https://www.devdigitalbr.com.br/blog.html">
+    <meta property="og:type" content="website">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <style>
+        :root {
+            --primary-color: #00d4ff;
+            --primary-dark: #0099cc;
+            --secondary-color: #0a0a0a;
+            --accent-color: #1a1a1a;
+            --text-light: #ffffff;
+            --text-gray: #a0a0a0;
+            --gradient-1: linear-gradient(135deg, #00d4ff 0%, #0099cc 50%, #0066aa 100%);
+            --gradient-2: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+            --gradient-bg: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%);
+            --border-radius: 15px;
+            --transition: all 0.3s ease;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--gradient-bg); color: var(--text-light); line-height: 1.6; }
+        header { position: fixed; top: 0; width: 100%; background: rgba(10, 10, 10, 0.95); backdrop-filter: blur(10px); padding: 1rem 5%; display: flex; justify-content: space-between; align-items: center; z-index: 1000; height: 110px; box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3); }
+        header.hidden { transform: translateY(-100%); }
+        .logo-link { text-decoration: none; color: inherit; }
+        .logo-container { display: flex; align-items: center; gap: 1rem; }
+        .logo-image { width: 80px; height: 80px; border-radius: var(--border-radius); background: var(--gradient-1); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3); transition: var(--transition); }
+        .logo-image:hover { transform: scale(1.05) rotate(5deg); }
+        .logo-image img { width: 100%; height: 100%; object-fit: contain; border-radius: calc(var(--border-radius) - 2px); }
+        .logo { font-size: 1.9rem; font-weight: 700; background: var(--gradient-1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        nav { display: flex; gap: 2rem; }
+        nav a { color: var(--text-light); text-decoration: none; font-weight: 500; transition: var(--transition); position: relative; padding: 0.5rem 0; }
+        nav a::after { content: ''; position: absolute; bottom: -5px; left: 0; width: 0; height: 2px; background: var(--gradient-1); transition: width 0.3s ease; }
+        nav a:hover::after { width: 100%; }
+        .menu-toggle { display: none; font-size: 1.5rem; color: var(--primary-color); cursor: pointer; background: none; border: none; position: relative; z-index: 1002; }
+        .blog-hero { min-height: 70vh; display: flex; align-items: center; justify-content: space-between; padding: 10rem 8% 6rem; background: var(--gradient-bg); position: relative; overflow: hidden; }
+        .blog-hero::before { content: ''; position: absolute; top: -50%; right: -20%; width: 600px; height: 600px; background: radial-gradient(circle, rgba(0, 212, 255, 0.1) 0%, transparent 70%); border-radius: 50%; animation: float 20s ease-in-out infinite; }
+        @keyframes float { 0%, 100% { transform: translate(0, 0) rotate(0deg); } 50% { transform: translate(-30px, -30px) rotate(180deg); } }
+        .blog-hero-content { flex: 1; max-width: 650px; z-index: 2; position: relative; }
+        .blog-badge { display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(0, 212, 255, 0.1); border: 1px solid rgba(0, 212, 255, 0.3); color: var(--primary-color); padding: 0.5rem 1.2rem; border-radius: 50px; font-size: 0.9rem; font-weight: 700; margin-bottom: 1.5rem; }
+        .blog-hero h1 { font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 900; margin-bottom: 1.5rem; line-height: 1.2; }
+        .blog-hero h1 .highlight { background: var(--gradient-1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .blog-hero-description { font-size: 1.2rem; color: var(--text-gray); margin-bottom: 2rem; line-height: 1.8; }
+        .blog-hero-stats { display: flex; gap: 2rem; flex-wrap: wrap; }
+        .hero-stat-item { display: flex; align-items: center; gap: 0.8rem; }
+        .hero-stat-item i { font-size: 1.5rem; color: var(--primary-color); }
+        .hero-stat-item span { color: var(--text-gray); font-weight: 500; }
+        .blog-hero-image { flex: 1; display: flex; justify-content: center; align-items: center; z-index: 2; position: relative; }
+        .blog-hero-image img { max-width: 500px; width: 100%; border-radius: 20px; box-shadow: 0 20px 60px rgba(0, 212, 255, 0.2); transition: var(--transition); }
+        .blog-hero-image img:hover { transform: scale(1.05); box-shadow: 0 30px 80px rgba(0, 212, 255, 0.3); }
+        .blog-section { padding: 4rem 8%; max-width: 1400px; margin: 0 auto; }
+        .section-header { text-align: center; margin-bottom: 4rem; }
+        .section-header h2 { font-size: clamp(2rem, 4vw, 2.8rem); font-weight: 700; margin-bottom: 1rem; }
+        .section-header h2 .highlight { background: var(--gradient-1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .section-header p { font-size: 1.1rem; color: var(--text-gray); }
+        .search-container { max-width: 700px; margin: 0 auto 4rem; position: relative; }
+        .search-bar { width: 100%; padding: 1.2rem 4rem 1.2rem 1.5rem; background: var(--gradient-2); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 50px; color: var(--text-light); font-size: 1rem; transition: var(--transition); }
+        .search-bar:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1); }
+        .search-btn { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: var(--gradient-1); border: none; width: 45px; height: 45px; border-radius: 50%; color: var(--secondary-color); font-size: 1.1rem; cursor: pointer; transition: var(--transition); }
+        .search-btn:hover { transform: translateY(-50%) scale(1.1); }
+        .blog-grid { display: flex; flex-direction: column; gap: 2.5rem; }
+        .blog-card-horizontal { display: grid; grid-template-columns: 400px 1fr; background: var(--gradient-2); border-radius: 20px; overflow: hidden; transition: var(--transition); border: 1px solid rgba(255, 255, 255, 0.1); cursor: pointer; min-height: 320px; height: auto; text-decoration: none; }
+        .blog-card-horizontal:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(0, 212, 255, 0.2); border-color: rgba(0, 212, 255, 0.3); }
+        .blog-card-image-horizontal { position: relative; overflow: hidden; }
+        .blog-card-image-horizontal img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
+        .blog-card-horizontal:hover .blog-card-image-horizontal img { transform: scale(1.1); }
+        .blog-card-content-horizontal { padding: 2rem 2.5rem; display: flex; flex-direction: column; justify-content: center; }
+        .blog-category { display: inline-block; background: rgba(0, 212, 255, 0.1); color: var(--primary-color); padding: 0.4rem 1rem; border-radius: 20px; font-size: 0.85rem; font-weight: 600; margin-bottom: 1rem; width: fit-content; }
+        .blog-card-horizontal h3 { font-size: 1.6rem; margin-bottom: 1rem; line-height: 1.3; color: var(--text-light); }
+        .blog-card-horizontal p { color: var(--text-gray); margin-bottom: 1.5rem; line-height: 1.6; font-size: 1rem; }
+        .blog-meta { display: flex; gap: 1.5rem; color: var(--text-gray); font-size: 0.9rem; margin-bottom: 1.5rem; }
+        .blog-meta i { color: var(--primary-color); margin-right: 0.3rem; }
+        .read-more-btn { display: inline-flex; align-items: center; gap: 0.5rem; background: transparent; color: var(--primary-color); padding: 0; border: none; text-decoration: none; font-weight: 600; font-size: 1rem; transition: var(--transition); width: fit-content; }
+        .read-more-btn:hover { gap: 1rem; }
+        .newsletter-section { background: var(--gradient-2); padding: 4rem 8%; margin: 4rem 0; border-radius: 20px; text-align: center; border: 1px solid rgba(255, 255, 255, 0.1); }
+        .newsletter-section h3 { font-size: 2rem; margin-bottom: 1rem; }
+        .newsletter-section h3 .highlight { background: var(--gradient-1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .newsletter-section p { color: var(--text-gray); margin-bottom: 2rem; font-size: 1.1rem; }
+        .newsletter-form { max-width: 600px; margin: 0 auto; display: flex; gap: 1rem; }
+        .newsletter-input { flex: 1; padding: 1.2rem 1.5rem; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 50px; color: var(--text-light); font-size: 1rem; transition: var(--transition); }
+        .newsletter-input:focus { outline: none; border-color: var(--primary-color); background: rgba(255, 255, 255, 0.08); }
+        .newsletter-btn { padding: 1.2rem 2.5rem; background: var(--gradient-1); color: var(--secondary-color); border: none; border-radius: 50px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: var(--transition); white-space: nowrap; }
+        .newsletter-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0, 212, 255, 0.4); }
+        footer { background: var(--secondary-color); padding: 3rem 8%; text-align: center; border-top: 1px solid rgba(255, 255, 255, 0.1); margin-top: 4rem; }
+        .social-links { display: flex; justify-content: center; gap: 1rem; margin-bottom: 1.5rem; }
+        .social-links a { width: 45px; height: 45px; background: var(--gradient-2); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--primary-color); text-decoration: none; transition: var(--transition); font-size: 1.2rem; }
+        .social-links a:hover { background: var(--primary-color); color: var(--secondary-color); transform: translateY(-3px); }
+        footer p { color: var(--text-gray); font-size: 0.9rem; margin-bottom: 0.5rem; }
+        footer a { color: var(--primary-color); text-decoration: none; transition: var(--transition); }
+        footer a:hover { color: var(--text-light); }
+        .whatsapp-flutuante { position: fixed; width: 70px; height: 70px; bottom: 30px; right: 30px; background-color: #25d366; border-radius: 50px; text-align: center; font-size: 35px; box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4); z-index: 1000; transition: all 0.3s ease-in-out; display: flex; align-items: center; justify-content: center; animation: pulse 2s infinite; }
+        .whatsapp-flutuante:hover { transform: scale(1.15); box-shadow: 0 6px 20px rgba(37, 211, 102, 0.6); }
+        .whatsapp-flutuante img { width: 100%; height: 100%; border-radius: 50%; padding: 12px; }
+        @keyframes pulse { 0% { box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4), 0 0 0 0 rgba(37, 211, 102, 0.7); } 70% { box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4), 0 0 0 10px rgba(37, 211, 102, 0); } 100% { box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4), 0 0 0 0 rgba(37, 211, 102, 0); } }
+        .fade-in { opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease, transform 0.8s ease; }
+        .fade-in.visible { opacity: 1; transform: translateY(0); }
+        @media (max-width: 1024px) {
+            .blog-hero { flex-direction: column; text-align: center; padding: 10rem 5% 4rem; }
+            .blog-hero-image { margin-top: 3rem; }
+            .blog-card-horizontal { grid-template-columns: 1fr; height: auto; }
+            .blog-card-image-horizontal { height: 250px; }
+            .blog-section { padding: 4rem 5%; }
+            .newsletter-section { padding: 3rem 5%; }
+        }
+        @media (max-width: 768px) {
+            header { height: 80px; padding: 1rem 5%; }
+            .logo-container { flex-grow: 1; }
+            .logo-image { width: 60px; height: 60px; }
+            .logo { font-size: 1.4rem; }
+            .menu-toggle { display: block; margin-left: auto; }
+            nav { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: rgba(10, 10, 10, 0.98); backdrop-filter: blur(20px); flex-direction: column; justify-content: center; align-items: center; gap: 2rem; transition: all 0.4s ease; z-index: 1001; opacity: 0; visibility: hidden; transform: translateY(-100%); }
+            nav.active { opacity: 1; visibility: visible; transform: translateY(0); }
+            nav a { font-size: 1.3rem; padding: 1rem 2rem; width: 250px; text-align: center; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.1); }
+            .blog-hero { padding: 8rem 5% 4rem; }
+            .blog-hero-stats { justify-content: center; }
+            .newsletter-form { flex-direction: column; }
+            .whatsapp-flutuante { width: 60px; height: 60px; bottom: 20px; right: 20px; }
+        }
+        @media (max-width: 480px) {
+            .blog-hero h1 { font-size: 2rem; }
+            .section-header h2 { font-size: 1.8rem; }
+            .blog-card-content-horizontal { padding: 1.5rem; }
+            .blog-card-horizontal h3 { font-size: 1.3rem; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="index.html" class="logo-link">
+            <div class="logo-container">
+                <div class="logo-image">
+                    <img src="logo_nome.png" alt="DevDigital Logo">
+                </div>
+                <div class="logo">Dev Digital BR</div>
+            </div>
+        </a>
+        <nav id="nav">
+            <a href="index.html">Início</a>
+            <a href="index.html#servicos">Serviços</a>
+            <a href="portifolio.html">Portfólio</a>
+            <a href="blog.html">Blog</a>
+            <a href="index.html#contato">Contato</a>
+        </nav>
+        <button class="menu-toggle" id="menu-toggle">
+            <i class="fas fa-bars"></i>
+        </button>
+    </header>
+
+    <main>
+        <section class="blog-hero">
+            <div class="blog-hero-content">
+                <div class="blog-badge">
+                    <i class="fas fa-fire"></i>
+                    <span>CONTEÚDO ATUALIZADO SEMANALMENTE</span>
+                </div>
+                <h1>Blog <span class="highlight">Dev Digital BR</span></h1>
+                <p class="blog-hero-description">
+                    Acompanhe as principais tendências, novidades e insights sobre criação de sites, landing pages, marketing digital e SEO. Descubra dicas valiosas, estratégias eficazes e as melhores práticas para alcançar sucesso no mundo digital e expandir seus negócios online.
+                </p>
+                <div class="blog-hero-stats">
+                    <div class="hero-stat-item">
+                        <i class="fas fa-newspaper"></i>
+                        <span><strong>5+</strong> Artigos publicados</span>
+                    </div>
+                    <div class="hero-stat-item">
+                        <i class="fas fa-clock"></i>
+                        <span>Atualizado <strong>semanalmente</strong></span>
+                    </div>
+                    <div class="hero-stat-item">
+                        <i class="fas fa-users"></i>
+                        <span><strong>100%</strong> gratuito</span>
+                    </div>
+                </div>
+            </div>
+            <div class="blog-hero-image">
+                <img src="imagens/fototech.jpg" alt="Blog Dev Digital BR">
+            </div>
+        </section>
+
+        <section class="blog-section">
+            <div class="search-container">
+                <input type="text" class="search-bar" id="searchInput" placeholder="Buscar artigos sobre sites, landing pages, SEO...">
+                <button class="search-btn" id="searchBtn">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+            <div class="section-header">
+                <h2>Leia Conteúdo Atualizado Sobre <span class="highlight">Criação de Sites, Apps, SEO e Marketing Digital</span></h2>
+                <p>Artigos práticos e estratégicos para impulsionar seu negócio no digital</p>
+            </div>
+            <div class="blog-grid">
+                <!-- Article 1 -->
+                <a href="artigo1.html" class="blog-card-horizontal fade-in">
+                    <div class="blog-card-image-horizontal">
+                        <img src="imagens/imagem_blog_1.jpg" alt="Landing Page para Empresas">
+                    </div>
+                    <div class="blog-card-content-horizontal">
+                        <span class="blog-category">Landing Pages</span>
+                        <h3>5 Motivos para sua Empresa em Presidente Prudente ter uma Landing Page</h3>
+                        <div class="blog-meta">
+                            <span><i class="far fa-calendar"></i> 16 Nov 2025</span>
+                            <span><i class="far fa-clock"></i> 5 min</span>
+                        </div>
+                        <p>Descubra por que empresas locais estão investindo em landing pages e como isso pode transformar seus resultados em até 300%.</p>
+                        <span class="read-more-btn">Ler artigo completo <i class="fas fa-arrow-right"></i></span>
+                    </div>
+                </a>
+                <!-- Article 2 -->
+                <a href="artigo2.html" class="blog-card-horizontal fade-in">
+                    <div class="blog-card-image-horizontal">
+                        <img src="imagens/imagem_blog_2.jpg" alt="Quanto custa um site profissional">
+                    </div>
+                    <div class="blog-card-content-horizontal">
+                        <span class="blog-category">Investimento</span>
+                        <h3>Quanto custa criar um site profissional em 2025?</h3>
+                        <div class="blog-meta">
+                            <span><i class="far fa-calendar"></i> 16 Nov 2025</span>
+                            <span><i class="far fa-clock"></i> 6 min</span>
+                        </div>
+                        <p>Entenda os valores reais do mercado e o que está incluso em cada tipo de projeto web. Tabela completa de preços atualizada.</p>
+                        <span class="read-more-btn">Ler artigo completo <i class="fas fa-arrow-right"></i></span>
+                    </div>
+                </a>
+                <!-- Article 3 -->
+                <a href="artigo3.html" class="blog-card-horizontal fade-in">
+                    <div class="blog-card-image-horizontal">
+                        <img src="imagens/imagem_blog_3.jpg" alt="Site vs Landing Page">
+                    </div>
+                    <div class="blog-card-content-horizontal">
+                        <span class="blog-category">Estratégia</span>
+                        <h3>Site institucional vs Landing Page: qual escolher?</h3>
+                        <div class="blog-meta">
+                            <span><i class="far fa-calendar"></i> 16 Nov 2025</span>
+                            <span><i class="far fa-clock"></i> 7 min</span>
+                        </div>
+                        <p>Compare as diferenças e descubra qual solução é ideal para o seu negócio e objetivos. Guia completo de decisão.</p>
+                        <span class="read-more-btn">Ler artigo completo <i class="fas fa-arrow-right"></i></span>
+                    </div>
+                </a>
+                <!-- Article 4 -->
+                <a href="artigo4.html" class="blog-card-horizontal fade-in">
+                    <div class="blog-card-image-horizontal">
+                        <img src="imagens/cod.jpg" alt="Aumentar vendas com landing page">
+                    </div>
+                    <div class="blog-card-content-horizontal">
+                        <span class="blog-category">Conversão</span>
+                        <h3>Como uma Landing Page pode aumentar suas vendas em 300%</h3>
+                        <div class="blog-meta">
+                            <span><i class="far fa-calendar"></i> 16 Nov 2025</span>
+                            <span><i class="far fa-clock"></i> 8 min</span>
+                        </div>
+                        <p>Estratégias comprovadas de conversão que transformam visitantes em clientes fiéis. Casos reais com números.</p>
+                        <span class="read-more-btn">Ler artigo completo <i class="fas fa-arrow-right"></i></span>
+                    </div>
+                </a>
+                <!-- Article 5 -->
+                <a href="artigo5.html" class="blog-card-horizontal fade-in">
+                    <div class="blog-card-image-horizontal">
+                        <img src="imagens/imagem_blog_5.jpg" alt="Checklist site conversão">
+                    </div>
+                    <div class="blog-card-content-horizontal">
+                        <span class="blog-category">Guia Prático</span>
+                        <h3>Checklist: O que seu site precisa ter para converter clientes</h3>
+                        <div class="blog-meta">
+                            <span><i class="far fa-calendar"></i> 16 Nov 2025</span>
+                            <span><i class="far fa-clock"></i> 10 min</span>
+                        </div>
+                        <p>Lista completa dos 50+ elementos essenciais para um site de alta conversão em 2025. Plano de ação de 30 dias incluído.</p>
+                        <span class="read-more-btn">Ler artigo completo <i class="fas fa-arrow-right"></i></span>
+                    </div>
+                </a>
+            </div>
+        </section>
+
+        <section class="newsletter-section">
+            <h3>Receba Novos <span class="highlight">Artigos por Email</span></h3>
+            <p>Inscreva-se gratuitamente e receba conteúdo exclusivo sobre criação de sites, landing pages e marketing digital toda semana!</p>
+            <form class="newsletter-form" id="newsletterForm">
+                <input type="email" class="newsletter-input" placeholder="Digite seu melhor email" required>
+                <button type="submit" class="newsletter-btn">
+                    <i class="fas fa-paper-plane"></i> Inscrever-se Grátis
+                </button>
+            </form>
+            <p style="font-size: 0.85rem; margin-top: 1rem; color: var(--text-gray);">
+                <i class="fas fa-lock"></i> Seus dados estão seguros. Sem spam, cancele quando quiser.
+            </p>
+        </section>
+    </main>
+
+    <footer>
+        <div class="social-links">
+            <a href="https://www.instagram.com/oficial_dev_digital/" target="_blank" rel="noopener" aria-label="Instagram">
+                <i class="fab fa-instagram"></i>
+            </a>
+            <a href="https://www.facebook.com/profile.php?id=61580229984541" target="_blank" rel="noopener" aria-label="Facebook">
+                <i class="fab fa-facebook"></i>
+            </a>
+        </div>
+        <p>&copy; 2025 Dev Digital BR - Todos os direitos reservados.</p>
+        <p><a href="index.html">Voltar ao Site Principal</a></p>
+    </footer>
+
+    <a href="https://wa.me/5515992710295?text=Olá! Vi o blog e quero saber mais sobre os serviços da Dev Digital BR." class="whatsapp-flutuante" target="_blank" rel="noopener">
+        <img src="imagens/iconewhats.svg" alt="WhatsApp">
+    </a>
+
+    <script>
+        // Menu Toggle
+        const menuToggle = document.getElementById('menu-toggle');
+        const nav = document.getElementById('nav');
+        const header = document.querySelector('header');
+        let lastScrollTop = 0;
+        let scrollThreshold = 100;
+
+        if (menuToggle) {
+            menuToggle.addEventListener('click', function() {
+                nav.classList.toggle('active');
+                const icon = this.querySelector('i');
+                if (nav.classList.contains('active')) {
+                    icon.classList.replace('fa-bars', 'fa-times');
+                    document.body.style.overflow = 'hidden';
+                } else {
+                    icon.classList.replace('fa-times', 'fa-bars');
+                    document.body.style.overflow = '';
+                }
+            });
+        }
+
+        // Close menu when clicking on link
+        document.querySelectorAll('nav a').forEach(link => {
+            link.addEventListener('click', function() {
+                if (nav.classList.contains('active')) {
+                    nav.classList.remove('active');
+                    const icon = menuToggle.querySelector('i');
+                    icon.classList.replace('fa-times', 'fa-bars');
+                    document.body.style.overflow = '';
+                }
+            });
+        });
+
+        // Hide/Show header on scroll
+        window.addEventListener('scroll', function() {
+            let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            if (scrollTop > scrollThreshold) {
+                if (scrollTop > lastScrollTop) {
+                    header.classList.add('hidden');
+                } else {
+                    header.classList.remove('hidden');
+                }
+            } else {
+                header.classList.remove('hidden');
+            }
+            lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+        });
+
+        // Search functionality
+        const searchInput = document.getElementById('searchInput');
+        const searchBtn = document.getElementById('searchBtn');
+        const blogCards = document.querySelectorAll('.blog-card-horizontal');
+
+        function performSearch() {
+            const searchTerm = searchInput.value.toLowerCase();
+            blogCards.forEach(card => {
+                const title = card.querySelector('h3').textContent.toLowerCase();
+                const description = card.querySelector('p').textContent.toLowerCase();
+                const category = card.querySelector('.blog-category').textContent.toLowerCase();
+                if (title.includes(searchTerm) || description.includes(searchTerm) || category.includes(searchTerm)) {
+                    card.style.display = 'grid';
+                } else {
+                    card.style.display = searchTerm === '' ? 'grid' : 'none';
+                }
+            });
+        }
+
+        if (searchBtn) searchBtn.addEventListener('click', performSearch);
+        if (searchInput) {
+            searchInput.addEventListener('keyup', function(e) {
+                if (e.key === 'Enter') performSearch();
+            });
+        }
+
+        // Newsletter form
+        const newsletterForm = document.getElementById('newsletterForm');
+        if (newsletterForm) {
+            newsletterForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const email = this.querySelector('input').value;
+                const message = `Olá! Quero me inscrever na newsletter do blog Dev Digital BR. Meu email: ${email}`;
+                window.open(`https://wa.me/5515992710295?text=${encodeURIComponent(message)}`, '_blank');
+                alert('Obrigado! Você será redirecionado para confirmar sua inscrição via WhatsApp.');
+                this.reset();
+            });
+        }
+
+        // Scroll animations
+        function handleScrollAnimations() {
+            const elements = document.querySelectorAll('.fade-in');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) entry.target.classList.add('visible');
+                });
+            }, { threshold: 0.1 });
+            elements.forEach(element => observer.observe(element));
+        }
+
+        document.addEventListener('DOMContentLoaded', handleScrollAnimations);
+    </script>
+</body>
+</html>
