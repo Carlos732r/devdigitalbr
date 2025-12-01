@@ -120,36 +120,148 @@
 
     <!-- Main Content -->
     <main class="main-content">
-      <!-- Dashboard Page -->
-      <section id="dashboard-page" class="page active">
-        <header class="page-header">
-          <h1><i class="fas fa-home"></i> Dashboard</h1>
-        </header>
+<!-- Dashboard Page -->
+<section id="dashboard-page" class="page active">
+  <header class="page-header">
+    <h1><i class="fas fa-home"></i> Dashboard</h1>
+    <div class="dashboard-date">
+      <i class="fas fa-calendar-alt"></i>
+      <span id="current-date"></span>
+    </div>
+  </header>
 
-        <div class="summary-grid">
-          <div class="summary-card receitas">
-            <i class="fas fa-arrow-up summary-icon"></i>
-            <div>Total Receitas</div>
-            <div class="summary-value">R$ <span id="total-receitas">0,00</span></div>
-          </div>
-          <div class="summary-card despesas">
-            <i class="fas fa-arrow-down summary-icon"></i>
-            <div>Total Despesas</div>
-            <div class="summary-value">R$ <span id="total-despesas">0,00</span></div>
-          </div>
-          <div class="summary-card" id="saldo-card">
-            <i class="fas fa-wallet summary-icon"></i>
-            <div>Saldo Atual</div>
-            <div class="summary-value">R$ <span id="saldo">0,00</span></div>
-          </div>
+  <!-- Cards de Resumo (Menores e mais limpos) -->
+  <div class="summary-grid-compact">
+    <div class="summary-card-compact receitas">
+      <div class="summary-card-content">
+        <i class="fas fa-arrow-up summary-icon-compact"></i>
+        <div class="summary-info">
+          <div class="summary-label">Receitas</div>
+          <div class="summary-value-compact">R$ <span id="total-receitas">0,00</span></div>
         </div>
-
-        <div class="card">
-          <h3 class="card-title"><i class="fas fa-chart-line"></i> Resumo Rápido</h3>
-          <canvas id="quick-chart"></canvas>
+      </div>
+    </div>
+    
+    <div class="summary-card-compact despesas">
+      <div class="summary-card-content">
+        <i class="fas fa-arrow-down summary-icon-compact"></i>
+        <div class="summary-info">
+          <div class="summary-label">Despesas</div>
+          <div class="summary-value-compact">R$ <span id="total-despesas">0,00</span></div>
         </div>
-      </section>
+      </div>
+    </div>
+    
+    <div class="summary-card-compact" id="saldo-card">
+      <div class="summary-card-content">
+        <i class="fas fa-wallet summary-icon-compact"></i>
+        <div class="summary-info">
+          <div class="summary-label">Saldo</div>
+          <div class="summary-value-compact">R$ <span id="saldo">0,00</span></div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="summary-card-compact health" id="health-card">
+      <div class="summary-card-content">
+        <i class="fas fa-heartbeat summary-icon-compact"></i>
+        <div class="summary-info">
+          <div class="summary-label">Saúde Financeira</div>
+          <div class="summary-value-compact" id="health-status">Analisando...</div>
+        </div>
+      </div>
+    </div>
+  </div>
 
+  <!-- KPIs Rápidos -->
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-icon"><i class="fas fa-exchange-alt"></i></div>
+      <div class="kpi-content">
+        <div class="kpi-value" id="kpi-transactions">0</div>
+        <div class="kpi-label">Transações do Mês</div>
+      </div>
+    </div>
+    
+    <div class="kpi-card">
+      <div class="kpi-icon"><i class="fas fa-receipt"></i></div>
+      <div class="kpi-content">
+        <div class="kpi-value">R$ <span id="kpi-avg-transaction">0,00</span></div>
+        <div class="kpi-label">Ticket Médio</div>
+      </div>
+    </div>
+    
+    <div class="kpi-card">
+      <div class="kpi-icon"><i class="fas fa-calendar-day"></i></div>
+      <div class="kpi-content">
+        <div class="kpi-value">R$ <span id="kpi-daily-avg">0,00</span></div>
+        <div class="kpi-label">Gasto Médio Diário</div>
+      </div>
+    </div>
+    
+    <div class="kpi-card">
+      <div class="kpi-icon"><i class="fas fa-bullseye"></i></div>
+      <div class="kpi-content">
+        <div class="kpi-value"><span id="kpi-goal-progress">0</span>%</div>
+        <div class="kpi-label">Progresso de Metas</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Layout em 2 colunas: Gráfico + Feed -->
+  <div class="dashboard-main-grid">
+    <!-- Gráfico -->
+    <div class="card dashboard-chart-card">
+      <h3 class="card-title">
+        <i class="fas fa-chart-pie"></i> Visão Geral Financeira
+      </h3>
+      <canvas id="quick-chart"></canvas>
+    </div>
+
+    <!-- Feed Financeiro Inteligente -->
+    <div class="card financial-feed-card">
+      <h3 class="card-title">
+        <i class="fas fa-rss"></i> Feed Financeiro
+      </h3>
+      <div class="financial-feed" id="financial-feed">
+        <div class="feed-loading">
+          <i class="fas fa-spinner fa-spin"></i> Analisando suas finanças...
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Gráfico de Saúde Financeira -->
+  <div class="card">
+    <h3 class="card-title">
+      <i class="fas fa-heartbeat"></i> Indicador de Saúde Financeira
+    </h3>
+    <div class="health-indicator">
+      <div class="health-bar-container">
+        <div class="health-bar" id="health-bar">
+          <div class="health-bar-fill" id="health-bar-fill"></div>
+        </div>
+        <div class="health-labels">
+          <span class="health-label-good">Saudável</span>
+          <span class="health-label-warning">Atenção</span>
+          <span class="health-label-danger">Crítico</span>
+        </div>
+      </div>
+      <div class="health-info" id="health-info">
+        <p>Suas despesas representam <strong id="expense-percentage">0%</strong> das suas receitas.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reconhecimento de Voz -->
+  <div class="voice-input-section">
+    <button class="btn-voice" id="voice-btn">
+      <i class="fas fa-microphone"></i>
+      <span>Registrar gasto por voz</span>
+    </button>
+    <div class="voice-feedback" id="voice-feedback"></div>
+  </div>
+</section>
       <!-- Transactions Page -->
       <section id="transactions-page" class="page">
         <header class="page-header">

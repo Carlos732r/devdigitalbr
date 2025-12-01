@@ -8,6 +8,9 @@ let filteredTransactions = [];
 let goals = [];
 let isFirebaseConnected = false;
 let currentUser = null;
+// Variáveis para o Dashboard melhorado
+let financialFeedInterval = null;
+let recognition = null;
 
 // Referências dos elementos do DOM - Login
 const loginContainer = document.getElementById("login-container");
@@ -292,7 +295,7 @@ navItems.forEach(item => {
 function loadPageData(pageName) {
     switch(pageName) {
         case 'dashboard':
-            renderQuickChart();
+            loadDashboard();
             break;
         case 'reports':
             renderReportsCharts();
@@ -389,6 +392,7 @@ async function loadTransactions() {
         
         if (transactions.length > 0) {
             showToast(`${transactions.length} transações carregadas`, 'info', 2000);
+            updateDashboard(); // ADICIONADO
         }
         
     } catch (error) {
@@ -892,37 +896,116 @@ console.log('✅ Modal de metas configurado');
 // ========================================
 // PARTE 16: ADICIONAR NOVA META
 // ========================================
+// PARTE 19: GRÁFICO RÁPIDO (DASHBOARD) - MELHORADO
+// ========================================
 
+function renderQuickChart() {
+    console.log('📊 Renderizando gráfico rápido do dashboard...');
+    
+    const ctx = document.getElementById('quick-chart');
+    if (!ctx) return;
+    
+    // Destrói o gráfico anterior se existir
+    if (quickChart) {
+        quickChart.destroy();
+    }
+    
+    // Calcula totais
+    let totalReceitas = 0;
+    let totalDespesas = 0;
+    
+    transactions.forEach(t => {
+        if (t.type === 'receita') {
+            totalReceitas += Number(t.amount);
+        } else {
+            totalDespesas += Number(t.amount);
+        }
+    });
+    
+    const saldo = totalReceitas - totalDespesas;
+    
+    // Cria o gráfico com saldo também
+    quickChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Receitas', 'Despesas', 'Saldo'],
+            datasets: [{
+                data: [totalReceitas, totalDespesas, Math.max(0, saldo)],
+                backgroundColor: [
+                    'rgba(37, 211, 102, 0.8)',
+                    'rgba(220, 53, 69, 0.8)',
+                    'rgba(0, 212, 255, 0.8)'
+                ],
+                borderColor: [
+                    'rgba(37, 211, 102, 1)',
+                    'rgba(220, 53, 69, 1)',
+                    'rgba(0, 212, 255, 1)'
+                ],
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        color: '#ffffff',
+                        font: {
+                            size: 14
+                        },
+                        padding: 20
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const label = context.label || '';
+                            const value = context.parsed || 0;
+                            return label + ': R$ ' + value.toLocaleString('pt-BR', {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2
+                            });
+                        }
+                    }
+                }
+            }
+        }
+    });
+    
+    console.log('✅ Gráfico rápido renderizado');
+}
+
+
+console.log('✅ Função de gráfico rápido configurada');
+
+// ...existing code...
 goalForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    
     const title = document.getElementById('goal-title').value.trim();
     const target = parseInt(document.getElementById('goal-target').value);
     const current = parseInt(document.getElementById('goal-current').value);
     const deadline = parseInt(document.getElementById('goal-deadline').value);
     const unit = document.getElementById('goal-unit').value.trim();
-    
+
     // Validação
     if (!title || isNaN(target) || isNaN(current) || isNaN(deadline) || !unit) {
         showToast('Preencha todos os campos corretamente', 'warning');
         return;
     }
-    
     if (target <= 0) {
         showToast('A meta deve ser maior que zero', 'warning');
         return;
     }
-    
     if (current < 0) {
         showToast('O progresso não pode ser negativo', 'warning');
         return;
     }
-    
     if (deadline <= 0) {
         showToast('O prazo deve ser maior que zero', 'warning');
         return;
     }
-
     if (!isFirebaseConnected || !currentUser) {
         showToast('Você precisa estar autenticado', 'warning');
         return;
@@ -940,29 +1023,21 @@ goalForm.addEventListener('submit', async (e) => {
             createdAt: Date.now(),
             userId: currentUser.uid
         };
-        
         // Salva no Firebase
         const docRef = await db.collection("goals").add(goal);
-        
         // Adiciona o ID da meta
         goal.id = docRef.id;
-        
         // Adiciona na lista local
         goals.unshift(goal);
-        
         // Atualiza a interface
         renderGoals();
-        
         // Fecha o modal e limpa o formulário
         goalModal.classList.add('hidden');
         goalForm.reset();
-        
         showToast(`Meta "${title}" criada com sucesso!`, 'success');
         console.log('✅ Meta salva com sucesso:', goal.id);
-        
     } catch (error) {
         console.error('❌ Erro ao salvar meta:', error);
-        
         if (error.code === 'permission-denied') {
             showToast('Sem permissão para adicionar meta', 'error');
         } else {
@@ -1149,6 +1224,493 @@ function renderQuickChart() {
         }
     });
     
+    // ========================================
+// DASHBOARD MELHORADO - KPIs
+// ========================================
+
+// Atualiza a data atual
+function updateCurrentDate() {
+    const dateEl = document.getElementById('current-date');
+    if (!dateEl) return;
+    
+    const now = new Date();
+    const options = { 
+        weekday: 'long', 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+    };
+    dateEl.textContent = now.toLocaleDateString('pt-BR', options);
+}
+
+// Calcula KPIs do mês atual
+function calculateMonthKPIs() {
+    const now = new Date();
+    const currentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+    
+    // Filtra transações do mês atual
+    const monthTransactions = transactions.filter(t => {
+        const tDate = new Date(t.timestamp);
+        const tMonth = `${tDate.getFullYear()}-${String(tDate.getMonth() + 1).padStart(2, '0')}`;
+        return tMonth === currentMonth;
+    });
+    
+    // Número de transações do mês
+    const numTransactions = monthTransactions.length;
+    
+    // Ticket médio
+    const totalAmount = monthTransactions.reduce((sum, t) => sum + Number(t.amount), 0);
+    const avgTransaction = numTransactions > 0 ? totalAmount / numTransactions : 0;
+    
+    // Gasto médio diário (apenas despesas)
+    const monthExpenses = monthTransactions.filter(t => t.type === 'despesa');
+    const totalExpenses = monthExpenses.reduce((sum, t) => sum + Number(t.amount), 0);
+    const daysInMonth = now.getDate();
+    const dailyAvg = daysInMonth > 0 ? totalExpenses / daysInMonth : 0;
+    
+    // Progresso de metas
+    let totalGoalProgress = 0;
+    if (goals.length > 0) {
+        goals.forEach(goal => {
+            const progress = Math.min((goal.current / goal.target) * 100, 100);
+            totalGoalProgress += progress;
+        });
+        totalGoalProgress = totalGoalProgress / goals.length;
+    }
+    
+    return {
+        numTransactions,
+        avgTransaction,
+        dailyAvg,
+        totalGoalProgress
+    };
+}
+
+// Atualiza os KPIs na tela
+function updateKPIs() {
+    const kpis = calculateMonthKPIs();
+    
+    document.getElementById('kpi-transactions').textContent = kpis.numTransactions;
+    document.getElementById('kpi-avg-transaction').textContent = kpis.avgTransaction.toLocaleString('pt-BR', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    });
+    document.getElementById('kpi-daily-avg').textContent = kpis.dailyAvg.toLocaleString('pt-BR', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    });
+    document.getElementById('kpi-goal-progress').textContent = Math.round(kpis.totalGoalProgress);
+    
+    console.log('✅ KPIs atualizados:', kpis);
+}
+
+// Calcula saúde financeira
+function calculateFinancialHealth() {
+    let totalReceitas = 0;
+    let totalDespesas = 0;
+    
+    transactions.forEach(t => {
+        if (t.type === 'receita') {
+            totalReceitas += Number(t.amount);
+        } else {
+            totalDespesas += Number(t.amount);
+        }
+    });
+    
+    if (totalReceitas === 0) {
+        return { percentage: 0, status: 'Sem dados', color: 'var(--text-gray)' };
+    }
+    
+    const percentage = (totalDespesas / totalReceitas) * 100;
+    
+    let status, color;
+    
+    if (percentage <= 50) {
+        status = 'Excelente';
+        color = 'var(--success-color)';
+    } else if (percentage <= 70) {
+        status = 'Bom';
+        color = 'var(--success-color)';
+    } else if (percentage <= 85) {
+        status = 'Atenção';
+        color = 'var(--warning-color)';
+    } else {
+        status = 'Crítico';
+        color = 'var(--danger-color)';
+    }
+    
+    return { percentage: Math.round(percentage), status, color };
+}
+
+// Atualiza indicador de saúde financeira
+function updateHealthIndicator() {
+    const health = calculateFinancialHealth();
+    
+    // Atualiza o card de saúde
+    const healthStatusEl = document.getElementById('health-status');
+    const healthCardEl = document.getElementById('health-card');
+    
+    if (healthStatusEl) {
+        healthStatusEl.textContent = health.status;
+        healthStatusEl.style.color = health.color;
+    }
+    
+    // Atualiza a barra de saúde
+    const healthBarFill = document.getElementById('health-bar-fill');
+    const expensePercentageEl = document.getElementById('expense-percentage');
+    
+    if (healthBarFill) {
+        healthBarFill.style.left = `${health.percentage}%`;
+    }
+    
+    if (expensePercentageEl) {
+        expensePercentageEl.textContent = `${health.percentage}%`;
+        expensePercentageEl.style.color = health.color;
+    }
+    
+    console.log('✅ Saúde financeira atualizada:', health);
+}
+
+console.log('✅ Funções de KPIs configuradas');
+
+// ========================================
+// FEED FINANCEIRO INTELIGENTE
+// ========================================
+
+function generateFinancialFeed() {
+    const feedEl = document.getElementById('financial-feed');
+    if (!feedEl) return;
+    
+    feedEl.innerHTML = '';
+    
+    if (transactions.length === 0) {
+        feedEl.innerHTML = `
+            <div class="feed-item">
+                <span class="feed-item-icon">💡</span>
+                <div class="feed-item-text">
+                    Comece adicionando suas primeiras transações para ver insights aqui!
+                </div>
+            </div>
+        `;
+        return;
+    }
+    
+    const feedItems = [];
+    
+    // Última transação
+    if (transactions.length > 0) {
+        const last = transactions[0];
+        const icon = last.type === 'receita' ? '💰' : '💸';
+        const type = last.type === 'receita' ? 'success' : 'danger';
+        feedItems.push({
+            icon,
+            type,
+            text: `${last.type === 'receita' ? 'Receita' : 'Despesa'} de R$ ${Number(last.amount).toLocaleString('pt-BR', {minimumFractionDigits: 2})} - ${last.desc}`,
+            time: 'Agora mesmo'
+        });
+    }
+    
+    // Gasto de hoje
+    const today = new Date().toLocaleDateString('pt-BR');
+    const todayExpenses = transactions.filter(t => t.type === 'despesa' && t.date === today);
+    const todayTotal = todayExpenses.reduce((sum, t) => sum + Number(t.amount), 0);
+    
+    if (todayTotal > 0) {
+        feedItems.push({
+            icon: '📅',
+            type: 'warning',
+            text: `Você gastou R$ ${todayTotal.toLocaleString('pt-BR', {minimumFractionDigits: 2})} hoje`,
+            time: 'Hoje'
+        });
+    }
+    
+    // Maior gasto recente
+    const recentExpenses = transactions.filter(t => t.type === 'despesa').slice(0, 10);
+    if (recentExpenses.length > 0) {
+        const biggest = recentExpenses.reduce((max, t) => Number(t.amount) > Number(max.amount) ? t : max);
+        feedItems.push({
+            icon: '⚠️',
+            type: 'danger',
+            text: `Seu maior gasto recente foi R$ ${Number(biggest.amount).toLocaleString('pt-BR', {minimumFractionDigits: 2})} em ${biggest.desc}`,
+            time: biggest.date
+        });
+    }
+    
+    // Progresso de metas
+    if (goals.length > 0) {
+        goals.forEach(goal => {
+            const progress = Math.min((goal.current / goal.target) * 100, 100);
+            if (progress >= 100) {
+                feedItems.push({
+                    icon: '🎉',
+                    type: 'success',
+                    text: `Parabéns! Você concluiu a meta "${goal.title}"!`,
+                    time: 'Meta concluída'
+                });
+            } else if (progress >= 50) {
+                feedItems.push({
+                    icon: '🎯',
+                    type: 'warning',
+                    text: `Você está ${progress.toFixed(0)}% da meta "${goal.title}"`,
+                    time: 'Em andamento'
+                });
+            }
+        });
+    }
+    
+    // Dica de economia
+    const health = calculateFinancialHealth();
+    if (health.percentage > 80) {
+        feedItems.push({
+            icon: '💡',
+            type: 'warning',
+            text: 'Suas despesas estão altas! Considere revisar seus gastos.',
+            time: 'Dica'
+        });
+    } else if (health.percentage < 50) {
+        feedItems.push({
+            icon: '✨',
+            type: 'success',
+            text: 'Ótimo controle de gastos! Continue assim!',
+            time: 'Parabéns'
+        });
+    }
+    
+    // Renderiza os itens do feed
+    feedItems.slice(0, 8).forEach(item => {
+        const feedItemEl = document.createElement('div');
+        feedItemEl.className = `feed-item ${item.type}`;
+        feedItemEl.innerHTML = `
+            <span class="feed-item-icon">${item.icon}</span>
+            <div class="feed-item-text">
+                ${item.text}
+                <span class="feed-item-time">${item.time}</span>
+            </div>
+        `;
+        feedEl.appendChild(feedItemEl);
+    });
+    
+    console.log('✅ Feed financeiro gerado');
+}
+
+
+console.log('✅ Função de feed financeiro configurada');
+
+// ========================================
+// RECONHECIMENTO DE VOZ
+// ========================================
+
+// Inicializa o reconhecimento de voz
+function initVoiceRecognition() {
+    // Verifica se o navegador suporta
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    
+    if (!SpeechRecognition) {
+        console.warn('⚠️ Navegador não suporta reconhecimento de voz');
+        const voiceBtn = document.getElementById('voice-btn');
+        if (voiceBtn) {
+            voiceBtn.disabled = true;
+            voiceBtn.innerHTML = '<i class="fas fa-times"></i> <span>Não suportado</span>';
+        }
+        return;
+    }
+    
+    recognition = new SpeechRecognition();
+    recognition.lang = 'pt-BR';
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    
+    const voiceBtn = document.getElementById('voice-btn');
+    const voiceFeedback = document.getElementById('voice-feedback');
+    
+    // Quando clicar no botão
+    voiceBtn.addEventListener('click', () => {
+        if (voiceBtn.classList.contains('listening')) {
+            recognition.stop();
+            return;
+        }
+        
+        voiceBtn.classList.add('listening');
+        voiceBtn.innerHTML = '<i class="fas fa-stop"></i> <span>Escutando...</span>';
+        voiceFeedback.textContent = '🎤 Fale agora... (Ex: "Registrar despesa de 50 reais em alimentação")';
+        voiceFeedback.classList.add('listening');
+        
+        recognition.start();
+        console.log('🎤 Reconhecimento de voz iniciado');
+    });
+    
+    // Quando reconhecer a fala
+    recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript.toLowerCase();
+        console.log('🎤 Reconhecido:', transcript);
+        
+        voiceFeedback.textContent = `Você disse: "${transcript}"`;
+        voiceFeedback.classList.remove('listening');
+        
+        // Processa o comando
+        processVoiceCommand(transcript);
+    };
+    
+    // Quando terminar
+    recognition.onend = () => {
+        voiceBtn.classList.remove('listening');
+        voiceBtn.innerHTML = '<i class="fas fa-microphone"></i> <span>Registrar gasto por voz</span>';
+        console.log('🎤 Reconhecimento de voz finalizado');
+    };
+    
+    // Quando der erro
+    recognition.onerror = (event) => {
+        console.error('❌ Erro no reconhecimento de voz:', event.error);
+        voiceBtn.classList.remove('listening');
+        voiceBtn.innerHTML = '<i class="fas fa-microphone"></i> <span>Registrar gasto por voz</span>';
+        
+        let errorMsg = 'Erro ao reconhecer voz. Tente novamente.';
+        
+        if (event.error === 'no-speech') {
+            errorMsg = 'Nenhuma fala detectada. Tente novamente.';
+        } else if (event.error === 'not-allowed') {
+            errorMsg = 'Permissão de microfone negada. Ative nas configurações do navegador.';
+        }
+        
+        voiceFeedback.textContent = errorMsg;
+        voiceFeedback.style.color = 'var(--danger-color)';
+        
+        setTimeout(() => {
+            voiceFeedback.textContent = '';
+            voiceFeedback.style.color = '';
+        }, 5000);
+    };
+    
+    console.log('✅ Reconhecimento de voz configurado');
+}
+
+// Processa o comando de voz
+function processVoiceCommand(transcript) {
+    const voiceFeedback = document.getElementById('voice-feedback');
+    
+    // Padrões de comando
+    // Ex: "registrar despesa de 50 reais em alimentação"
+    // Ex: "adicionar gasto de 100 reais no mercado"
+    // Ex: "despesa de 30 reais em transporte"
+    
+    let type = 'despesa'; // Padrão
+    let amount = null;
+    let description = '';
+    
+    // Detecta se é receita ou despesa
+    if (transcript.includes('receita') || transcript.includes('ganho') || transcript.includes('entrada')) {
+        type = 'receita';
+    }
+    
+    // Extrai o valor
+    const valuePatterns = [
+        /(\d+(?:,\d+)?)\s*reais?/i,
+        /(\d+(?:,\d+)?)\s*r\$/i,
+        /r\$\s*(\d+(?:,\d+)?)/i,
+        /de\s+(\d+(?:,\d+)?)/i
+    ];
+    
+    for (const pattern of valuePatterns) {
+        const match = transcript.match(pattern);
+        if (match) {
+            amount = parseFloat(match[1].replace(',', '.'));
+            break;
+        }
+    }
+    
+    // Extrai a descrição
+    const descPatterns = [
+        /(?:em|no|na|para|com)\s+(.+)$/i,
+        /(?:despesa|receita|gasto)\s+(?:de|em)?\s*\d+[^a-z]+(.+)$/i
+    ];
+    
+    for (const pattern of descPatterns) {
+        const match = transcript.match(pattern);
+        if (match) {
+            description = match[1].trim();
+            break;
+        }
+    }
+    
+    // Se não encontrou descrição, usa padrão
+    if (!description) {
+        description = type === 'receita' ? 'Receita por voz' : 'Despesa por voz';
+    }
+    
+    // Valida
+    if (!amount || amount <= 0) {
+        voiceFeedback.textContent = '❌ Não consegui identificar o valor. Tente novamente.';
+        voiceFeedback.style.color = 'var(--danger-color)';
+        showToast('Não consegui identificar o valor', 'warning');
+        
+        setTimeout(() => {
+            voiceFeedback.textContent = '';
+            voiceFeedback.style.color = '';
+        }, 5000);
+        return;
+    }
+    
+    // Confirma com o usuário
+    const confirmMsg = `${type === 'receita' ? 'Receita' : 'Despesa'} de R$ ${amount.toFixed(2)} - ${description}`;
+    voiceFeedback.textContent = `✅ ${confirmMsg}`;
+    voiceFeedback.style.color = 'var(--success-color)';
+    
+    console.log('🎤 Comando processado:', { type, amount, description });
+    
+    // Salva a transação
+    saveVoiceTransaction(type, amount, description);
+    
+    setTimeout(() => {
+        voiceFeedback.textContent = '';
+        voiceFeedback.style.color = '';
+    }, 5000);
+}
+
+// Salva a transação criada por voz
+async function saveVoiceTransaction(type, amount, description) {
+    if (!isFirebaseConnected || !currentUser) {
+        showToast('Erro: não conectado ao Firebase', 'error');
+        return;
+    }
+    
+    try {
+        const transaction = {
+            desc: description,
+            reason: 'Adicionado por voz',
+            amount: Number(amount),
+            type: type,
+            date: new Date().toLocaleDateString('pt-BR'),
+            timestamp: Date.now(),
+            userId: currentUser.uid
+        };
+        
+        console.log('💾 Salvando transação por voz:', transaction);
+        
+        const docRef = await db.collection("transactions").add(transaction);
+        transaction.id = docRef.id;
+        
+        // Adiciona na lista local
+        transactions.unshift(transaction);
+        filteredTransactions = [...transactions];
+        
+        // Atualiza tudo
+        populateMonthFilter();
+        renderTransactions();
+        updateDashboard(); // Nova função que vamos criar
+        
+        const typeText = type === 'receita' ? 'Receita' : 'Despesa';
+        showToast(`${typeText} de R$ ${amount.toFixed(2)} adicionada por voz!`, 'success');
+        
+        console.log('✅ Transação por voz salva com sucesso');
+        
+    } catch (error) {
+        console.error('❌ Erro ao salvar transação por voz:', error);
+        showToast('Erro ao salvar transação', 'error');
+    }
+}
+
+console.log('✅ Funções de reconhecimento de voz configuradas');
+
     // Cria o gráfico
     quickChart = new Chart(ctx, {
         type: 'doughnut',
@@ -1201,6 +1763,7 @@ function renderQuickChart() {
 }
 
 console.log('✅ Função de gráfico rápido configurada');
+
 
 // ========================================
 // PARTE 20: GRÁFICO MENSAL (RECEITAS vs DESPESAS)
@@ -1956,12 +2519,17 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     console.log('✅ Firebase detectado');
-    console.log('✅ Sistema pronto para uso');
     
+    // ADICIONADO: Inicializa reconhecimento de voz e dashboard
+    initVoiceRecognition();
+    loadDashboard();
+    
+    console.log('✅ Sistema pronto para uso');
     // Mensagem de boas-vindas no console
     console.log('%c💰 Sistema Financeiro Dev Digital BR', 'color: #00d4ff; font-size: 20px; font-weight: bold;');
     console.log('%c🔐 Sistema protegido com autenticação Firebase', 'color: #25d366; font-size: 12px;');
     console.log('%c📊 Recursos: Dashboard, Transações, Relatórios, Metas e IA', 'color: #ffc107; font-size: 12px;');
+    console.log('%c🎤 Reconhecimento de voz ativado!', 'color: #764ba2; font-size: 12px;');
 });
 
 console.log('✅ Sistema de inicialização configurado');
