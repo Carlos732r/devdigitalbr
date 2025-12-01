@@ -909,6 +909,409 @@ console.log('✅ Modal de metas configurado');
 // ========================================
 // PARTE 16: ADICIONAR NOVA META
 // ========================================
+goalForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const title = document.getElementById('goal-title').value.trim();
+    const target = parseInt(document.getElementById('goal-target').value);
+    const current = parseInt(document.getElementById('goal-current').value);
+    const deadline = parseInt(document.getElementById('goal-deadline').value);
+    const unit = document.getElementById('goal-unit').value.trim();
+    
+    // Validação
+    if (!title || isNaN(target) || isNaN(current) || isNaN(deadline) || !unit) {
+        showToast('Preencha todos os campos corretamente', 'warning');
+        return;
+    }
+    
+    if (target <= 0) {
+        showToast('A meta deve ser maior que zero', 'warning');
+        return;
+    }
+    
+    if (current < 0) {
+        showToast('O progresso não pode ser negativo', 'warning');
+        return;
+    }
+    
+    if (deadline <= 0) {
+        showToast('O prazo deve ser maior que zero', 'warning');
+        return;
+    }
+
+    if (!isFirebaseConnected || !currentUser) {
+        showToast('Você precisa estar autenticado', 'warning');
+        return;
+    }
+
+    try {
+        const goal = {
+            title,
+            target,
+            current,
+            deadline,
+            unit,
+            createdAt: Date.now(),
+            userId: currentUser.uid
+        };
+        
+        const docRef = await db.collection("goals").add(goal);
+        goal.id = docRef.id;
+        goals.unshift(goal);
+        renderGoals();
+        goalModal.classList.add('hidden');
+        goalForm.reset();
+        
+        showToast(`Meta "${title}" criada com sucesso!`, 'success');
+        
+    } catch (error) {
+        console.error('❌ Erro ao salvar meta:', error);
+        showToast('Erro ao salvar meta', 'error');
+    }
+});
+
+// ========================================
+// PARTE 17: RENDERIZAÇÃO DE METAS
+// ========================================
+
+function renderGoals() {
+    console.log('🎨 Renderizando metas...');
+    
+    const goalsContainer = document.getElementById('goals-container');
+    goalsContainer.innerHTML = '';
+    
+    if (goals.length === 0) {
+        goalsContainer.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-bullseye"></i>
+                <h3>Nenhuma meta cadastrada</h3>
+                <p>Crie sua primeira meta usando o botão acima.</p>
+            </div>
+        `;
+        return;
+    }
+    
+    goals.forEach(goal => {
+        const percentage = Math.min((goal.current / goal.target) * 100, 100);
+        const isCompleted = goal.current >= goal.target;
+        
+        const goalCard = document.createElement('div');
+        goalCard.className = 'goal-card';
+        goalCard.innerHTML = `
+            <div class="goal-header">
+                <h3 class="goal-title">${goal.title}</h3>
+                <button class="goal-delete" onclick="deleteGoal('${goal.id}')">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+            
+            <div class="goal-progress">
+                <div class="goal-progress-text">
+                    <span>${goal.current} / ${goal.target} ${goal.unit}</span>
+                    <span>${percentage.toFixed(1)}%</span>
+                </div>
+                <div class="goal-progress-bar">
+                    <div class="goal-progress-fill" style="width: ${percentage}%"></div>
+                </div>
+            </div>
+            
+            <div class="goal-info">
+                <div>
+                    <i class="fas fa-calendar-alt"></i>
+                    Prazo: ${goal.deadline} ${goal.deadline === 1 ? 'mês' : 'meses'}
+                </div>
+                <div>
+                    <i class="fas fa-${isCompleted ? 'check-circle' : 'clock'}"></i>
+                    ${isCompleted ? 'Concluída!' : 'Em andamento'}
+                </div>
+            </div>
+            
+            <button class="goal-update-btn" onclick="updateGoalProgress('${goal.id}', ${goal.current}, ${goal.target})">
+                <i class="fas fa-arrow-up"></i> Atualizar Progresso
+            </button>
+        `;
+        
+        goalsContainer.appendChild(goalCard);
+    });
+    
+    console.log('✅ Metas renderizadas:', goals.length);
+}
+
+// ========================================
+// PARTE 18: ATUALIZAR E DELETAR METAS
+// ========================================
+
+async function updateGoalProgress(goalId, currentProgress, target) {
+    const newProgress = prompt(
+        `Digite o novo progresso (atual: ${currentProgress}):`,
+        currentProgress
+    );
+    
+    if (newProgress === null) return;
+    
+    const progressNum = parseInt(newProgress);
+    
+    if (isNaN(progressNum) || progressNum < 0) {
+        showToast('Valor inválido', 'warning');
+        return;
+    }
+
+    try {
+        await db.collection("goals").doc(goalId).update({
+            current: progressNum
+        });
+        
+        const goal = goals.find(g => g.id === goalId);
+        if (goal) {
+            goal.current = progressNum;
+        }
+        
+        renderGoals();
+        
+        if (progressNum >= target) {
+            showToast('🎉 Parabéns! Meta concluída!', 'success');
+        } else {
+            showToast('Progresso atualizado!', 'success', 2000);
+        }
+        
+    } catch (error) {
+        console.error('❌ Erro ao atualizar meta:', error);
+        showToast('Erro ao atualizar progresso', 'error');
+    }
+}
+
+async function deleteGoal(goalId) {
+    if (!confirm('Tem certeza que deseja excluir esta meta?')) {
+        return;
+    }
+
+    try {
+        await db.collection("goals").doc(goalId).delete();
+        goals = goals.filter(g => g.id !== goalId);
+        renderGoals();
+        showToast('Meta excluída com sucesso', 'success', 2000);
+    } catch (error) {
+        console.error('❌ Erro ao excluir meta:', error);
+        showToast('Erro ao excluir meta', 'error');
+    }
+}
+
+window.updateGoalProgress = updateGoalProgress;
+window.deleteGoal = deleteGoal;
+
+console.log('✅ Funções de metas configuradas');
+
+// ========================================
+// DASHBOARD MELHORADO - KPIs
+// ========================================
+
+let quickChart = null;
+
+function updateCurrentDate() {
+    const dateEl = document.getElementById('current-date');
+    if (!dateEl) return;
+    
+    const now = new Date();
+    const options = { 
+        weekday: 'long', 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+    };
+    dateEl.textContent = now.toLocaleDateString('pt-BR', options);
+}
+
+function calculateMonthKPIs() {
+    const now = new Date();
+    const currentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+    
+    const monthTransactions = transactions.filter(t => {
+        const tDate = new Date(t.timestamp);
+        const tMonth = `${tDate.getFullYear()}-${String(tDate.getMonth() + 1).padStart(2, '0')}`;
+        return tMonth === currentMonth;
+    });
+    
+    const numTransactions = monthTransactions.length;
+    const totalAmount = monthTransactions.reduce((sum, t) => sum + Number(t.amount), 0);
+    const avgTransaction = numTransactions > 0 ? totalAmount / numTransactions : 0;
+    
+    const monthExpenses = monthTransactions.filter(t => t.type === 'despesa');
+    const totalExpenses = monthExpenses.reduce((sum, t) => sum + Number(t.amount), 0);
+    const daysInMonth = now.getDate();
+    const dailyAvg = daysInMonth > 0 ? totalExpenses / daysInMonth : 0;
+    
+    let totalGoalProgress = 0;
+    if (goals.length > 0) {
+        goals.forEach(goal => {
+            const progress = Math.min((goal.current / goal.target) * 100, 100);
+            totalGoalProgress += progress;
+        });
+        totalGoalProgress = totalGoalProgress / goals.length;
+    }
+    
+    return { numTransactions, avgTransaction, dailyAvg, totalGoalProgress };
+}
+
+function updateKPIs() {
+    const kpis = calculateMonthKPIs();
+    
+    const kpiTransactionsEl = document.getElementById('kpi-transactions');
+    if (kpiTransactionsEl) kpiTransactionsEl.textContent = kpis.numTransactions;
+    
+    const kpiAvgEl = document.getElementById('kpi-avg-transaction');
+    if (kpiAvgEl) kpiAvgEl.textContent = kpis.avgTransaction.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    
+    const kpiDailyEl = document.getElementById('kpi-daily-avg');
+    if (kpiDailyEl) kpiDailyEl.textContent = kpis.dailyAvg.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    
+    const kpiGoalEl = document.getElementById('kpi-goal-progress');
+    if (kpiGoalEl) kpiGoalEl.textContent = Math.round(kpis.totalGoalProgress);
+}
+
+function calculateFinancialHealth() {
+    let totalReceitas = 0;
+    let totalDespesas = 0;
+    
+    transactions.forEach(t => {
+        if (t.type === 'receita') totalReceitas += Number(t.amount);
+        else totalDespesas += Number(t.amount);
+    });
+    
+    if (totalReceitas === 0) {
+        return { percentage: 0, status: 'Sem dados', color: 'var(--text-gray)' };
+    }
+    
+    const percentage = (totalDespesas / totalReceitas) * 100;
+    let status, color;
+    
+    if (percentage <= 50) {
+        status = 'Excelente';
+        color = 'var(--success-color)';
+    } else if (percentage <= 70) {
+        status = 'Bom';
+        color = 'var(--success-color)';
+    } else if (percentage <= 85) {
+        status = 'Atenção';
+        color = 'var(--warning-color)';
+    } else {
+        status = 'Crítico';
+        color = 'var(--danger-color)';
+    }
+    
+    return { percentage: Math.round(percentage), status, color };
+}
+
+function updateHealthIndicator() {
+    const health = calculateFinancialHealth();
+    
+    const healthStatusEl = document.getElementById('health-status');
+    if (healthStatusEl) {
+        healthStatusEl.textContent = health.status;
+        healthStatusEl.style.color = health.color;
+    }
+    
+    const healthBarFill = document.getElementById('health-bar-fill');
+    if (healthBarFill) healthBarFill.style.left = `${health.percentage}%`;
+    
+    const expensePercentageEl = document.getElementById('expense-percentage');
+    if (expensePercentageEl) {
+        expensePercentageEl.textContent = `${health.percentage}%`;
+        expensePercentageEl.style.color = health.color;
+    }
+}
+
+function generateFinancialFeed() {
+    const feedEl = document.getElementById('financial-feed');
+    if (!feedEl) return;
+    
+    feedEl.innerHTML = '';
+    
+    if (transactions.length === 0) {
+        feedEl.innerHTML = `
+            <div class="feed-item">
+                <span class="feed-item-icon">💡</span>
+                <div class="feed-item-text">
+                    Comece adicionando suas primeiras transações para ver insights aqui!
+                </div>
+            </div>
+        `;
+        return;
+    }
+    
+    const feedItems = [];
+    
+    if (transactions.length > 0) {
+        const last = transactions[0];
+        const icon = last.type === 'receita' ? '💰' : '💸';
+        const type = last.type === 'receita' ? 'success' : 'danger';
+        feedItems.push({
+            icon, type,
+            text: `${last.type === 'receita' ? 'Receita' : 'Despesa'} de R$ ${Number(last.amount).toLocaleString('pt-BR', {minimumFractionDigits: 2})} - ${last.desc}`,
+            time: 'Agora mesmo'
+        });
+    }
+    
+    const health = calculateFinancialHealth();
+    if (health.percentage > 80) {
+        feedItems.push({
+            icon: '💡', type: 'warning',
+            text: 'Suas despesas estão altas! Considere revisar seus gastos.',
+            time: 'Dica'
+        });
+    } else if (health.percentage < 50) {
+        feedItems.push({
+            icon: '✨', type: 'success',
+            text: 'Ótimo controle de gastos! Continue assim!',
+            time: 'Parabéns'
+        });
+    }
+    
+    feedItems.slice(0, 8).forEach(item => {
+        const feedItemEl = document.createElement('div');
+        feedItemEl.className = `feed-item ${item.type}`;
+        feedItemEl.innerHTML = `
+            <span class="feed-item-icon">${item.icon}</span>
+            <div class="feed-item-text">
+                ${item.text}
+                <span class="feed-item-time">${item.time}</span>
+            </div>
+        `;
+        feedEl.appendChild(feedItemEl);
+    });
+}
+
+function updateDashboard() {
+    try { updateCurrentDate(); } catch(e) {}
+    try { updateKPIs(); } catch(e) {}
+    try { updateHealthIndicator(); } catch(e) {}
+    try { generateFinancialFeed(); } catch(e) {}
+    try { renderQuickChart(); } catch(e) {}
+}
+
+function loadDashboard() {
+    const dashboardPage = document.getElementById('dashboard-page');
+    if (!dashboardPage || !dashboardPage.classList.contains('active')) return;
+    
+    try { updateCurrentDate(); } catch(e) {}
+    
+    if (transactions.length > 0) {
+        updateDashboard();
+    } else {
+        try { updateKPIs(); updateHealthIndicator(); renderQuickChart(); } catch(e) {}
+    }
+}
+
+// Reconhecimento de voz (simplificado - sem implementar completamente por ora)
+function initVoiceRecognition() {
+    const voiceBtn = document.getElementById('voice-btn');
+    if (voiceBtn) {
+        voiceBtn.addEventListener('click', () => {
+            showToast('Reconhecimento de voz em desenvolvimento', 'info', 2000);
+        });
+    }
+}
+
+console.log('✅ Funções do dashboard configuradas');
 // PARTE 19: GRÁFICO RÁPIDO (DASHBOARD) - MELHORADO
 // ========================================
 
