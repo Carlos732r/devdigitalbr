@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Obrigado pelo Contato! | Dev Digital BR</title>
+    <meta name="description" content="Recebemos sua mensagem e retornaremos em breve!">
+    <meta name="robots" content="noindex, nofollow">
+    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon_io/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    
+    <style>
+        :root {
+            --primary-color: #00d4ff;
+            --primary-dark: #0099cc;
+            --secondary-color: #0a0a0a;
+            --accent-color: #1a1a1a;
+            --text-light: #ffffff;
+            --text-gray: #a0a0a0;
+            --gradient-1: linear-gradient(135deg, #00d4ff 0%, #0099cc 50%, #0066aa 100%);
+            --gradient-2: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+            --gradient-bg: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%);
+            --border-radius: 15px;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--gradient-bg);
+            color: var(--text-light);
+            overflow-x: hidden;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header Styles */
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            transition: var(--transition);
+            height: 110px;
+        }
+        
+        .logo-link {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: var(--transition);
+        }
+
+        .logo-image {
+            width: 80px;
+            height: 80px;
+            border-radius: var(--border-radius);
+            background: var(--gradient-1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .logo-image:hover {
+            transform: scale(1.05) rotate(5deg);
+            box-shadow: 0 6px 25px rgba(0, 212, 255, 0.4);
+        }
+
+        .logo-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: calc(var(--border-radius) - 2px);
+        }
+
+        .logo {
+            font-size: 1.9rem;
+            font-weight: 700;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Thank You Section */
+        .thank-you-section {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 150px 5% 80px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .thank-you-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(0, 212, 255, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        .thank-you-section::after {
+            content: '';
+            position: absolute;
+            bottom: -50%;
+            left: -20%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(0, 153, 204, 0.08) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: float 10s ease-in-out infinite reverse;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) translateX(0); }
+            50% { transform: translateY(-30px) translateX(30px); }
+        }
+
+        .thank-you-content {
+            max-width: 700px;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .success-icon {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 2rem;
+            background: var(--gradient-1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 40px rgba(0, 212, 255, 0.3);
+            animation: scaleIn 0.6s ease-out 0.3s backwards;
+        }
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .success-icon i {
+            font-size: 3.5rem;
+            color: var(--secondary-color);
+        }
+
+        .thank-you-content h1 {
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .thank-you-content p {
+            font-size: 1.2rem;
+            color: var(--text-gray);
+            margin-bottom: 2rem;
+            line-height: 1.8;
+        }
+
+        .info-box {
+            background: var(--gradient-2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 2rem 0;
+            animation: fadeIn 1s ease-out 0.6s backwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .info-box h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+
+        .info-box ul {
+            list-style: none;
+            text-align: left;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .info-box li {
+            padding: 0.8rem 0;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: var(--text-gray);
+        }
+
+        .info-box li i {
+            color: var(--primary-color);
+            font-size: 1.2rem;
+            min-width: 24px;
+        }
+
+        .portfolio-cta {
+            margin-top: 3rem;
+            padding: 2rem;
+            background: rgba(0, 212, 255, 0.05);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: 20px;
+            animation: fadeIn 1s ease-out 0.9s backwards;
+        }
+
+        .portfolio-cta h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .portfolio-cta p {
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 1rem 2rem;
+            background: var(--gradient-1);
+            color: var(--secondary-color);
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            transition: var(--transition);
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(0, 212, 255, 0.4);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+            margin-left: 1rem;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(0, 212, 255, 0.1);
+        }
+
+        .social-proof {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .proof-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .proof-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .proof-label {
+            color: var(--text-gray);
+            font-size: 0.9rem;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--secondary-color);
+            padding: 2rem 5%;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .social-links a {
+            width: 45px;
+            height: 45px;
+            background: var(--gradient-2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: var(--transition);
+            font-size: 1.2rem;
+        }
+
+        .social-links a:hover {
+            background: var(--primary-color);
+            color: var(--secondary-color);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 212, 255, 0.4);
+        }
+
+        footer p {
+            color: var(--text-gray);
+            font-size: 0.9rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            header {
+                height: 80px;
+                padding: 1rem 5%;
+            }
+
+            .logo-image {
+                width: 60px;
+                height: 60px;
+            }
+
+            .logo {
+                font-size: 1.4rem;
+            }
+
+            .thank-you-section {
+                padding: 120px 5% 60px;
+            }
+
+            .success-icon {
+                width: 100px;
+                height: 100px;
+            }
+
+            .success-icon i {
+                font-size: 3rem;
+            }
+
+            .thank-you-content h1 {
+                font-size: 2rem;
+            }
+
+            .thank-you-content p {
+                font-size: 1rem;
+            }
+
+            .info-box {
+                padding: 1.5rem;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+                margin: 0.5rem 0;
+            }
+
+            .btn-secondary {
+                margin-left: 0;
+            }
+
+            .social-proof {
+                gap: 1rem;
+            }
+
+            .proof-number {
+                font-size: 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .portfolio-cta {
+                padding: 1.5rem;
+            }
+
+            .info-box ul {
+                padding: 0 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="index.html" class="logo-link" aria-label="DevDigital - Voltar para página inicial">
+            <div class="logo-container">
+                <div class="logo-image">
+                    <img src="logo_nome.png" alt="DevDigital Logo" loading="lazy">
+                </div>
+                <div class="logo">Dev Digital BR</div>
+            </div>
+        </a>
+    </header>
+
+    <main>
+        <section class="thank-you-section">
+            <div class="thank-you-content">
+                <div class="success-icon">
+                    <i class="fas fa-check"></i>
+                </div>
+
+                <h1>Mensagem Recebida com Sucesso!</h1>
+                <p>Obrigado por entrar em contato com a Dev Digital BR. Sua mensagem foi recebida e nossa equipe retornará em breve.</p>
+
+                <div class="info-box">
+                    <h3><i class="fas fa-clock"></i> O que acontece agora?</h3>
+                    <ul>
+                        <li>
+                            <i class="fas fa-envelope-open-text"></i>
+                            <span>Nossa equipe está analisando sua solicitação</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-headset"></i>
+                            <span>Entraremos em contato em até 24 horas úteis</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-chart-line"></i>
+                            <span>Você receberá uma proposta personalizada</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-rocket"></i>
+                            <span>Juntos vamos transformar sua presença digital</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="social-proof">
+                    <div class="proof-item">
+                        <span class="proof-number">20+</span>
+                        <span class="proof-label">Projetos Entregues</span>
+                    </div>
+                    <div class="proof-item">
+                        <span class="proof-number">100%</span>
+                        <span class="proof-label">Satisfação</span>
+                    </div>
+                    <div class="proof-item">
+                        <span class="proof-number">24h</span>
+                        <span class="proof-label">Resposta Rápida</span>
+                    </div>
+                </div>
+
+                <div class="portfolio-cta">
+                    <h3>Enquanto aguarda...</h3>
+                    <p>Conheça alguns dos projetos que já desenvolvemos e inspire-se para o seu!</p>
+                    
+                    <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                        <a href="portifolio.html" class="btn">
+                            <i class="fas fa-images"></i>
+                            Ver Nosso Portfólio
+                        </a>
+                        <a href="index.html" class="btn btn-secondary">
+                            <i class="fas fa-home"></i>
+                            Voltar ao Início
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="social-links">
+            <a href="https://www.instagram.com/oficial_dev_digital/" target="_blank" rel="noopener" aria-label="Instagram da Dev Digital BR">
+                <i class="fab fa-instagram"></i>
+            </a>
+            <a href="https://www.facebook.com/profile.php?id=61580229984541" target="_blank" rel="noopener" aria-label="Facebook da Dev Digital BR">
+                <i class="fab fa-facebook"></i>
+            </a>
+        </div>
+        <p>&copy; 2025 Dev Digital BR - Todos os direitos reservados.</p>
+    </footer>
+
+    <script>
+        // Adiciona animação suave ao carregar a página
+        document.addEventListener('DOMContentLoaded', function() {
+            // Scroll suave para links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+
+            // Efeito de header ao scroll
+            window.addEventListener('scroll', function() {
+                const header = document.querySelector('header');
+                if (window.scrollY > 50) {
+                    header.style.background = 'rgba(10, 10, 10, 0.98)';
+                    header.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.3)';
+                } else {
+                    header.style.background = 'rgba(10, 10, 10, 0.95)';
+                    header.style.boxShadow = 'none';
+                }
+            });
+        });
+
+        console.log('Obrigado por escolher a Dev Digital BR! 🚀');
+    </script>
+</body>
+</html>
