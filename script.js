@@ -1,31 +1,28 @@
+// ========================================
+// SISTEMA FINANCEIRO DEV DIGITAL BR
+// Versão Completa e Funcional
+// ========================================
 
 // ========================================
-// PARTE 1: CONFIGURAÇÃO INICIAL
+// PARTE 1: VARIÁVEIS GLOBAIS
 // ========================================
 
-// Variáveis Globais
 let transactions = [];
 let filteredTransactions = [];
 let goals = [];
 let isFirebaseConnected = false;
 let currentUser = null;
-// Variáveis para o Dashboard melhorado
-let financialFeedInterval = null;
-let recognition = null;
+let quickChart = null;
 
-// Referências dos elementos do DOM - Login
+// Referências dos elementos do DOM
 const loginContainer = document.getElementById("login-container");
 const appContainer = document.getElementById("app-container");
 const loginForm = document.getElementById("login-form");
 const loginBtn = document.getElementById("login-btn");
 const logoutBtn = document.getElementById("logout");
+const connectionStatusEl = document.getElementById("connection-status");
 
-// Referências dos elementos do DOM - Dashboard
-const totalReceitasEl = document.getElementById("total-receitas");
-const totalDespesasEl = document.getElementById("total-despesas");
-const saldoEl = document.getElementById("saldo");
-
-// Referências dos elementos do DOM - Transações
+// Transações
 const transactionForm = document.getElementById("transaction-form");
 const tableBody = document.getElementById("transaction-table-body");
 const emptyState = document.getElementById("empty-state");
@@ -36,55 +33,50 @@ const addTransactionBtn = document.getElementById("add-transaction-btn");
 const transactionModal = document.getElementById("transaction-modal");
 const closeModal = document.getElementById("close-modal");
 
-// Referências dos elementos do DOM - Conexão
-const connectionStatusEl = document.getElementById("connection-status");
-
-// Referências dos elementos do DOM - Lucro Mensal
+// Lucro Mensal
 const monthlyProfitCard = document.getElementById("monthly-profit-card");
 const monthReceitasEl = document.getElementById("month-receitas");
 const monthDespesasEl = document.getElementById("month-despesas");
 const monthProfitEl = document.getElementById("month-profit");
 
-// Email do administrador (IMPORTANTE: Troque pelo seu email)
+// IA
+const aiChat = document.getElementById('ai-chat');
+const aiInput = document.getElementById('ai-input');
+const aiSendBtn = document.getElementById('ai-send-btn');
+const aiSuggestionBtns = document.querySelectorAll('.ai-suggestion-btn');
+
+// Email do administrador
 const ADMIN_EMAIL = 'borgescarlos030@gmail.com';
 
 console.log('✅ Variáveis globais inicializadas');
+
 // ========================================
 // PARTE 2: AUTENTICAÇÃO
 // ========================================
 
-// Monitor de autenticação do Firebase
 auth.onAuthStateChanged(async (user) => {
     if (!user) {
-        // Usuário não está logado
         loginContainer.classList.remove('hidden');
         appContainer.classList.add('hidden');
         console.log('❌ Usuário não autenticado');
         return;
     }
 
-    // PROTEÇÃO: Verifica se é o administrador autorizado
     if (user.email !== ADMIN_EMAIL) {
         console.warn('🚫 Tentativa de acesso não autorizado:', user.email);
-        
         loginContainer.classList.add('hidden');
         appContainer.classList.add('hidden');
-        
-        alert('🚫 ACESSO NEGADO\n\nEste sistema é exclusivo para administradores.\n\nVocê será redirecionado.');
-        
+        alert('🚫 ACESSO NEGADO\n\nEste sistema é exclusivo para administradores.');
         await auth.signOut();
-        window.location.href = 'vendas.html';
         return;
     }
 
-    // ✅ Usuário autorizado
     currentUser = user;
     console.log('✅ Usuário autenticado:', user.email);
     
     loginContainer.classList.add('hidden');
     appContainer.classList.remove('hidden');
     
-    // Testa conexão e carrega dados
     const connected = await testFirebaseConnection();
     if (connected) {
         await loadTransactions();
@@ -92,7 +84,6 @@ auth.onAuthStateChanged(async (user) => {
     }
 });
 
-// Função de Login
 loginForm.addEventListener("submit", async (e) => {
     e.preventDefault();
     
@@ -137,7 +128,6 @@ loginForm.addEventListener("submit", async (e) => {
     }
 });
 
-// Função de Logout
 logoutBtn.addEventListener("click", async () => {
     try {
         await auth.signOut();
@@ -152,7 +142,6 @@ logoutBtn.addEventListener("click", async () => {
 });
 
 console.log('✅ Sistema de autenticação configurado');
-
 // ========================================
 // PARTE 3: SISTEMA DE NOTIFICAÇÕES (TOAST)
 // ========================================
@@ -161,7 +150,6 @@ function showToast(message, type = 'success', duration = 4000) {
     const toastContainer = document.getElementById('toast-container');
     const toast = document.createElement('div');
     
-    // Ícones para cada tipo de notificação
     const icons = {
         success: 'fas fa-check-circle',
         error: 'fas fa-exclamation-circle',
@@ -179,11 +167,7 @@ function showToast(message, type = 'success', duration = 4000) {
     `;
 
     toastContainer.appendChild(toast);
-    
-    // Animação de entrada
     setTimeout(() => toast.classList.add('show'), 100);
-    
-    // Remove automaticamente após a duração
     setTimeout(() => {
         toast.classList.remove('show');
         setTimeout(() => toast.remove(), 400);
@@ -210,13 +194,10 @@ function updateConnectionStatus(status, message) {
         <span>${message}</span>
     `;
     
-    // Esconde o status após conectar com sucesso
     if (status === 'connected') {
         setTimeout(() => {
             connectionStatusEl.style.opacity = '0';
-            setTimeout(() => {
-                connectionStatusEl.style.display = 'none';
-            }, 300);
+            setTimeout(() => connectionStatusEl.style.display = 'none', 300);
         }, 2000);
     } else {
         connectionStatusEl.style.display = 'flex';
@@ -224,25 +205,19 @@ function updateConnectionStatus(status, message) {
     }
 }
 
-// Testa a conexão com o Firebase
 async function testFirebaseConnection() {
     updateConnectionStatus('connecting', 'Verificando conexão...');
     
     try {
-        // Tenta fazer uma query simples
         await db.collection('transactions').limit(1).get();
-        
         isFirebaseConnected = true;
         updateConnectionStatus('connected', 'Conectado ao Firebase');
         console.log('✅ Conexão com Firebase estabelecida');
         return true;
-        
     } catch (error) {
         console.error('❌ Erro na conexão com Firebase:', error);
-        
         isFirebaseConnected = false;
         updateConnectionStatus('disconnected', 'Erro de conexão');
-        
         showToast('Erro ao conectar com o banco de dados', 'error');
         return false;
     }
@@ -254,37 +229,27 @@ console.log('✅ Sistema de status de conexão configurado');
 // PARTE 5: NAVEGAÇÃO ENTRE PÁGINAS
 // ========================================
 
-// Seleciona todos os botões de navegação
 const navItems = document.querySelectorAll('.nav-item');
 const pages = document.querySelectorAll('.page');
 
-// Função para trocar de página
 function navigateToPage(pageName) {
-    // Remove a classe 'active' de todos os botões
     navItems.forEach(item => item.classList.remove('active'));
-    
-    // Remove a classe 'active' de todas as páginas
     pages.forEach(page => page.classList.remove('active'));
     
-    // Adiciona 'active' no botão clicado
     const activeNavItem = document.querySelector(`[data-page="${pageName}"]`);
     if (activeNavItem) {
         activeNavItem.classList.add('active');
     }
     
-    // Adiciona 'active' na página correspondente
     const activePage = document.getElementById(`${pageName}-page`);
     if (activePage) {
         activePage.classList.add('active');
     }
     
     console.log(`📄 Navegou para: ${pageName}`);
-    
-    // Carrega dados específicos da página
     loadPageData(pageName);
 }
 
-// Adiciona evento de clique em cada botão de navegação
 navItems.forEach(item => {
     item.addEventListener('click', () => {
         const pageName = item.getAttribute('data-page');
@@ -292,7 +257,6 @@ navItems.forEach(item => {
     });
 });
 
-// Função para carregar dados específicos de cada página
 function loadPageData(pageName) {
     switch(pageName) {
         case 'dashboard':
@@ -305,7 +269,6 @@ function loadPageData(pageName) {
             renderGoals();
             break;
         case 'ai-assistant':
-            // A IA já está carregada
             break;
     }
 }
@@ -316,7 +279,6 @@ console.log('✅ Sistema de navegação configurado');
 // PARTE 6: CONTROLE DE MODAIS
 // ========================================
 
-// Modal de Transação
 addTransactionBtn.addEventListener('click', () => {
     transactionModal.classList.remove('hidden');
     document.getElementById('desc').focus();
@@ -327,7 +289,6 @@ closeModal.addEventListener('click', () => {
     transactionForm.reset();
 });
 
-// Fecha modal ao clicar fora
 transactionModal.addEventListener('click', (e) => {
     if (e.target === transactionModal) {
         transactionModal.classList.add('hidden');
@@ -335,7 +296,6 @@ transactionModal.addEventListener('click', (e) => {
     }
 });
 
-// Fecha modal com ESC
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
         if (!transactionModal.classList.contains('hidden')) {
@@ -387,13 +347,12 @@ async function loadTransactions() {
         
         console.log(`✅ ${transactions.length} transações carregadas`);
         
-        // Atualiza a interface
         populateMonthFilter();
         renderTransactions();
         
         if (transactions.length > 0) {
             showToast(`${transactions.length} transações carregadas`, 'info', 2000);
-            updateDashboard(); // ADICIONADO
+            updateDashboard();
         }
         
     } catch (error) {
@@ -425,7 +384,6 @@ transactionForm.addEventListener("submit", async (e) => {
     const amount = parseFloat(document.getElementById("amount").value);
     const type = document.getElementById("type").value;
     
-    // Validação
     if (!desc || isNaN(amount) || amount <= 0) {
         showToast('Preencha todos os campos corretamente', 'warning');
         return;
@@ -449,25 +407,18 @@ transactionForm.addEventListener("submit", async (e) => {
             userId: currentUser.uid
         };
         
-        // Salva no Firebase
         const docRef = await db.collection("transactions").add(transaction);
-        
-        // Adiciona o ID da transação
         transaction.id = docRef.id;
         
-        // Adiciona na lista local
         transactions.unshift(transaction);
         filteredTransactions = [...transactions];
         
-        // Atualiza a interface
         populateMonthFilter();
         renderTransactions();
         
-        // Fecha o modal e limpa o formulário
         transactionModal.classList.add('hidden');
         transactionForm.reset();
         
-        // Feedback ao usuário
         const typeText = type === 'receita' ? 'Receita' : 'Despesa';
         const formattedAmount = amount.toLocaleString('pt-BR', {
             minimumFractionDigits: 2,
@@ -507,14 +458,11 @@ async function deleteTransaction(id) {
     console.log('🗑️ Deletando transação:', id);
 
     try {
-        // Deleta do Firebase
         await db.collection("transactions").doc(id).delete();
         
-        // Remove da lista local
         transactions = transactions.filter(t => t.id !== id);
         filteredTransactions = filteredTransactions.filter(t => t.id !== id);
         
-        // Atualiza a interface
         populateMonthFilter();
         renderTransactions();
         
@@ -532,7 +480,6 @@ async function deleteTransaction(id) {
     }
 }
 
-// Torna a função global para ser chamada pelo HTML
 window.deleteTransaction = deleteTransaction;
 
 console.log('✅ Função de deletar transação configurada');
@@ -541,14 +488,12 @@ console.log('✅ Função de deletar transação configurada');
 // PARTE 10: SISTEMA DE FILTROS
 // ========================================
 
-// Popula o filtro de meses com base nas transações
 function populateMonthFilter() {
     if (transactions.length === 0) {
         filterMonthEl.innerHTML = '<option value="">Todos os meses</option>';
         return;
     }
     
-    // Extrai todos os meses únicos das transações
     const months = [...new Set(transactions.map(t => {
         const date = new Date(t.timestamp);
         return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
@@ -573,7 +518,6 @@ function populateMonthFilter() {
     console.log(`✅ Filtro de meses atualizado: ${months.length} meses disponíveis`);
 }
 
-// Aplica os filtros selecionados
 function applyFilters() {
     const typeFilter = filterTypeEl.value;
     const monthFilter = filterMonthEl.value;
@@ -581,10 +525,8 @@ function applyFilters() {
     console.log('🔍 Aplicando filtros:', { tipo: typeFilter || 'todos', mês: monthFilter || 'todos' });
     
     filteredTransactions = transactions.filter(transaction => {
-        // Filtro por tipo
         let matchesType = !typeFilter || transaction.type === typeFilter;
         
-        // Filtro por mês
         let matchesMonth = true;
         if (monthFilter) {
             const transactionDate = new Date(transaction.timestamp);
@@ -599,7 +541,6 @@ function applyFilters() {
     renderTransactions();
 }
 
-// Limpa todos os filtros
 function clearFilters() {
     filterTypeEl.value = '';
     filterMonthEl.value = '';
@@ -609,7 +550,6 @@ function clearFilters() {
     console.log('✅ Filtros limpos');
 }
 
-// Event Listeners dos filtros
 filterTypeEl.addEventListener('change', applyFilters);
 filterMonthEl.addEventListener('change', applyFilters);
 clearFiltersBtn.addEventListener('click', clearFilters);
@@ -623,7 +563,6 @@ console.log('✅ Sistema de filtros configurado');
 function updateMonthlyProfitCard() {
     const selectedMonth = filterMonthEl.value;
     
-    // Se nenhum mês foi selecionado, esconde o card
     if (!selectedMonth) {
         monthlyProfitCard.style.display = 'none';
         return;
@@ -634,7 +573,6 @@ function updateMonthlyProfitCard() {
     let monthReceitas = 0;
     let monthDespesas = 0;
     
-    // Calcula receitas e despesas do mês filtrado
     filteredTransactions.forEach(t => {
         if (t.type === 'receita') {
             monthReceitas += Number(t.amount);
@@ -645,7 +583,6 @@ function updateMonthlyProfitCard() {
     
     const monthProfit = monthReceitas - monthDespesas;
     
-    // Atualiza os valores na tela
     monthReceitasEl.textContent = monthReceitas.toLocaleString('pt-BR', { 
         minimumFractionDigits: 2, 
         maximumFractionDigits: 2 
@@ -661,7 +598,6 @@ function updateMonthlyProfitCard() {
         maximumFractionDigits: 2 
     });
     
-    // Muda a cor do card de lucro baseado no valor
     const profitCard = document.getElementById('month-profit-card-inner');
     const profitValueEl = profitCard.querySelector('.summary-value');
     const profitIconEl = profitCard.querySelector('.summary-icon');
@@ -697,7 +633,6 @@ function renderTransactions() {
     
     tableBody.innerHTML = '';
     
-    // Calcula totais gerais (de todas as transações, não filtradas)
     let totalReceitas = 0;
     let totalDespesas = 0;
     
@@ -709,7 +644,6 @@ function renderTransactions() {
         }
     });
 
-    // Se não houver transações filtradas, mostra estado vazio
     if (filteredTransactions.length === 0) {
         emptyState.classList.remove("hidden");
         document.querySelector(".table").style.display = "none";
@@ -717,7 +651,6 @@ function renderTransactions() {
         emptyState.classList.add("hidden");
         document.querySelector(".table").style.display = "table";
         
-        // Renderiza cada transação filtrada
         filteredTransactions.forEach(t => {
             const row = document.createElement("tr");
             
@@ -749,10 +682,7 @@ function renderTransactions() {
         });
     }
 
-    // Atualiza os cards de resumo (sempre com totais gerais)
     updateSummaryCards(totalReceitas, totalDespesas);
-    
-    // Atualiza o card de lucro mensal (se houver filtro de mês)
     updateMonthlyProfitCard();
     
     console.log('✅ Transações renderizadas:', filteredTransactions.length);
@@ -765,44 +695,53 @@ console.log('✅ Função de renderização de transações configurada');
 // ========================================
 
 function updateSummaryCards(totalReceitas, totalDespesas) {
-    // Formata e atualiza receitas
-    totalReceitasEl.textContent = totalReceitas.toLocaleString('pt-BR', { 
-        minimumFractionDigits: 2, 
-        maximumFractionDigits: 2 
-    });
+    const totalReceitasEl = document.getElementById('total-receitas');
+    if (totalReceitasEl) {
+        totalReceitasEl.textContent = totalReceitas.toLocaleString('pt-BR', { 
+            minimumFractionDigits: 2, 
+            maximumFractionDigits: 2 
+        });
+    }
     
-    // Formata e atualiza despesas
-    totalDespesasEl.textContent = totalDespesas.toLocaleString('pt-BR', { 
-        minimumFractionDigits: 2, 
-        maximumFractionDigits: 2 
-    });
+    const totalDespesasEl = document.getElementById('total-despesas');
+    if (totalDespesasEl) {
+        totalDespesasEl.textContent = totalDespesas.toLocaleString('pt-BR', { 
+            minimumFractionDigits: 2, 
+            maximumFractionDigits: 2 
+        });
+    }
     
-    // Calcula e formata o saldo
     const saldo = totalReceitas - totalDespesas;
-    saldoEl.textContent = saldo.toLocaleString('pt-BR', { 
-        minimumFractionDigits: 2, 
-        maximumFractionDigits: 2 
-    });
+    const saldoEl = document.getElementById('saldo');
+    if (saldoEl) {
+        saldoEl.textContent = saldo.toLocaleString('pt-BR', { 
+            minimumFractionDigits: 2, 
+            maximumFractionDigits: 2 
+        });
+    }
     
-    // Atualiza a cor do card de saldo baseado no valor
     const saldoCard = document.getElementById('saldo-card');
-    const saldoValueEl = saldoCard.querySelector('.summary-value');
-    const saldoIconEl = saldoCard.querySelector('.summary-icon');
-    
-    if (saldo > 0) {
-        saldoCard.classList.add('receitas');
-        saldoCard.classList.remove('despesas');
-        saldoValueEl.style.color = 'var(--success-color)';
-        saldoIconEl.style.color = 'var(--success-color)';
-    } else if (saldo < 0) {
-        saldoCard.classList.add('despesas');
-        saldoCard.classList.remove('receitas');
-        saldoValueEl.style.color = 'var(--danger-color)';
-        saldoIconEl.style.color = 'var(--danger-color)';
-    } else {
-        saldoCard.classList.remove('receitas', 'despesas');
-        saldoValueEl.style.color = 'var(--text-light)';
-        saldoIconEl.style.color = 'var(--primary-color)';
+    if (saldoCard) {
+        const saldoValueEl = saldoCard.querySelector('.summary-value-compact');
+        const saldoIconEl = saldoCard.querySelector('.summary-icon-compact');
+        
+        if (saldoValueEl && saldoIconEl) {
+            if (saldo > 0) {
+                saldoCard.classList.add('receitas');
+                saldoCard.classList.remove('despesas');
+                saldoValueEl.style.color = 'var(--success-color)';
+                saldoIconEl.style.color = 'var(--success-color)';
+            } else if (saldo < 0) {
+                saldoCard.classList.add('despesas');
+                saldoCard.classList.remove('receitas');
+                saldoValueEl.style.color = 'var(--danger-color)';
+                saldoIconEl.style.color = 'var(--danger-color)';
+            } else {
+                saldoCard.classList.remove('receitas', 'despesas');
+                saldoValueEl.style.color = 'var(--text-light)';
+                saldoIconEl.style.color = 'var(--primary-color)';
+            }
+        }
     }
     
     console.log('✅ Cards de resumo atualizados:', {
@@ -872,19 +811,16 @@ const goalModal = document.getElementById('goal-modal');
 const closeGoalModal = document.getElementById('close-goal-modal');
 const goalForm = document.getElementById('goal-form');
 
-// Abre o modal de metas
 addGoalBtn.addEventListener('click', () => {
     goalModal.classList.remove('hidden');
     document.getElementById('goal-title').focus();
 });
 
-// Fecha o modal de metas
 closeGoalModal.addEventListener('click', () => {
     goalModal.classList.add('hidden');
     goalForm.reset();
 });
 
-// Fecha modal ao clicar fora
 goalModal.addEventListener('click', (e) => {
     if (e.target === goalModal) {
         goalModal.classList.add('hidden');
@@ -897,122 +833,40 @@ console.log('✅ Modal de metas configurado');
 // ========================================
 // PARTE 16: ADICIONAR NOVA META
 // ========================================
-// PARTE 19: GRÁFICO RÁPIDO (DASHBOARD) - MELHORADO
-// ========================================
 
-function renderQuickChart() {
-    console.log('📊 Renderizando gráfico rápido do dashboard...');
-    
-    const ctx = document.getElementById('quick-chart');
-    if (!ctx) return;
-    
-    // Destrói o gráfico anterior se existir
-    if (quickChart) {
-        quickChart.destroy();
-    }
-    
-    // Calcula totais
-    let totalReceitas = 0;
-    let totalDespesas = 0;
-    
-    transactions.forEach(t => {
-        if (t.type === 'receita') {
-            totalReceitas += Number(t.amount);
-        } else {
-            totalDespesas += Number(t.amount);
-        }
-    });
-    
-    const saldo = totalReceitas - totalDespesas;
-    
-    // Cria o gráfico com saldo também
-    quickChart = new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-            labels: ['Receitas', 'Despesas', 'Saldo'],
-            datasets: [{
-                data: [totalReceitas, totalDespesas, Math.max(0, saldo)],
-                backgroundColor: [
-                    'rgba(37, 211, 102, 0.8)',
-                    'rgba(220, 53, 69, 0.8)',
-                    'rgba(0, 212, 255, 0.8)'
-                ],
-                borderColor: [
-                    'rgba(37, 211, 102, 1)',
-                    'rgba(220, 53, 69, 1)',
-                    'rgba(0, 212, 255, 1)'
-                ],
-                borderWidth: 2
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: true,
-            plugins: {
-                legend: {
-                    position: 'bottom',
-                    labels: {
-                        color: '#ffffff',
-                        font: {
-                            size: 14
-                        },
-                        padding: 20
-                    }
-                },
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            const label = context.label || '';
-                            const value = context.parsed || 0;
-                            return label + ': R$ ' + value.toLocaleString('pt-BR', {
-                                minimumFractionDigits: 2,
-                                maximumFractionDigits: 2
-                            });
-                        }
-                    }
-                }
-            }
-        }
-    });
-    
-    console.log('✅ Gráfico rápido renderizado');
-}
-
-
-console.log('✅ Função de gráfico rápido configurada');
-
-// ...existing code...
 goalForm.addEventListener('submit', async (e) => {
     e.preventDefault();
+    
     const title = document.getElementById('goal-title').value.trim();
     const target = parseInt(document.getElementById('goal-target').value);
     const current = parseInt(document.getElementById('goal-current').value);
     const deadline = parseInt(document.getElementById('goal-deadline').value);
     const unit = document.getElementById('goal-unit').value.trim();
-
-    // Validação
+    
     if (!title || isNaN(target) || isNaN(current) || isNaN(deadline) || !unit) {
         showToast('Preencha todos os campos corretamente', 'warning');
         return;
     }
+    
     if (target <= 0) {
         showToast('A meta deve ser maior que zero', 'warning');
         return;
     }
+    
     if (current < 0) {
         showToast('O progresso não pode ser negativo', 'warning');
         return;
     }
+    
     if (deadline <= 0) {
         showToast('O prazo deve ser maior que zero', 'warning');
         return;
     }
+
     if (!isFirebaseConnected || !currentUser) {
         showToast('Você precisa estar autenticado', 'warning');
         return;
     }
-
-    console.log('💾 Salvando nova meta...');
 
     try {
         const goal = {
@@ -1024,21 +878,19 @@ goalForm.addEventListener('submit', async (e) => {
             createdAt: Date.now(),
             userId: currentUser.uid
         };
-        // Salva no Firebase
+        
         const docRef = await db.collection("goals").add(goal);
-        // Adiciona o ID da meta
         goal.id = docRef.id;
-        // Adiciona na lista local
         goals.unshift(goal);
-        // Atualiza a interface
         renderGoals();
-        // Fecha o modal e limpa o formulário
         goalModal.classList.add('hidden');
         goalForm.reset();
+        
         showToast(`Meta "${title}" criada com sucesso!`, 'success');
-        console.log('✅ Meta salva com sucesso:', goal.id);
+        
     } catch (error) {
         console.error('❌ Erro ao salvar meta:', error);
+        
         if (error.code === 'permission-denied') {
             showToast('Sem permissão para adicionar meta', 'error');
         } else {
@@ -1122,14 +974,13 @@ console.log('✅ Função de renderização de metas configurada');
 // PARTE 18: ATUALIZAR E DELETAR METAS
 // ========================================
 
-// Atualizar progresso da meta
 async function updateGoalProgress(goalId, currentProgress, target) {
     const newProgress = prompt(
         `Digite o novo progresso (atual: ${currentProgress}):`,
         currentProgress
     );
     
-    if (newProgress === null) return; // Cancelou
+    if (newProgress === null) return;
     
     const progressNum = parseInt(newProgress);
     
@@ -1138,14 +989,11 @@ async function updateGoalProgress(goalId, currentProgress, target) {
         return;
     }
 
-    console.log('📝 Atualizando progresso da meta:', goalId);
-
     try {
         await db.collection("goals").doc(goalId).update({
             current: progressNum
         });
         
-        // Atualiza na lista local
         const goal = goals.find(g => g.id === goalId);
         if (goal) {
             goal.current = progressNum;
@@ -1159,48 +1007,36 @@ async function updateGoalProgress(goalId, currentProgress, target) {
             showToast('Progresso atualizado!', 'success', 2000);
         }
         
-        console.log('✅ Progresso atualizado');
-        
     } catch (error) {
         console.error('❌ Erro ao atualizar meta:', error);
         showToast('Erro ao atualizar progresso', 'error');
     }
 }
 
-// Deletar meta
 async function deleteGoal(goalId) {
     if (!confirm('Tem certeza que deseja excluir esta meta?')) {
         return;
     }
 
-    console.log('🗑️ Deletando meta:', goalId);
-
     try {
         await db.collection("goals").doc(goalId).delete();
-        
         goals = goals.filter(g => g.id !== goalId);
         renderGoals();
-        
         showToast('Meta excluída com sucesso', 'success', 2000);
-        console.log('✅ Meta deletada');
-        
     } catch (error) {
         console.error('❌ Erro ao excluir meta:', error);
         showToast('Erro ao excluir meta', 'error');
     }
 }
 
-// Torna as funções globais
 window.updateGoalProgress = updateGoalProgress;
 window.deleteGoal = deleteGoal;
 
-console.log('✅ Funções de atualizar e deletar metas configuradas');
+console.log('✅ Funções de metas configuradas');
 
 // ========================================
 // PARTE 19: GRÁFICO RÁPIDO (DASHBOARD)
 // ========================================
-
-let quickChart = null;
 
 function renderQuickChart() {
     console.log('📊 Renderizando gráfico rápido do dashboard...');
@@ -1208,12 +1044,10 @@ function renderQuickChart() {
     const ctx = document.getElementById('quick-chart');
     if (!ctx) return;
     
-    // Destrói o gráfico anterior se existir
     if (quickChart) {
         quickChart.destroy();
     }
     
-    // Calcula totais
     let totalReceitas = 0;
     let totalDespesas = 0;
     
@@ -1225,494 +1059,6 @@ function renderQuickChart() {
         }
     });
     
-    // ========================================
-// DASHBOARD MELHORADO - KPIs
-// ========================================
-
-// Atualiza a data atual
-function updateCurrentDate() {
-    const dateEl = document.getElementById('current-date');
-    if (!dateEl) return;
-    
-    const now = new Date();
-    const options = { 
-        weekday: 'long', 
-        year: 'numeric', 
-        month: 'long', 
-        day: 'numeric' 
-    };
-    dateEl.textContent = now.toLocaleDateString('pt-BR', options);
-}
-
-// Calcula KPIs do mês atual
-function calculateMonthKPIs() {
-    const now = new Date();
-    const currentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
-    
-    // Filtra transações do mês atual
-    const monthTransactions = transactions.filter(t => {
-        const tDate = new Date(t.timestamp);
-        const tMonth = `${tDate.getFullYear()}-${String(tDate.getMonth() + 1).padStart(2, '0')}`;
-        return tMonth === currentMonth;
-    });
-    
-    // Número de transações do mês
-    const numTransactions = monthTransactions.length;
-    
-    // Ticket médio
-    const totalAmount = monthTransactions.reduce((sum, t) => sum + Number(t.amount), 0);
-    const avgTransaction = numTransactions > 0 ? totalAmount / numTransactions : 0;
-    
-    // Gasto médio diário (apenas despesas)
-    const monthExpenses = monthTransactions.filter(t => t.type === 'despesa');
-    const totalExpenses = monthExpenses.reduce((sum, t) => sum + Number(t.amount), 0);
-    const daysInMonth = now.getDate();
-    const dailyAvg = daysInMonth > 0 ? totalExpenses / daysInMonth : 0;
-    
-    // Progresso de metas
-    let totalGoalProgress = 0;
-    if (goals.length > 0) {
-        goals.forEach(goal => {
-            const progress = Math.min((goal.current / goal.target) * 100, 100);
-            totalGoalProgress += progress;
-        });
-        totalGoalProgress = totalGoalProgress / goals.length;
-    }
-    
-    return {
-        numTransactions,
-        avgTransaction,
-        dailyAvg,
-        totalGoalProgress
-    };
-}
-
-// Atualiza os KPIs na tela
-function updateKPIs() {
-    const kpis = calculateMonthKPIs();
-    
-    document.getElementById('kpi-transactions').textContent = kpis.numTransactions;
-    document.getElementById('kpi-avg-transaction').textContent = kpis.avgTransaction.toLocaleString('pt-BR', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-    });
-    document.getElementById('kpi-daily-avg').textContent = kpis.dailyAvg.toLocaleString('pt-BR', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-    });
-    document.getElementById('kpi-goal-progress').textContent = Math.round(kpis.totalGoalProgress);
-    
-    console.log('✅ KPIs atualizados:', kpis);
-}
-
-// Calcula saúde financeira
-function calculateFinancialHealth() {
-    let totalReceitas = 0;
-    let totalDespesas = 0;
-    
-    transactions.forEach(t => {
-        if (t.type === 'receita') {
-            totalReceitas += Number(t.amount);
-        } else {
-            totalDespesas += Number(t.amount);
-        }
-    });
-    
-    if (totalReceitas === 0) {
-        return { percentage: 0, status: 'Sem dados', color: 'var(--text-gray)' };
-    }
-    
-    const percentage = (totalDespesas / totalReceitas) * 100;
-    
-    let status, color;
-    
-    if (percentage <= 50) {
-        status = 'Excelente';
-        color = 'var(--success-color)';
-    } else if (percentage <= 70) {
-        status = 'Bom';
-        color = 'var(--success-color)';
-    } else if (percentage <= 85) {
-        status = 'Atenção';
-        color = 'var(--warning-color)';
-    } else {
-        status = 'Crítico';
-        color = 'var(--danger-color)';
-    }
-    
-    return { percentage: Math.round(percentage), status, color };
-}
-
-// Atualiza indicador de saúde financeira
-function updateHealthIndicator() {
-    const health = calculateFinancialHealth();
-    
-    // Atualiza o card de saúde
-    const healthStatusEl = document.getElementById('health-status');
-    const healthCardEl = document.getElementById('health-card');
-    
-    if (healthStatusEl) {
-        healthStatusEl.textContent = health.status;
-        healthStatusEl.style.color = health.color;
-    }
-    
-    // Atualiza a barra de saúde
-    const healthBarFill = document.getElementById('health-bar-fill');
-    const expensePercentageEl = document.getElementById('expense-percentage');
-    
-    if (healthBarFill) {
-        healthBarFill.style.left = `${health.percentage}%`;
-    }
-    
-    if (expensePercentageEl) {
-        expensePercentageEl.textContent = `${health.percentage}%`;
-        expensePercentageEl.style.color = health.color;
-    }
-    
-    console.log('✅ Saúde financeira atualizada:', health);
-}
-
-console.log('✅ Funções de KPIs configuradas');
-
-// ========================================
-// FEED FINANCEIRO INTELIGENTE
-// ========================================
-
-function generateFinancialFeed() {
-    const feedEl = document.getElementById('financial-feed');
-    if (!feedEl) return;
-    
-    feedEl.innerHTML = '';
-    
-    if (transactions.length === 0) {
-        feedEl.innerHTML = `
-            <div class="feed-item">
-                <span class="feed-item-icon">💡</span>
-                <div class="feed-item-text">
-                    Comece adicionando suas primeiras transações para ver insights aqui!
-                </div>
-            </div>
-        `;
-        return;
-    }
-    
-    const feedItems = [];
-    
-    // Última transação
-    if (transactions.length > 0) {
-        const last = transactions[0];
-        const icon = last.type === 'receita' ? '💰' : '💸';
-        const type = last.type === 'receita' ? 'success' : 'danger';
-        feedItems.push({
-            icon,
-            type,
-            text: `${last.type === 'receita' ? 'Receita' : 'Despesa'} de R$ ${Number(last.amount).toLocaleString('pt-BR', {minimumFractionDigits: 2})} - ${last.desc}`,
-            time: 'Agora mesmo'
-        });
-    }
-    
-    // Gasto de hoje
-    const today = new Date().toLocaleDateString('pt-BR');
-    const todayExpenses = transactions.filter(t => t.type === 'despesa' && t.date === today);
-    const todayTotal = todayExpenses.reduce((sum, t) => sum + Number(t.amount), 0);
-    
-    if (todayTotal > 0) {
-        feedItems.push({
-            icon: '📅',
-            type: 'warning',
-            text: `Você gastou R$ ${todayTotal.toLocaleString('pt-BR', {minimumFractionDigits: 2})} hoje`,
-            time: 'Hoje'
-        });
-    }
-    
-    // Maior gasto recente
-    const recentExpenses = transactions.filter(t => t.type === 'despesa').slice(0, 10);
-    if (recentExpenses.length > 0) {
-        const biggest = recentExpenses.reduce((max, t) => Number(t.amount) > Number(max.amount) ? t : max);
-        feedItems.push({
-            icon: '⚠️',
-            type: 'danger',
-            text: `Seu maior gasto recente foi R$ ${Number(biggest.amount).toLocaleString('pt-BR', {minimumFractionDigits: 2})} em ${biggest.desc}`,
-            time: biggest.date
-        });
-    }
-    
-    // Progresso de metas
-    if (goals.length > 0) {
-        goals.forEach(goal => {
-            const progress = Math.min((goal.current / goal.target) * 100, 100);
-            if (progress >= 100) {
-                feedItems.push({
-                    icon: '🎉',
-                    type: 'success',
-                    text: `Parabéns! Você concluiu a meta "${goal.title}"!`,
-                    time: 'Meta concluída'
-                });
-            } else if (progress >= 50) {
-                feedItems.push({
-                    icon: '🎯',
-                    type: 'warning',
-                    text: `Você está ${progress.toFixed(0)}% da meta "${goal.title}"`,
-                    time: 'Em andamento'
-                });
-            }
-        });
-    }
-    
-    // Dica de economia
-    const health = calculateFinancialHealth();
-    if (health.percentage > 80) {
-        feedItems.push({
-            icon: '💡',
-            type: 'warning',
-            text: 'Suas despesas estão altas! Considere revisar seus gastos.',
-            time: 'Dica'
-        });
-    } else if (health.percentage < 50) {
-        feedItems.push({
-            icon: '✨',
-            type: 'success',
-            text: 'Ótimo controle de gastos! Continue assim!',
-            time: 'Parabéns'
-        });
-    }
-    
-    // Renderiza os itens do feed
-    feedItems.slice(0, 8).forEach(item => {
-        const feedItemEl = document.createElement('div');
-        feedItemEl.className = `feed-item ${item.type}`;
-        feedItemEl.innerHTML = `
-            <span class="feed-item-icon">${item.icon}</span>
-            <div class="feed-item-text">
-                ${item.text}
-                <span class="feed-item-time">${item.time}</span>
-            </div>
-        `;
-        feedEl.appendChild(feedItemEl);
-    });
-    
-    console.log('✅ Feed financeiro gerado');
-}
-
-
-console.log('✅ Função de feed financeiro configurada');
-
-// ========================================
-// RECONHECIMENTO DE VOZ
-// ========================================
-
-// Inicializa o reconhecimento de voz
-function initVoiceRecognition() {
-    // Verifica se o navegador suporta
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    
-    if (!SpeechRecognition) {
-        console.warn('⚠️ Navegador não suporta reconhecimento de voz');
-        const voiceBtn = document.getElementById('voice-btn');
-        if (voiceBtn) {
-            voiceBtn.disabled = true;
-            voiceBtn.innerHTML = '<i class="fas fa-times"></i> <span>Não suportado</span>';
-        }
-        return;
-    }
-    
-    recognition = new SpeechRecognition();
-    recognition.lang = 'pt-BR';
-    recognition.continuous = false;
-    recognition.interimResults = false;
-    
-    const voiceBtn = document.getElementById('voice-btn');
-    const voiceFeedback = document.getElementById('voice-feedback');
-    
-    // Quando clicar no botão
-    voiceBtn.addEventListener('click', () => {
-        if (voiceBtn.classList.contains('listening')) {
-            recognition.stop();
-            return;
-        }
-        
-        voiceBtn.classList.add('listening');
-        voiceBtn.innerHTML = '<i class="fas fa-stop"></i> <span>Escutando...</span>';
-        voiceFeedback.textContent = '🎤 Fale agora... (Ex: "Registrar despesa de 50 reais em alimentação")';
-        voiceFeedback.classList.add('listening');
-        
-        recognition.start();
-        console.log('🎤 Reconhecimento de voz iniciado');
-    });
-    
-    // Quando reconhecer a fala
-    recognition.onresult = (event) => {
-        const transcript = event.results[0][0].transcript.toLowerCase();
-        console.log('🎤 Reconhecido:', transcript);
-        
-        voiceFeedback.textContent = `Você disse: "${transcript}"`;
-        voiceFeedback.classList.remove('listening');
-        
-        // Processa o comando
-        processVoiceCommand(transcript);
-    };
-    
-    // Quando terminar
-    recognition.onend = () => {
-        voiceBtn.classList.remove('listening');
-        voiceBtn.innerHTML = '<i class="fas fa-microphone"></i> <span>Registrar gasto por voz</span>';
-        console.log('🎤 Reconhecimento de voz finalizado');
-    };
-    
-    // Quando der erro
-    recognition.onerror = (event) => {
-        console.error('❌ Erro no reconhecimento de voz:', event.error);
-        voiceBtn.classList.remove('listening');
-        voiceBtn.innerHTML = '<i class="fas fa-microphone"></i> <span>Registrar gasto por voz</span>';
-        
-        let errorMsg = 'Erro ao reconhecer voz. Tente novamente.';
-        
-        if (event.error === 'no-speech') {
-            errorMsg = 'Nenhuma fala detectada. Tente novamente.';
-        } else if (event.error === 'not-allowed') {
-            errorMsg = 'Permissão de microfone negada. Ative nas configurações do navegador.';
-        }
-        
-        voiceFeedback.textContent = errorMsg;
-        voiceFeedback.style.color = 'var(--danger-color)';
-        
-        setTimeout(() => {
-            voiceFeedback.textContent = '';
-            voiceFeedback.style.color = '';
-        }, 5000);
-    };
-    
-    console.log('✅ Reconhecimento de voz configurado');
-}
-
-// Processa o comando de voz
-function processVoiceCommand(transcript) {
-    const voiceFeedback = document.getElementById('voice-feedback');
-    
-    // Padrões de comando
-    // Ex: "registrar despesa de 50 reais em alimentação"
-    // Ex: "adicionar gasto de 100 reais no mercado"
-    // Ex: "despesa de 30 reais em transporte"
-    
-    let type = 'despesa'; // Padrão
-    let amount = null;
-    let description = '';
-    
-    // Detecta se é receita ou despesa
-    if (transcript.includes('receita') || transcript.includes('ganho') || transcript.includes('entrada')) {
-        type = 'receita';
-    }
-    
-    // Extrai o valor
-    const valuePatterns = [
-        /(\d+(?:,\d+)?)\s*reais?/i,
-        /(\d+(?:,\d+)?)\s*r\$/i,
-        /r\$\s*(\d+(?:,\d+)?)/i,
-        /de\s+(\d+(?:,\d+)?)/i
-    ];
-    
-    for (const pattern of valuePatterns) {
-        const match = transcript.match(pattern);
-        if (match) {
-            amount = parseFloat(match[1].replace(',', '.'));
-            break;
-        }
-    }
-    
-    // Extrai a descrição
-    const descPatterns = [
-        /(?:em|no|na|para|com)\s+(.+)$/i,
-        /(?:despesa|receita|gasto)\s+(?:de|em)?\s*\d+[^a-z]+(.+)$/i
-    ];
-    
-    for (const pattern of descPatterns) {
-        const match = transcript.match(pattern);
-        if (match) {
-            description = match[1].trim();
-            break;
-        }
-    }
-    
-    // Se não encontrou descrição, usa padrão
-    if (!description) {
-        description = type === 'receita' ? 'Receita por voz' : 'Despesa por voz';
-    }
-    
-    // Valida
-    if (!amount || amount <= 0) {
-        voiceFeedback.textContent = '❌ Não consegui identificar o valor. Tente novamente.';
-        voiceFeedback.style.color = 'var(--danger-color)';
-        showToast('Não consegui identificar o valor', 'warning');
-        
-        setTimeout(() => {
-            voiceFeedback.textContent = '';
-            voiceFeedback.style.color = '';
-        }, 5000);
-        return;
-    }
-    
-    // Confirma com o usuário
-    const confirmMsg = `${type === 'receita' ? 'Receita' : 'Despesa'} de R$ ${amount.toFixed(2)} - ${description}`;
-    voiceFeedback.textContent = `✅ ${confirmMsg}`;
-    voiceFeedback.style.color = 'var(--success-color)';
-    
-    console.log('🎤 Comando processado:', { type, amount, description });
-    
-    // Salva a transação
-    saveVoiceTransaction(type, amount, description);
-    
-    setTimeout(() => {
-        voiceFeedback.textContent = '';
-        voiceFeedback.style.color = '';
-    }, 5000);
-}
-
-// Salva a transação criada por voz
-async function saveVoiceTransaction(type, amount, description) {
-    if (!isFirebaseConnected || !currentUser) {
-        showToast('Erro: não conectado ao Firebase', 'error');
-        return;
-    }
-    
-    try {
-        const transaction = {
-            desc: description,
-            reason: 'Adicionado por voz',
-            amount: Number(amount),
-            type: type,
-            date: new Date().toLocaleDateString('pt-BR'),
-            timestamp: Date.now(),
-            userId: currentUser.uid
-        };
-        
-        console.log('💾 Salvando transação por voz:', transaction);
-        
-        const docRef = await db.collection("transactions").add(transaction);
-        transaction.id = docRef.id;
-        
-        // Adiciona na lista local
-        transactions.unshift(transaction);
-        filteredTransactions = [...transactions];
-        
-        // Atualiza tudo
-        populateMonthFilter();
-        renderTransactions();
-        updateDashboard(); // Nova função que vamos criar
-        
-        const typeText = type === 'receita' ? 'Receita' : 'Despesa';
-        showToast(`${typeText} de R$ ${amount.toFixed(2)} adicionada por voz!`, 'success');
-        
-        console.log('✅ Transação por voz salva com sucesso');
-        
-    } catch (error) {
-        console.error('❌ Erro ao salvar transação por voz:', error);
-        showToast('Erro ao salvar transação', 'error');
-    }
-}
-
-console.log('✅ Funções de reconhecimento de voz configuradas');
-
-    // Cria o gráfico
     quickChart = new Chart(ctx, {
         type: 'doughnut',
         data: {
@@ -1765,9 +1111,8 @@ console.log('✅ Funções de reconhecimento de voz configuradas');
 
 console.log('✅ Função de gráfico rápido configurada');
 
-
 // ========================================
-// PARTE 20: GRÁFICO MENSAL (RECEITAS vs DESPESAS)
+// PARTE 20: GRÁFICO MENSAL
 // ========================================
 
 let monthlyChart = null;
@@ -1778,12 +1123,10 @@ function renderMonthlyChart() {
     const ctx = document.getElementById('monthly-chart');
     if (!ctx) return;
     
-    // Destrói o gráfico anterior se existir
     if (monthlyChart) {
         monthlyChart.destroy();
     }
     
-    // Agrupa transações por mês
     const monthlyData = {};
     
     transactions.forEach(t => {
@@ -1804,16 +1147,13 @@ function renderMonthlyChart() {
         }
     });
     
-    // Ordena os meses
     const sortedMonths = Object.keys(monthlyData).sort();
     
-    // Nomes dos meses
     const monthNames = [
         'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun',
         'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'
     ];
     
-    // Prepara os dados para o gráfico
     const labels = sortedMonths.map(m => {
         const [year, month] = m.split('-');
         return `${monthNames[parseInt(month) - 1]}/${year}`;
@@ -1822,7 +1162,6 @@ function renderMonthlyChart() {
     const receitasData = sortedMonths.map(m => monthlyData[m].receitas);
     const despesasData = sortedMonths.map(m => monthlyData[m].despesas);
     
-    // Cria o gráfico
     monthlyChart = new Chart(ctx, {
         type: 'bar',
         data: {
@@ -1911,12 +1250,10 @@ function renderExpensesPieChart() {
     const ctx = document.getElementById('expenses-pie-chart');
     if (!ctx) return;
     
-    // Destrói o gráfico anterior se existir
     if (expensesPieChart) {
         expensesPieChart.destroy();
     }
     
-    // Agrupa despesas por descrição
     const expensesData = {};
     
     transactions.forEach(t => {
@@ -1928,7 +1265,6 @@ function renderExpensesPieChart() {
         }
     });
     
-    // Pega as top 5 despesas
     const sortedExpenses = Object.entries(expensesData)
         .sort((a, b) => b[1] - a[1])
         .slice(0, 5);
@@ -1946,7 +1282,6 @@ function renderExpensesPieChart() {
     const labels = sortedExpenses.map(e => e[0]);
     const data = sortedExpenses.map(e => e[1]);
     
-    // Cores variadas
     const colors = [
         'rgba(220, 53, 69, 0.8)',
         'rgba(255, 193, 7, 0.8)',
@@ -1955,7 +1290,6 @@ function renderExpensesPieChart() {
         'rgba(255, 152, 0, 0.8)'
     ];
     
-    // Cria o gráfico
     expensesPieChart = new Chart(ctx, {
         type: 'pie',
         data: {
@@ -2016,11 +1350,10 @@ function renderTopExpenses() {
     
     tbody.innerHTML = '';
     
-    // Filtra apenas despesas e ordena por valor
     const expenses = transactions
         .filter(t => t.type === 'despesa')
         .sort((a, b) => b.amount - a.amount)
-        .slice(0, 10); // Top 10
+        .slice(0, 10);
     
     if (expenses.length === 0) {
         tbody.innerHTML = `
@@ -2068,7 +1401,6 @@ console.log('✅ Função de maiores gastos configurada');
 function renderBestAndWorstMonths() {
     console.log('📊 Analisando melhores e piores meses...');
     
-    // Agrupa transações por mês
     const monthlyData = {};
     
     transactions.forEach(t => {
@@ -2090,7 +1422,6 @@ function renderBestAndWorstMonths() {
     });
     
     if (Object.keys(monthlyData).length === 0) {
-        // Sem dados
         document.getElementById('best-revenue-month').textContent = 'Sem dados';
         document.getElementById('best-revenue-value').textContent = '0,00';
         document.getElementById('worst-expense-month').textContent = 'Sem dados';
@@ -2098,13 +1429,11 @@ function renderBestAndWorstMonths() {
         return;
     }
     
-    // Nomes dos meses
     const monthNames = [
         'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
         'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
     ];
     
-    // Encontra o mês com maior receita
     let bestRevenueMonth = null;
     let bestRevenueValue = 0;
     
@@ -2115,7 +1444,6 @@ function renderBestAndWorstMonths() {
         }
     });
     
-    // Encontra o mês com maior despesa
     let worstExpenseMonth = null;
     let worstExpenseValue = 0;
     
@@ -2126,7 +1454,6 @@ function renderBestAndWorstMonths() {
         }
     });
     
-    // Formata e exibe o melhor mês de receita
     if (bestRevenueMonth) {
         const [year, month] = bestRevenueMonth.split('-');
         const monthName = monthNames[parseInt(month) - 1];
@@ -2137,7 +1464,6 @@ function renderBestAndWorstMonths() {
         });
     }
     
-    // Formata e exibe o pior mês de despesa
     if (worstExpenseMonth) {
         const [year, month] = worstExpenseMonth.split('-');
         const monthName = monthNames[parseInt(month) - 1];
@@ -2148,12 +1474,7 @@ function renderBestAndWorstMonths() {
         });
     }
     
-    console.log('✅ Análise de meses concluída:', {
-        melhorReceita: bestRevenueMonth,
-        valorReceita: bestRevenueValue,
-        piorDespesa: worstExpenseMonth,
-        valorDespesa: worstExpenseValue
-    });
+    console.log('✅ Análise de meses concluída');
 }
 
 console.log('✅ Função de análise de meses configurada');
@@ -2171,7 +1492,6 @@ function renderReportsCharts() {
         return;
     }
     
-    // Renderiza todos os gráficos e análises
     renderMonthlyChart();
     renderExpensesPieChart();
     renderTopExpenses();
@@ -2183,15 +1503,9 @@ function renderReportsCharts() {
 console.log('✅ Função principal de relatórios configurada');
 
 // ========================================
-// PARTE 25: ASSISTENTE DE IA - CONFIGURAÇÃO
+// PARTE 25: ASSISTENTE DE IA - MENSAGENS
 // ========================================
 
-const aiChat = document.getElementById('ai-chat');
-const aiInput = document.getElementById('ai-input');
-const aiSendBtn = document.getElementById('ai-send-btn');
-const aiSuggestionBtns = document.querySelectorAll('.ai-suggestion-btn');
-
-// Adiciona mensagem do usuário ao chat
 function addUserMessage(message) {
     const messageDiv = document.createElement('div');
     messageDiv.className = 'ai-message ai-user';
@@ -2207,7 +1521,6 @@ function addUserMessage(message) {
     aiChat.scrollTop = aiChat.scrollHeight;
 }
 
-// Adiciona mensagem do assistente ao chat
 function addAssistantMessage(message) {
     const messageDiv = document.createElement('div');
     messageDiv.className = 'ai-message ai-system';
@@ -2223,7 +1536,6 @@ function addAssistantMessage(message) {
     aiChat.scrollTop = aiChat.scrollHeight;
 }
 
-// Adiciona mensagem de loading
 function addLoadingMessage() {
     const messageDiv = document.createElement('div');
     messageDiv.className = 'ai-message ai-system ai-loading';
@@ -2253,7 +1565,6 @@ function analyzeFinances() {
         return '<p>Você ainda não tem transações cadastradas. Comece adicionando suas receitas e despesas para que eu possa fazer uma análise completa.</p>';
     }
     
-    // Calcula totais
     let totalReceitas = 0;
     let totalDespesas = 0;
     
@@ -2268,7 +1579,6 @@ function analyzeFinances() {
     const saldo = totalReceitas - totalDespesas;
     const percentualDespesas = totalReceitas > 0 ? (totalDespesas / totalReceitas * 100) : 0;
     
-    // Análise
     let analysis = '<p><strong>📊 Análise Financeira Completa:</strong></p><ul>';
     
     analysis += `<li><strong>Receitas Totais:</strong> R$ ${totalReceitas.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</li>`;
@@ -2277,7 +1587,6 @@ function analyzeFinances() {
     analysis += `<li><strong>Percentual de Despesas:</strong> ${percentualDespesas.toFixed(1)}%</li>`;
     analysis += '</ul>';
     
-    // Recomendações
     analysis += '<p><strong>💡 Recomendações:</strong></p><ul>';
     
     if (saldo < 0) {
@@ -2359,25 +1668,21 @@ function processAIQuestion(question) {
     
     const lowerQuestion = question.toLowerCase();
     
-    // Analise de finanças
     if (lowerQuestion.includes('analisa') || lowerQuestion.includes('análise') || 
         lowerQuestion.includes('finanças') || lowerQuestion.includes('financeiro')) {
         return analyzeFinances();
     }
     
-    // Dicas de economia
     if (lowerQuestion.includes('economizar') || lowerQuestion.includes('economia') || 
         lowerQuestion.includes('poupar') || lowerQuestion.includes('dicas')) {
         return provideSavingsTips();
     }
     
-    // Maiores gastos
     if (lowerQuestion.includes('maior') || lowerQuestion.includes('gasto') || 
         lowerQuestion.includes('despesa') || lowerQuestion.includes('gastei')) {
         return findBiggestExpense();
     }
     
-    // Saldo
     if (lowerQuestion.includes('saldo') || lowerQuestion.includes('quanto tenho')) {
         let totalReceitas = 0;
         let totalDespesas = 0;
@@ -2398,7 +1703,6 @@ function processAIQuestion(question) {
         })}</strong>.</p>`;
     }
     
-    // Metas
     if (lowerQuestion.includes('meta') || lowerQuestion.includes('objetivo')) {
         if (goals.length === 0) {
             return '<p>Você ainda não tem metas cadastradas. Acesse a aba <strong>Metas</strong> para criar suas primeiras metas financeiras!</p>';
@@ -2416,7 +1720,6 @@ function processAIQuestion(question) {
         return response;
     }
     
-    // Receitas
     if (lowerQuestion.includes('receita') || lowerQuestion.includes('ganho') || 
         lowerQuestion.includes('entrada')) {
         const totalReceitas = transactions
@@ -2429,7 +1732,6 @@ function processAIQuestion(question) {
         })}</strong>.</p>`;
     }
     
-    // Resposta padrão
     return `<p>Desculpe, não entendi sua pergunta. Posso ajudá-lo com:</p>
             <ul>
                 <li>Análise das suas finanças</li>
@@ -2447,19 +1749,16 @@ console.log('✅ Função de processamento de perguntas da IA configurada');
 // PARTE 28: EVENT LISTENERS DA IA
 // ========================================
 
-// Enviar mensagem ao pressionar Enter
 aiInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') {
         sendAIMessage();
     }
 });
 
-// Enviar mensagem ao clicar no botão
 aiSendBtn.addEventListener('click', () => {
     sendAIMessage();
 });
 
-// Função para enviar mensagem
 function sendAIMessage() {
     const message = aiInput.value.trim();
     
@@ -2470,29 +1769,19 @@ function sendAIMessage() {
     
     console.log('📤 Enviando mensagem para IA:', message);
     
-    // Adiciona mensagem do usuário
     addUserMessage(message);
-    
-    // Limpa o input
     aiInput.value = '';
     
-    // Mostra loading
     const loadingMsg = addLoadingMessage();
     
-    // Simula processamento (pode adicionar delay para parecer mais real)
     setTimeout(() => {
-        // Remove loading
         loadingMsg.remove();
-        
-        // Processa e adiciona resposta
         const response = processAIQuestion(message);
         addAssistantMessage(response);
-        
         console.log('✅ Resposta da IA enviada');
     }, 1000);
 }
 
-// Botões de sugestão
 aiSuggestionBtns.forEach(btn => {
     btn.addEventListener('click', () => {
         const question = btn.getAttribute('data-question');
@@ -2504,15 +1793,223 @@ aiSuggestionBtns.forEach(btn => {
 console.log('✅ Event listeners da IA configurados');
 
 // ========================================
-// PARTE 29: INICIALIZAÇÃO DO SISTEMA
+// PARTE 29: DASHBOARD MELHORADO - KPIs
 // ========================================
 
-// Função de inicialização quando o DOM estiver pronto
+function updateCurrentDate() {
+    const dateEl = document.getElementById('current-date');
+    if (!dateEl) return;
+    
+    const now = new Date();
+    const options = { 
+        weekday: 'long', 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+    };
+    dateEl.textContent = now.toLocaleDateString('pt-BR', options);
+}
+
+function calculateMonthKPIs() {
+    const now = new Date();
+    const currentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+    
+    const monthTransactions = transactions.filter(t => {
+        const tDate = new Date(t.timestamp);
+        const tMonth = `${tDate.getFullYear()}-${String(tDate.getMonth() + 1).padStart(2, '0')}`;
+        return tMonth === currentMonth;
+    });
+    
+    const numTransactions = monthTransactions.length;
+    const totalAmount = monthTransactions.reduce((sum, t) => sum + Number(t.amount), 0);
+    const avgTransaction = numTransactions > 0 ? totalAmount / numTransactions : 0;
+    
+    const monthExpenses = monthTransactions.filter(t => t.type === 'despesa');
+    const totalExpenses = monthExpenses.reduce((sum, t) => sum + Number(t.amount), 0);
+    const daysInMonth = now.getDate();
+    const dailyAvg = daysInMonth > 0 ? totalExpenses / daysInMonth : 0;
+    
+    let totalGoalProgress = 0;
+    if (goals.length > 0) {
+        goals.forEach(goal => {
+            const progress = Math.min((goal.current / goal.target) * 100, 100);
+            totalGoalProgress += progress;
+        });
+        totalGoalProgress = totalGoalProgress / goals.length;
+    }
+    
+    return { numTransactions, avgTransaction, dailyAvg, totalGoalProgress };
+}
+
+function updateKPIs() {
+    const kpis = calculateMonthKPIs();
+    
+    const kpiTransactionsEl = document.getElementById('kpi-transactions');
+    if (kpiTransactionsEl) kpiTransactionsEl.textContent = kpis.numTransactions;
+    
+    const kpiAvgEl = document.getElementById('kpi-avg-transaction');
+    if (kpiAvgEl) kpiAvgEl.textContent = kpis.avgTransaction.toLocaleString('pt-BR', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    });
+    
+    const kpiDailyEl = document.getElementById('kpi-daily-avg');
+    if (kpiDailyEl) kpiDailyEl.textContent = kpis.dailyAvg.toLocaleString('pt-BR', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    });
+    
+    const kpiGoalEl = document.getElementById('kpi-goal-progress');
+    if (kpiGoalEl) kpiGoalEl.textContent = Math.round(kpis.totalGoalProgress);
+}
+
+function calculateFinancialHealth() {
+    let totalReceitas = 0;
+    let totalDespesas = 0;
+    
+    transactions.forEach(t => {
+        if (t.type === 'receita') totalReceitas += Number(t.amount);
+        else totalDespesas += Number(t.amount);
+    });
+    
+    if (totalReceitas === 0) {
+        return { percentage: 0, status: 'Sem dados', color: 'var(--text-gray)' };
+    }
+    
+    const percentage = (totalDespesas / totalReceitas) * 100;
+    let status, color;
+    
+    if (percentage <= 50) {
+        status = 'Excelente';
+        color = 'var(--success-color)';
+    } else if (percentage <= 70) {
+        status = 'Bom';
+        color = 'var(--success-color)';
+    } else if (percentage <= 85) {
+        status = 'Atenção';
+        color = 'var(--warning-color)';
+    } else {
+        status = 'Crítico';
+        color = 'var(--danger-color)';
+    }
+    
+    return { percentage: Math.round(percentage), status, color };
+}
+
+function updateHealthIndicator() {
+    const health = calculateFinancialHealth();
+    
+    const healthStatusEl = document.getElementById('health-status');
+    if (healthStatusEl) {
+        healthStatusEl.textContent = health.status;
+        healthStatusEl.style.color = health.color;
+    }
+    
+    const healthBarFill = document.getElementById('health-bar-fill');
+    if (healthBarFill) healthBarFill.style.left = `${health.percentage}%`;
+    
+    const expensePercentageEl = document.getElementById('expense-percentage');
+    if (expensePercentageEl) {
+        expensePercentageEl.textContent = `${health.percentage}%`;
+        expensePercentageEl.style.color = health.color;
+    }
+}
+
+function generateFinancialFeed() {
+    const feedEl = document.getElementById('financial-feed');
+    if (!feedEl) return;
+    
+    feedEl.innerHTML = '';
+    
+    if (transactions.length === 0) {
+        feedEl.innerHTML = `
+            <div class="feed-item">
+                <span class="feed-item-icon">💡</span>
+                <div class="feed-item-text">
+                    Comece adicionando suas primeiras transações para ver insights aqui!
+                </div>
+            </div>
+        `;
+        return;
+    }
+    
+    const feedItems = [];
+    
+    if (transactions.length > 0) {
+        const last = transactions[0];
+        const icon = last.type === 'receita' ? '💰' : '💸';
+        const type = last.type === 'receita' ? 'success' : 'danger';
+        feedItems.push({
+            icon, type,
+            text: `${last.type === 'receita' ? 'Receita' : 'Despesa'} de R$ ${Number(last.amount).toLocaleString('pt-BR', {minimumFractionDigits: 2})} - ${last.desc}`,
+            time: 'Agora mesmo'
+        });
+    }
+    
+    const health = calculateFinancialHealth();
+    if (health.percentage > 80) {
+        feedItems.push({
+            icon: '💡', type: 'warning',
+            text: 'Suas despesas estão altas! Considere revisar seus gastos.',
+            time: 'Dica'
+        });
+    } else if (health.percentage < 50) {
+        feedItems.push({
+            icon: '✨', type: 'success',
+            text: 'Ótimo controle de gastos! Continue assim!',
+            time: 'Parabéns'
+        });
+    }
+    
+    feedItems.slice(0, 8).forEach(item => {
+        const feedItemEl = document.createElement('div');
+        feedItemEl.className = `feed-item ${item.type}`;
+        feedItemEl.innerHTML = `
+            <span class="feed-item-icon">${item.icon}</span>
+            <div class="feed-item-text">
+                ${item.text}
+                <span class="feed-item-time">${item.time}</span>
+            </div>
+        `;
+        feedEl.appendChild(feedItemEl);
+    });
+}
+
+function updateDashboard() {
+    try { updateCurrentDate(); } catch(e) {}
+    try { updateKPIs(); } catch(e) {}
+    try { updateHealthIndicator(); } catch(e) {}
+    try { generateFinancialFeed(); } catch(e) {}
+    try { renderQuickChart(); } catch(e) {}
+}
+
+function loadDashboard() {
+    const dashboardPage = document.getElementById('dashboard-page');
+    if (!dashboardPage || !dashboardPage.classList.contains('active')) return;
+    
+    try { updateCurrentDate(); } catch(e) {}
+    
+    if (transactions.length > 0) {
+        updateDashboard();
+    } else {
+        try { 
+            updateKPIs(); 
+            updateHealthIndicator(); 
+            renderQuickChart(); 
+        } catch(e) {}
+    }
+}
+
+console.log('✅ Funções do dashboard configuradas');
+
+// ========================================
+// PARTE 30: INICIALIZAÇÃO DO SISTEMA
+// ========================================
+
 document.addEventListener('DOMContentLoaded', () => {
     console.log('🚀 Iniciando Sistema Financeiro Dev Digital BR...');
     console.log('📅 Data atual:', new Date().toLocaleDateString('pt-BR'));
     
-    // Verifica se o Firebase está inicializado
     if (typeof firebase === 'undefined') {
         console.error('❌ Firebase não está carregado!');
         showToast('Erro ao carregar Firebase', 'error');
@@ -2520,104 +2017,20 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     console.log('✅ Firebase detectado');
-    
-    // ADICIONADO: Inicializa reconhecimento de voz e dashboard
-    initVoiceRecognition();
-    loadDashboard();
-    
     console.log('✅ Sistema pronto para uso');
-    // Mensagem de boas-vindas no console
+    
     console.log('%c💰 Sistema Financeiro Dev Digital BR', 'color: #00d4ff; font-size: 20px; font-weight: bold;');
     console.log('%c🔐 Sistema protegido com autenticação Firebase', 'color: #25d366; font-size: 12px;');
     console.log('%c📊 Recursos: Dashboard, Transações, Relatórios, Metas e IA', 'color: #ffc107; font-size: 12px;');
-    console.log('%c🎤 Reconhecimento de voz ativado!', 'color: #764ba2; font-size: 12px;');
 });
 
 console.log('✅ Sistema de inicialização configurado');
 
 // ========================================
-// PARTE 30: FUNÇÕES AUXILIARES
-// ========================================
-
-// Formata valor em reais
-function formatCurrency(value) {
-    return value.toLocaleString('pt-BR', {
-        style: 'currency',
-        currency: 'BRL',
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-    });
-}
-
-// Formata data
-function formatDate(timestamp) {
-    const date = new Date(timestamp);
-    return date.toLocaleDateString('pt-BR');
-}
-
-// Formata data com hora
-function formatDateTime(timestamp) {
-    const date = new Date(timestamp);
-    return date.toLocaleString('pt-BR');
-}
-
-// Calcula porcentagem
-function calculatePercentage(value, total) {
-    if (total === 0) return 0;
-    return (value / total) * 100;
-}
-
-// Valida email
-function isValidEmail(email) {
-    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return regex.test(email);
-}
-
-// Gera ID único
-function generateId() {
-    return Date.now().toString(36) + Math.random().toString(36).substr(2);
-}
-
-// Debounce (útil para otimizar pesquisas)
-function debounce(func, wait) {
-    let timeout;
-    return function executedFunction(...args) {
-        const later = () => {
-            clearTimeout(timeout);
-            func(...args);
-        };
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
-    };
-}
-
-// Log personalizado
-function logSuccess(message) {
-    console.log('%c✅ ' + message, 'color: #25d366; font-weight: bold;');
-}
-
-function logError(message) {
-    console.error('%c❌ ' + message, 'color: #dc3545; font-weight: bold;');
-}
-
-function logInfo(message) {
-    console.log('%c📌 ' + message, 'color: #00d4ff; font-weight: bold;');
-}
-
-console.log('✅ Funções auxiliares configuradas');
-
-// ========================================
 // PARTE 31: FINALIZAÇÃO
 // ========================================
 
-// Exporta funções globais necessárias
-window.deleteTransaction = deleteTransaction;
-window.updateGoalProgress = updateGoalProgress;
-window.deleteGoal = deleteGoal;
-
-// Previne fechamento acidental com dados não salvos
 window.addEventListener('beforeunload', (e) => {
-    // Só avisa se houver dados no formulário
     const transactionFormFilled = document.getElementById('desc').value || 
                                   document.getElementById('amount').value;
     const goalFormFilled = document.getElementById('goal-title') && 
@@ -2629,13 +2042,12 @@ window.addEventListener('beforeunload', (e) => {
     }
 });
 
-// Log final
 console.log('%c🎉 SISTEMA TOTALMENTE CARREGADO E PRONTO!', 'color: #00d4ff; font-size: 16px; font-weight: bold;');
 console.log('%c━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'color: #00d4ff;');
 console.log('%c💰 Dev Digital BR - Sistema Financeiro', 'color: #ffffff; font-size: 14px;');
 console.log('%c📊 Funcionalidades Ativas:', 'color: #ffc107; font-weight: bold;');
 console.log('%c  ✅ Autenticação Firebase', 'color: #25d366;');
-console.log('%c  ✅ Dashboard com Resumo', 'color: #25d366;');
+console.log('%c  ✅ Dashboard Melhorado', 'color: #25d366;');
 console.log('%c  ✅ Gerenciamento de Transações', 'color: #25d366;');
 console.log('%c  ✅ Filtros por Tipo e Mês', 'color: #25d366;');
 console.log('%c  ✅ Relatórios com Gráficos', 'color: #25d366;');
@@ -2644,3 +2056,6 @@ console.log('%c  ✅ Assistente de IA', 'color: #25d366;');
 console.log('%c━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'color: #00d4ff;');
 
 // FIM DO ARQUIVO JAVASCRIPT
+
+
+
