@@ -2156,6 +2156,10 @@ fbq('track', 'PageView');
                     submitBtn.style.background = '';
                     submitBtn.disabled = false;
                 }, 3000);
+                // Após enviar com sucesso, adicione:
+setTimeout(() => {
+    window.location.href = 'obrigado.html';
+}, 1500);
             });
         }
         
