@@ -51,7 +51,7 @@ const ADMIN_EMAIL = 'borgescarlos030@gmail.com';
 console.log('✅ Variáveis globais inicializadas');
 
 // ========================================
-// PARTE 2: AUTENTICAÇÃO
+// PARTE 2: AUTENTICAÇÃO E INICIALIZAÇÃO
 // ========================================
 
 auth.onAuthStateChanged(async (user) => {
@@ -76,6 +76,12 @@ auth.onAuthStateChanged(async (user) => {
     
     loginContainer.classList.add('hidden');
     appContainer.classList.remove('hidden');
+    
+    // ⬇️ NOVO: Inicializar menu mobile
+    initMobileMenu();
+    
+    // ⬇️ NOVO: Atualizar data atual
+    updateCurrentDate();
     
     const connected = await testFirebaseConnection();
     if (connected) {
@@ -106,19 +112,27 @@ loginForm.addEventListener("submit", async (e) => {
         
         let errorMessage = 'Erro ao fazer login';
         
-        switch(error.code) {
+        switch (error.code) {
+            case 'auth/invalid-email':
+                errorMessage = 'Email inválido';
+                break;
+            case 'auth/user-disabled':
+                errorMessage = 'Usuário desabilitado';
+                break;
             case 'auth/user-not-found':
                 errorMessage = 'Usuário não encontrado';
                 break;
             case 'auth/wrong-password':
                 errorMessage = 'Senha incorreta';
                 break;
-            case 'auth/invalid-email':
-                errorMessage = 'Email inválido';
+            case 'auth/invalid-credential':
+                errorMessage = 'Email ou senha incorretos';
                 break;
             case 'auth/too-many-requests':
                 errorMessage = 'Muitas tentativas. Tente novamente mais tarde';
                 break;
+            default:
+                errorMessage = error.message;
         }
         
         showToast(errorMessage, 'error');
@@ -131,9 +145,7 @@ loginForm.addEventListener("submit", async (e) => {
 logoutBtn.addEventListener("click", async () => {
     try {
         await auth.signOut();
-        showToast('Logout realizado', 'info', 2000);
-        document.getElementById("email").value = '';
-        document.getElementById("password").value = '';
+        showToast('Logout realizado com sucesso!', 'success');
         console.log('✅ Logout realizado');
     } catch (error) {
         console.error('❌ Erro no logout:', error);
@@ -141,7 +153,60 @@ logoutBtn.addEventListener("click", async () => {
     }
 });
 
-console.log('✅ Sistema de autenticação configurado');
+// ========================================
+// MENU MOBILE (NOVO!)
+// ========================================
+function initMobileMenu() {
+    const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+    const sidebar = document.getElementById('sidebar');
+    const sidebarOverlay = document.getElementById('sidebar-overlay');
+
+    if (!mobileMenuToggle || !sidebar || !sidebarOverlay) {
+        console.warn("⚠️ Elementos do menu mobile não encontrados");
+        return;
+    }
+
+    // Abrir/Fechar menu
+    mobileMenuToggle.addEventListener('click', () => {
+        sidebar.classList.toggle('mobile-open');
+        sidebarOverlay.classList.toggle('active');
+    });
+
+    // Fechar menu ao clicar no overlay
+    sidebarOverlay.addEventListener('click', () => {
+        sidebar.classList.remove('mobile-open');
+        sidebarOverlay.classList.remove('active');
+    });
+
+    // Fechar menu ao clicar em um item de navegação (mobile)
+    document.querySelectorAll('.nav-item').forEach(item => {
+        item.addEventListener('click', () => {
+            if (window.innerWidth <= 768) {
+                sidebar.classList.remove('mobile-open');
+                sidebarOverlay.classList.remove('active');
+            }
+        });
+    });
+
+    console.log("✅ Menu mobile inicializado");
+}
+
+// ========================================
+// ATUALIZAR DATA ATUAL NO DASHBOARD (NOVO!)
+// ========================================
+function updateCurrentDate() {
+    const currentDateElement = document.getElementById('current-date');
+    if (currentDateElement) {
+        const now = new Date();
+        const options = { 
+            weekday: 'long', 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+        };
+        currentDateElement.textContent = now.toLocaleDateString('pt-BR', options);
+    }
+}
 // ========================================
 // PARTE 3: SISTEMA DE NOTIFICAÇÕES (TOAST)
 // ========================================
