@@ -74,11 +74,15 @@
       </form>
     </div>
   </div>
-
   <!-- Main App -->
   <div id="app-container" class="hidden">
+    <!-- Botão Menu Mobile -->
+    <button class="mobile-menu-toggle" id="mobile-menu-toggle">
+      <i class="fas fa-bars"></i>
+    </button>
+
     <!-- Sidebar -->
-    <aside class="sidebar">
+    <aside class="sidebar" id="sidebar">
       <div class="sidebar-header">
         <div class="logo-container">
           <div class="logo-image">
@@ -93,34 +97,48 @@
           <i class="fas fa-home"></i>
           <span>Dashboard</span>
         </button>
+        
         <button class="nav-item" data-page="transactions">
           <i class="fas fa-exchange-alt"></i>
           <span>Transações</span>
         </button>
+        
         <button class="nav-item" data-page="reports">
           <i class="fas fa-chart-bar"></i>
           <span>Relatórios</span>
         </button>
+        
         <button class="nav-item" data-page="goals">
           <i class="fas fa-bullseye"></i>
           <span>Metas</span>
         </button>
+        
         <button class="nav-item" data-page="ai-assistant">
           <i class="fas fa-robot"></i>
           <span>Assistente IA</span>
         </button>
+        
+        <!-- NOVO: Link para Clientes -->
+        <a href="cliente.html" class="nav-item nav-link">
+          <i class="fas fa-users"></i>
+          <span>Clientes</span>
+        </a>
       </nav>
 
       <div class="sidebar-footer">
         <button class="btn btn-danger btn-small" id="logout">
-          <i class="fas fa-sign-out-alt"></i> Sair
+          <i class="fas fa-sign-out-alt"></i> 
+          <span>Sair</span>
         </button>
       </div>
     </aside>
 
+    <!-- Overlay para fechar menu no mobile -->
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
     <!-- Main Content -->
     <main class="main-content">
-<!-- Dashboard Page -->
+      <!-- Dashboard Page -->
 <section id="dashboard-page" class="page active">
   <header class="page-header">
     <h1><i class="fas fa-home"></i> Dashboard</h1>
@@ -262,275 +280,274 @@
     <div class="voice-feedback" id="voice-feedback"></div>
   </div>
 </section>
-      <!-- Transactions Page -->
-      <section id="transactions-page" class="page">
-        <header class="page-header">
-          <h1><i class="fas fa-exchange-alt"></i> Transações</h1>
-          <button class="btn btn-primary" id="add-transaction-btn">
-            <i class="fas fa-plus"></i> Nova Transação
-          </button>
-        </header>
+<!-- Transactions Page -->
+<section id="transactions-page" class="page">
+  <header class="page-header">
+    <h1><i class="fas fa-exchange-alt"></i> Transações</h1>
+    <button class="btn btn-primary" id="add-transaction-btn">
+      <i class="fas fa-plus"></i> Nova Transação
+    </button>
+  </header>
 
-        <!-- Transaction Form (Modal) -->
-        <div id="transaction-modal" class="modal hidden">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h3><i class="fas fa-plus-circle"></i> Nova Transação</h3>
-              <button class="modal-close" id="close-modal">
-                <i class="fas fa-times"></i>
-              </button>
-            </div>
-            <form id="transaction-form">
-              <div class="form-row">
-                <div class="form-group">
-                  <label for="desc">Descrição</label>
-                  <input type="text" id="desc" class="form-control" placeholder="Descrição da transação" required>
-                </div>
-                <div class="form-group">
-                  <label for="reason">Motivo</label>
-                  <input type="text" id="reason" class="form-control" placeholder="Ex: Pagamento de cliente">
-                </div>
-              </div>
-              <div class="form-row">
-                <div class="form-group">
-                  <label for="amount">Valor (R$)</label>
-                  <input type="number" id="amount" class="form-control" placeholder="0,00" step="0.01" required>
-                </div>
-                <div class="form-group">
-                  <label for="type">Tipo</label>
-                  <select id="type" class="form-control">
-                    <option value="receita">💰 Receita</option>
-                    <option value="despesa">💸 Despesa</option>
-                  </select>
-                </div>
-              </div>
-              <button type="submit" class="btn btn-success">
-                <i class="fas fa-check"></i> Adicionar Transação
-              </button>
-            </form>
+  <!-- Transaction Form (Modal) -->
+  <div id="transaction-modal" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3><i class="fas fa-plus-circle"></i> Nova Transação</h3>
+        <button class="modal-close" id="close-modal">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <form id="transaction-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="desc">Descrição</label>
+            <input type="text" id="desc" class="form-control" placeholder="Descrição da transação" required>
+          </div>
+          <div class="form-group">
+            <label for="reason">Motivo</label>
+            <input type="text" id="reason" class="form-control" placeholder="Ex: Pagamento de cliente">
           </div>
         </div>
-
-        <!-- Filters -->
-        <div class="filters-section">
-          <div class="filter-group">
-            <label for="filter-type">Tipo</label>
-            <select id="filter-type" class="form-control">
-              <option value="">Todos</option>
-              <option value="receita">Receitas</option>
-              <option value="despesa">Despesas</option>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="amount">Valor (R$)</label>
+            <input type="number" id="amount" class="form-control" placeholder="0,00" step="0.01" required>
+          </div>
+          <div class="form-group">
+            <label for="type">Tipo</label>
+            <select id="type" class="form-control">
+              <option value="receita">💰 Receita</option>
+              <option value="despesa">💸 Despesa</option>
             </select>
           </div>
-          <div class="filter-group">
-            <label for="filter-month">Mês</label>
-            <select id="filter-month" class="form-control">
-              <option value="">Todos os meses</option>
-            </select>
-          </div>
-          <button class="clear-filters" id="clear-filters">
-            <i class="fas fa-times-circle"></i> Limpar
-          </button>
         </div>
+        <button type="submit" class="btn btn-success">
+          <i class="fas fa-check"></i> Adicionar Transação
+        </button>
+      </form>
+    </div>
+  </div>
 
-        <!-- Monthly Profit Card -->
-        <div class="card" id="monthly-profit-card" style="display: none;">
-          <h3 class="card-title"><i class="fas fa-calendar-check"></i> Lucro do Mês Selecionado</h3>
-          <div class="summary-grid">
-            <div class="summary-card receitas">
-              <i class="fas fa-arrow-up summary-icon"></i>
-              <div>Receitas do Mês</div>
-              <div class="summary-value">R$ <span id="month-receitas">0,00</span></div>
-            </div>
-            <div class="summary-card despesas">
-              <i class="fas fa-arrow-down summary-icon"></i>
-              <div>Despesas do Mês</div>
-              <div class="summary-value">R$ <span id="month-despesas">0,00</span></div>
-            </div>
-            <div class="summary-card" id="month-profit-card-inner">
-              <i class="fas fa-chart-line summary-icon"></i>
-              <div>Lucro do Mês</div>
-              <div class="summary-value">R$ <span id="month-profit">0,00</span></div>
-            </div>
-          </div>
+  <!-- Filters -->
+  <div class="filters-section">
+    <div class="filter-group">
+      <label for="filter-type">Tipo</label>
+      <select id="filter-type" class="form-control">
+        <option value="">Todos</option>
+        <option value="receita">Receitas</option>
+        <option value="despesa">Despesas</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label for="filter-month">Mês</label>
+      <select id="filter-month" class="form-control">
+        <option value="">Todos os meses</option>
+      </select>
+    </div>
+    <button class="clear-filters" id="clear-filters">
+      <i class="fas fa-times-circle"></i> Limpar
+    </button>
+  </div>
+
+  <!-- Monthly Profit Card -->
+  <div class="card" id="monthly-profit-card" style="display: none;">
+    <h3 class="card-title"><i class="fas fa-calendar-check"></i> Lucro do Mês Selecionado</h3>
+    <div class="summary-grid">
+      <div class="summary-card receitas">
+        <i class="fas fa-arrow-up summary-icon"></i>
+        <div>Receitas do Mês</div>
+        <div class="summary-value">R$ <span id="month-receitas">0,00</span></div>
+      </div>
+      <div class="summary-card despesas">
+        <i class="fas fa-arrow-down summary-icon"></i>
+        <div>Despesas do Mês</div>
+        <div class="summary-value">R$ <span id="month-despesas">0,00</span></div>
+      </div>
+      <div class="summary-card" id="month-profit-card-inner">
+        <i class="fas fa-chart-line summary-icon"></i>
+        <div>Lucro do Mês</div>
+        <div class="summary-value">R$ <span id="month-profit">0,00</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Transactions Table -->
+  <div class="card">
+    <h3 class="card-title"><i class="fas fa-list"></i> Histórico de Transações</h3>
+    <div class="table-container">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Descrição</th>
+            <th>Motivo</th>
+            <th>Valor</th>
+            <th>Tipo</th>
+            <th>Data</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody id="transaction-table-body"></tbody>
+      </table>
+      <div id="empty-state" class="empty-state hidden">
+        <i class="fas fa-inbox"></i>
+        <h3>Nenhuma transação encontrada</h3>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- Reports Page -->
+<section id="reports-page" class="page">
+  <header class="page-header">
+    <h1><i class="fas fa-chart-bar"></i> Relatórios</h1>
+  </header>
+
+  <div class="cards-grid">
+    <div class="card">
+      <h3 class="card-title"><i class="fas fa-calendar-alt"></i> Receitas vs Despesas por Mês</h3>
+      <canvas id="monthly-chart"></canvas>
+    </div>
+
+    <div class="card">
+      <h3 class="card-title"><i class="fas fa-chart-pie"></i> Distribuição de Despesas</h3>
+      <canvas id="expenses-pie-chart"></canvas>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 class="card-title"><i class="fas fa-trophy"></i> Maiores Gastos</h3>
+    <div class="table-container">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Descrição</th>
+            <th>Valor</th>
+            <th>Data</th>
+          </tr>
+        </thead>
+        <tbody id="top-expenses-body"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="cards-grid">
+    <div class="card">
+      <h3 class="card-title"><i class="fas fa-arrow-up"></i> Mês com Maior Receita</h3>
+      <div class="stat-highlight">
+        <div class="stat-month" id="best-revenue-month">-</div>
+        <div class="stat-value receita">R$ <span id="best-revenue-value">0,00</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 class="card-title"><i class="fas fa-arrow-down"></i> Mês com Maior Despesa</h3>
+      <div class="stat-highlight">
+        <div class="stat-month" id="worst-expense-month">-</div>
+        <div class="stat-value despesa">R$ <span id="worst-expense-value">0,00</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Goals Page -->
+<section id="goals-page" class="page">
+  <header class="page-header">
+    <h1><i class="fas fa-bullseye"></i> Metas</h1>
+    <button class="btn btn-primary" id="add-goal-btn">
+      <i class="fas fa-plus"></i> Nova Meta
+    </button>
+  </header>
+
+  <!-- Goal Form Modal -->
+  <div id="goal-modal" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3><i class="fas fa-bullseye"></i> Nova Meta</h3>
+        <button class="modal-close" id="close-goal-modal">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <form id="goal-form">
+        <div class="form-group">
+          <label for="goal-title">Título da Meta</label>
+          <input type="text" id="goal-title" class="form-control" placeholder="Ex: Vender 22 Landing Pages" required>
         </div>
-
-        <!-- Transactions Table -->
-        <div class="card">
-          <h3 class="card-title"><i class="fas fa-list"></i> Histórico de Transações</h3>
-          <div class="table-container">
-            <table class="table">
-              <thead>
-                <tr>
-                  <th>Descrição</th>
-                  <th>Motivo</th>
-                  <th>Valor</th>
-                  <th>Tipo</th>
-                  <th>Data</th>
-                  <th>Ações</th>
-                </tr>
-              </thead>
-              <tbody id="transaction-table-body"></tbody>
-            </table>
-            <div id="empty-state" class="empty-state hidden">
-              <i class="fas fa-inbox"></i>
-              <h3>Nenhuma transação encontrada</h3>
-            </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="goal-target">Meta (número)</label>
+            <input type="number" id="goal-target" class="form-control" placeholder="22" required>
           </div>
-        </div>
-      </section>
-
-      <!-- Reports Page -->
-      <section id="reports-page" class="page">
-        <header class="page-header">
-          <h1><i class="fas fa-chart-bar"></i> Relatórios</h1>
-        </header>
-
-        <div class="cards-grid">
-          <div class="card">
-            <h3 class="card-title"><i class="fas fa-calendar-alt"></i> Receitas vs Despesas por Mês</h3>
-            <canvas id="monthly-chart"></canvas>
-          </div>
-
-          <div class="card">
-            <h3 class="card-title"><i class="fas fa-chart-pie"></i> Distribuição de Despesas</h3>
-            <canvas id="expenses-pie-chart"></canvas>
-          </div>
-        </div>
-
-        <div class="card">
-          <h3 class="card-title"><i class="fas fa-trophy"></i> Maiores Gastos</h3>
-          <div class="table-container">
-            <table class="table">
-              <thead>
-                <tr>
-                  <th>Descrição</th>
-                  <th>Valor</th>
-                  <th>Data</th>
-                </tr>
-              </thead>
-              <tbody id="top-expenses-body"></tbody>
-            </table>
-          </div>
-        </div>
-
-        <div class="cards-grid">
-          <div class="card">
-            <h3 class="card-title"><i class="fas fa-arrow-up"></i> Mês com Maior Receita</h3>
-            <div class="stat-highlight">
-              <div class="stat-month" id="best-revenue-month">-</div>
-              <div class="stat-value receita">R$ <span id="best-revenue-value">0,00</span></div>
-            </div>
-          </div>
-
-          <div class="card">
-            <h3 class="card-title"><i class="fas fa-arrow-down"></i> Mês com Maior Despesa</h3>
-            <div class="stat-highlight">
-              <div class="stat-month" id="worst-expense-month">-</div>
-              <div class="stat-value despesa">R$ <span id="worst-expense-value">0,00</span></div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Goals Page -->
-      <section id="goals-page" class="page">
-        <header class="page-header">
-          <h1><i class="fas fa-bullseye"></i> Metas</h1>
-          <button class="btn btn-primary" id="add-goal-btn">
-            <i class="fas fa-plus"></i> Nova Meta
-          </button>
-        </header>
-
-        <!-- Goal Form Modal -->
-        <div id="goal-modal" class="modal hidden">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h3><i class="fas fa-bullseye"></i> Nova Meta</h3>
-              <button class="modal-close" id="close-goal-modal">
-                <i class="fas fa-times"></i>
-              </button>
-            </div>
-            <form id="goal-form">
-              <div class="form-group">
-                <label for="goal-title">Título da Meta</label>
-                <input type="text" id="goal-title" class="form-control" placeholder="Ex: Vender 22 Landing Pages" required>
-              </div>
-              <div class="form-row">
-                <div class="form-group">
-                  <label for="goal-target">Meta (número)</label>
-                  <input type="number" id="goal-target" class="form-control" placeholder="22" required>
-                </div>
-                <div class="form-group">
-                  <label for="goal-current">Progresso Atual</label>
-                  <input type="number" id="goal-current" class="form-control" placeholder="0" value="0" required>
-                </div>
-              </div>
-              <div class="form-row">
-                <div class="form-group">
-                  <label for="goal-deadline">Prazo (meses)</label>
-                  <input type="number" id="goal-deadline" class="form-control" placeholder="8" required>
-                </div>
-                <div class="form-group">
-                  <label for="goal-unit">Unidade</label>
-                  <input type="text" id="goal-unit" class="form-control" placeholder="Landing Pages" required>
-                </div>
-              </div>
-              <button type="submit" class="btn btn-success">
-                <i class="fas fa-check"></i> Criar Meta
-              </button>
-            </form>
-          </div>
-        </div>
-
-        <!-- Goals List -->
-        <div id="goals-container" class="goals-container"></div>
-      </section>
-
-      <!-- AI Assistant Page -->
-      <section id="ai-assistant-page" class="page">
-        <header class="page-header">
-          <h1><i class="fas fa-robot"></i> Assistente Financeiro IA</h1>
-        </header>
-
-        <div class="ai-container">
-          <div class="ai-chat" id="ai-chat">
-            <div class="ai-message ai-system">
-              <div class="ai-avatar">
-                <i class="fas fa-robot"></i>
-              </div>
-              <div class="ai-content">
-                <p>Olá! Sou seu assistente financeiro virtual. Posso ajudá-lo com:</p>
-                <ul>
-                  <li>Análise das suas finanças atuais</li>
-                  <li>Sugestões para reduzir despesas</li>
-                  <li>Planejamento financeiro</li>
-                  <li>Insights sobre suas transações</li>
-                </ul>
-                <p>Como posso ajudá-lo hoje?</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="ai-input-container">
-            <input type="text" id="ai-input" class="ai-input" placeholder="Digite sua pergunta...">
-            <button class="btn btn-primary" id="ai-send-btn">
-              <i class="fas fa-paper-plane"></i>
-            </button>
-          </div>
-
-          <div class="ai-suggestions">
-            <button class="ai-suggestion-btn" data-question="Analise minhas finanças">
-              <i class="fas fa-chart-line"></i> Analisar Finanças
-            </button>
-            <button class="ai-suggestion-btn" data-question="Como posso economizar mais?">
-              <i class="fas fa-piggy-bank"></i> Dicas de Economia
-            </button>
-            <button class="ai-suggestion-btn" data-question="Qual meu maior gasto?">
-              <i class="fas fa-search-dollar"></i> Maiores Gastos
-            </button>
+          <div class="form-group">
+            <label for="goal-current">Progresso Atual</label>
+            <input type="number" id="goal-current" class="form-control" placeholder="0" value="0" required>
           </div>
         </div>
-      </section>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="goal-deadline">Prazo (meses)</label>
+            <input type="number" id="goal-deadline" class="form-control" placeholder="8" required>
+          </div>
+          <div class="form-group">
+            <label for="goal-unit">Unidade</label>
+            <input type="text" id="goal-unit" class="form-control" placeholder="Landing Pages" required>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-success">
+          <i class="fas fa-check"></i> Criar Meta
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Goals List -->
+  <div id="goals-container" class="goals-container"></div>
+</section>
+
+<!-- AI Assistant Page -->
+<section id="ai-assistant-page" class="page">
+  <header class="page-header">
+    <h1><i class="fas fa-robot"></i> Assistente Financeiro IA</h1>
+  </header>
+
+  <div class="ai-container">
+    <div class="ai-chat" id="ai-chat">
+      <div class="ai-message ai-system">
+        <div class="ai-avatar">
+          <i class="fas fa-robot"></i>
+        </div>
+        <div class="ai-content">
+          <p>Olá! Sou seu assistente financeiro virtual. Posso ajudá-lo com:</p>
+          <ul>
+            <li>Análise das suas finanças atuais</li>
+            <li>Sugestões para reduzir despesas</li>
+            <li>Planejamento financeiro</li>
+            <li>Insights sobre suas transações</li>
+          </ul>
+          <p>Como posso ajudá-lo hoje?</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="ai-input-container">
+      <input type="text" id="ai-input" class="ai-input" placeholder="Digite sua pergunta...">
+      <button class="btn btn-primary" id="ai-send-btn">
+        <i class="fas fa-paper-plane"></i>
+      </button>
+    </div>
+
+    <div class="ai-suggestions">
+      <button class="ai-suggestion-btn" data-question="Analise minhas finanças">
+        <i class="fas fa-chart-line"></i> Analisar Finanças
+      </button>
+      <button class="ai-suggestion-btn" data-question="Como posso economizar mais?">
+        <i class="fas fa-piggy-bank"></i> Dicas de Economia
+      </button>
+      <button class="ai-suggestion-btn" data-question="Qual meu maior gasto?">
+        <i class="fas fa-search-dollar"></i> Maiores Gastos
+      </button>
+    </div>
+  </div>
+</section>
     </main>
   </div>
 
