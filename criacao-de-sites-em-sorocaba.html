@@ -1,0 +1,1031 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEO SOROCABA - OTIMIZADO -->
+    <title>Criação de Sites em Sorocaba SP | Landing Pages e E-commerce Profissionais | Dev Digital BR</title>
+    <meta name="description" content="Desenvolvimento de sites profissionais em Sorocaba e região. Landing pages de alta conversão, e-commerce completo e sites institucionais. Atendimento personalizado em Sorocaba, Votorantim e toda região metropolitana. Solicite seu orçamento gratuito!">
+    <meta name="keywords" content="criação de sites sorocaba, desenvolvimento web sorocaba, landing page sorocaba, e-commerce sorocaba, sites profissionais sorocaba, agência digital sorocaba, criar site votorantim, site empresarial sorocaba">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <meta name="author" content="Dev Digital BR">
+    
+    <!-- Geo Tags -->
+    <meta name="geo.region" content="BR-SP">
+    <meta name="geo.placename" content="Sorocaba">
+    <meta name="geo.position" content="-23.501200;-47.458200">
+    <meta name="ICBM" content="-23.501200, -47.458200">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.devdigitalbr.com.br/sorocaba">
+    <meta property="og:title" content="Criação de Sites em Sorocaba | Dev Digital BR - Sites Profissionais">
+    <meta property="og:description" content="Desenvolvimento de sites, landing pages e e-commerce em Sorocaba. Transforme sua presença digital com a Dev Digital BR. Atendimento em Sorocaba e região.">
+    <meta property="og:image" content="https://www.devdigitalbr.com.br/imagens/fototech.jpg">
+    <meta property="og:locale" content="pt_BR">
+    
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://www.devdigitalbr.com.br/sorocaba">
+    <meta name="twitter:title" content="Criação de Sites em Sorocaba | Dev Digital BR">
+    <meta name="twitter:description" content="Sites profissionais, landing pages e e-commerce em Sorocaba e região. Orçamento gratuito!">
+    <meta name="twitter:image" content="https://www.devdigitalbr.com.br/imagens/fototech.jpg">
+    
+    <!-- Canonical -->
+    <link rel="canonical" href="https://www.devdigitalbr.com.br/sorocaba">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon_io/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+
+    <!-- Fontes e Ícones -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Analytics (opcional - adicione seu ID) -->
+    <!-- <script async src="https://www.googletagmanager.com/gtag/js?id=UA-XXXXXXXX-X"></script> -->
+    
+    <!-- Schema.org Markup para Google -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "LocalBusiness",
+      "name": "Dev Digital BR - Criação de Sites Sorocaba",
+      "image": "https://www.devdigitalbr.com.br/logo_nome.png",
+      "description": "Desenvolvimento de sites profissionais, landing pages e e-commerce em Sorocaba e região",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Sorocaba",
+        "addressRegion": "SP",
+        "addressCountry": "BR"
+      },
+      "telephone": "+55-15-99271-0295",
+      "email": "contato@devdigitalbr.com.br",
+      "url": "https://www.devdigitalbr.com.br",
+      "priceRange": "$$",
+      "areaServed": ["Sorocaba", "Votorantim", "Itu", "Salto", "Alumínio"],
+      "sameAs": [
+        "https://www.instagram.com/oficial_dev_digital/",
+        "https://www.facebook.com/profile.php?id=61580229984541"
+      ]
+    }
+    </script>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#0066FF',
+                        primaryDark: '#004ec2',
+                        darkBg: '#0f172a',
+                        cardBg: '#1e293b',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Estilos Personalizados e Animações -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        /* Hero Background com imagem de Tecnologia */
+        .hero-bg {
+            background-image: linear-gradient(rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.95)), 
+                              url('https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=2070&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        /* Animações simples ao rolar */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease-out;
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Logo com imagem - NOVO */
+        .logo-link {
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: all 0.3s ease;
+        }
+
+        .logo-image {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #0066FF 0%, #004ec2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(0, 102, 255, 0.3);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .logo-image::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            background: linear-gradient(135deg, #0066FF 0%, #004ec2 100%);
+            border-radius: 12px;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .logo-image:hover::before {
+            opacity: 1;
+        }
+
+        .logo-image:hover {
+            transform: scale(1.05) rotate(5deg);
+            box-shadow: 0 6px 25px rgba(0, 102, 255, 0.4);
+        }
+
+        .logo-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+
+        .logo-container:hover {
+            transform: translateX(3px);
+        }
+
+        /* Botão Flutuante WhatsApp */
+        .whatsapp-float {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background-color: #0066FF;
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            z-index: 1000;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            animation: pulse-whatsapp 2s infinite;
+        }
+
+        .whatsapp-float:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 16px rgba(0, 102, 255, 0.5);
+            background-color: #004ec2;
+        }
+
+        @keyframes pulse-whatsapp {
+            0% {
+                box-shadow: 0 4px 12px rgba(0, 102, 255, 0.3), 0 0 0 0 rgba(0, 102, 255, 0.7);
+            }
+            70% {
+                box-shadow: 0 4px 12px rgba(0, 102, 255, 0.3), 0 0 0 10px rgba(0, 102, 255, 0);
+            }
+            100% {
+                box-shadow: 0 4px 12px rgba(0, 102, 255, 0.3), 0 0 0 0 rgba(0, 102, 255, 0);
+            }
+        }
+
+        /* Card Hover Effects */
+        .service-card:hover {
+            transform: translateY(-5px);
+            border-bottom: 4px solid #0066FF;
+        }
+
+        /* Menu mobile melhorado */
+        nav a {
+            position: relative;
+            padding: 0.5rem 0;
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(135deg, #0066FF 0%, #004ec2 100%);
+            transition: width 0.3s ease;
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        /* Responsivo para logo */
+        @media (max-width: 768px) {
+            .logo-image {
+                width: 40px;
+                height: 40px;
+            }
+            
+            .logo-container .logo {
+                font-size: 1.3rem;
+            }
+
+            .whatsapp-float {
+                width: 55px;
+                height: 55px;
+                bottom: 20px;
+                right: 20px;
+                font-size: 26px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo-image {
+                width: 35px;
+                height: 35px;
+            }
+        }
+        /* Estilos para links de redes sociais */
+        .social-links a {
+            transition: all 0.3s ease;
+        }
+
+        .social-links a:hover {
+            background: #0066FF;
+            color: #ffffff;
+            transform: translateY(-3px) scale(1.1);
+            box-shadow: 0 5px 15px rgba(0, 102, 255, 0.4);
+        }
+
+        /* Melhorias nos botões */
+        .btn-primary {
+            background: linear-gradient(135deg, #0066FF 0%, #004ec2 100%);
+            box-shadow: 0 4px 15px rgba(0, 102, 255, 0.3);
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 8px 25px rgba(0, 102, 255, 0.5);
+        }
+
+        .btn-secondary {
+            border: 2px solid #0066FF;
+            color: #0066FF;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(0, 102, 255, 0.1);
+            border-color: #004ec2;
+        }
+
+        /* Animação de loading */
+        body.loading {
+            opacity: 0;
+        }
+
+        /* Melhorias de acessibilidade */
+        .btn:focus,
+        nav a:focus,
+        .logo-link:focus {
+            outline: 2px solid #0066FF;
+            outline-offset: 2px;
+        }
+
+        /* Smooth scroll */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Otimizações de performance */
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* Estilo para menu ativo no mobile */
+        nav.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        /* Overlay do menu mobile */
+        .menu-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .menu-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Cores personalizadas para Sorocaba */
+        :root {
+            --primary-color: #0066FF;
+            --primary-dark: #004ec2;
+            --secondary-color: #0f172a;
+            --accent-color: #1e293b;
+        }
+
+        /* Estilos específicos para a página de Sorocaba */
+        .logo-image {
+            background: none !important;
+            box-shadow: none !important;
+        }
+        .logo-image::before {
+            background: none !important;
+            opacity: 0 !important;
+        }
+
+        .logo-img-size {
+            width: 75px !important;
+            height: 100px !important;
+            max-width: none !important;
+            max-height: none !important;
+        }
+        .footer-logo-size {
+            width: 120px !important;
+            height: auto !important;
+            max-width: none !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- NAV MENU COM LOGO E NOVOS LINKS -->
+    <nav class="fixed w-full z-50 bg-slate-900/90 backdrop-blur-md border-b border-slate-700">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <!-- Logo com Imagem -->
+            <a href="index.html" class="logo-link" aria-label="Dev Digital BR - Página inicial">
+                <div class="logo-container">
+                    <div class="logo-image">
+                        <img src="logo_semFundo.png" alt="Dev Digital BR Logo" loading="lazy" class="logo-img-size">
+                    </div>
+                    <div class="text-xl md:text-2xl font-bold bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">
+                        Dev Digital BR
+                    </div>
+                </div>
+            </a>
+
+            <!-- Menu Desktop -->
+            <div class="hidden md:flex space-x-8 items-center">
+                <a href="#servicos" class="text-gray-300 hover:text-white transition">Serviços</a>
+                <a href="portifolio.html" class="text-gray-300 hover:text-white transition">Portfólio</a>
+                <a href="blog.html" class="text-gray-300 hover:text-white transition">Blog</a>
+                <a href="#processo" class="text-gray-300 hover:text-white transition">Como Funciona</a>
+                <a href="#contato" class="px-5 py-2 bg-primary hover:bg-primaryDark text-white rounded-full font-semibold transition shadow-lg">
+                    Orçamento Rápido
+                </a>
+            </div>
+
+            <!-- Mobile Menu Button -->
+            <button id="mobile-btn" class="md:hidden text-white text-2xl focus:outline-none">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+        
+        <!-- Mobile Menu Links (Hidden by default) -->
+        <div id="mobile-menu" class="hidden md:hidden bg-slate-900 border-t border-slate-700">
+            <a href="#servicos" class="block py-4 px-6 text-gray-300 hover:bg-slate-800">Serviços</a>
+            <a href="portifolio.html" class="block py-4 px-6 text-gray-300 hover:bg-slate-800">Portfólio</a>
+            <a href="blog.html" class="block py-4 px-6 text-gray-300 hover:bg-slate-800">Blog</a>
+            <a href="#processo" class="block py-4 px-6 text-gray-300 hover:bg-slate-800">Como Funciona</a>
+            <a href="#contato" class="block py-4 px-6 text-primary font-bold hover:bg-slate-800">Solicitar Orçamento</a>
+        </div>
+    </nav>
+    <!-- 1) HERO SECTION -->
+    <header class="hero-bg min-h-screen flex items-center relative pt-20">
+        <div class="container mx-auto px-6 relative z-10 grid md:grid-cols-2 gap-12 items-center">
+            
+            <div class="text-center md:text-left reveal active">
+                <span class="bg-primary/20 text-primary border border-primary/30 px-3 py-1 rounded-full text-sm font-semibold uppercase tracking-wider mb-4 inline-block">
+                    Atendimento em Sorocaba - SP
+                </span>
+                <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight mb-6">
+                    Criação de Sites <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-blue-600">Profissionais</span> em Sorocaba – SP
+                </h1>
+                <p class="text-lg md:text-xl text-gray-300 mb-8 max-w-lg mx-auto md:mx-0">
+                    Desenvolvimento de sites institucionais, landing pages e e-commerce para empresas de Sorocaba e região. Tecnologia de ponta para destacar seu negócio.
+                </p>
+                <div class="flex flex-col md:flex-row gap-4 justify-center md:justify-start">
+                    <a href="#contato" class="px-8 py-4 bg-primary hover:bg-primaryDark text-white rounded-full font-bold text-lg transition shadow-lg shadow-blue-500/30 flex items-center justify-center gap-2">
+                        Solicitar Orçamento <i class="fas fa-arrow-right"></i>
+                    </a>
+                    <a href="portifolio.html" class="px-8 py-4 border border-gray-500 hover:border-white text-white rounded-full font-semibold transition flex items-center justify-center">
+                        Ver Projetos
+                    </a>
+                </div>
+
+                <!-- Estatísticas -->
+                <div class="mt-12 grid grid-cols-3 gap-4 border-t border-gray-700 pt-8">
+                    <div>
+                        <h3 class="text-2xl md:text-3xl font-bold text-white">20+</h3>
+                        <p class="text-xs md:text-sm text-gray-400">Projetos Entregues</p>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl md:text-3xl font-bold text-white">100%</h3>
+                        <p class="text-xs md:text-sm text-gray-400">Foco em Resultado</p>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl md:text-3xl font-bold text-white">24/7</h3>
+                        <p class="text-xs md:text-sm text-gray-400">Suporte Dedicado</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Imagem Decorativa -->
+            <div class="hidden md:block relative reveal">
+                <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-blue-600/20 rounded-full blur-3xl -z-10"></div>
+                <img src="https://cdn-icons-png.flaticon.com/512/2620/2620673.png" alt="Tecnologia e Desenvolvimento Web" class="w-full max-w-md mx-auto drop-shadow-2xl animate-pulse">
+            </div>
+        </div>
+        
+        <!-- Overlay Gradient Bottom -->
+        <div class="absolute bottom-0 left-0 w-full h-24 bg-gradient-to-t from-[#0f172a] to-transparent"></div>
+    </header>
+    <!-- 2) SERVIÇOS -->
+    <section id="servicos" class="py-20 bg-darkBg">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16 reveal">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">Soluções Digitais para seu Negócio</h2>
+                <p class="text-gray-400 max-w-2xl mx-auto">
+                    Focamos no essencial para alavancar suas vendas em Sorocaba. Escolha o serviço ideal para sua empresa.
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Card 1 -->
+                <a href="https://wa.me/5515992710295?text=Vim%20pelo%20site%20e%20gostaria%20de%20fazer%20um%20site%20institucional" target="_blank" rel="noopener noreferrer" style="text-decoration:none;">
+                <div class="service-card bg-cardBg p-8 rounded-2xl border border-gray-800 transition duration-300 reveal">
+                    <div class="w-14 h-14 bg-blue-500/10 rounded-lg flex items-center justify-center text-primary text-2xl mb-6">
+                        <i class="fas fa-building"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Site Institucional</h3>
+                    <p class="text-gray-400 text-sm mb-6 leading-relaxed">
+                        Fortaleça a autoridade da sua marca. Um site multipáginas perfeito para apresentar sua empresa, história e serviços com profissionalismo.
+                    </p>
+                    <ul class="text-gray-300 text-sm space-y-2 mb-6">
+                        <li><i class="fas fa-check text-green-500 mr-2"></i> Design Exclusivo</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i> Otimizado para Google</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i> Responsivo (Celular)</li>
+                    </ul>
+                </div>
+                </a>
+
+                <!-- Card 2 -->
+                <a href="https://wa.me/5515992710295?text=Vim%20pelo%20site%20e%20gostaria%20de%20fazer%20uma%20landing%20page" target="_blank" rel="noopener noreferrer" style="text-decoration:none;">
+                <div class="service-card bg-cardBg p-8 rounded-2xl border border-primary/40 relative transition duration-300 reveal" style="box-shadow: 0 0 20px rgba(0,102,255,0.15);">
+                    <div class="absolute top-0 right-0 bg-primary text-white text-xs font-bold px-3 py-1 rounded-bl-lg rounded-tr-lg">MAIS VENDIDO</div>
+                    <div class="w-14 h-14 bg-blue-500/10 rounded-lg flex items-center justify-center text-primary text-2xl mb-6">
+                        <i class="fas fa-rocket"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Landing Page</h3>
+                    <p class="text-gray-400 text-sm mb-6 leading-relaxed">
+                        Página única focada em conversão. Ideal para campanhas de anúncios (Google/Facebook Ads) para captar leads e vender serviços.
+                    </p>
+                    <ul class="text-gray-300 text-sm space-y-2 mb-6">
+                        <li><i class="fas fa-check text-green-500 mr-2"></i> Alta Taxa de Conversão</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i> Carregamento Ultra Rápido</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i> Call-to-Actions Estratégicos</li>
+                    </ul>
+                </div>
+                </a>
+
+                <!-- Card 3 -->
+                <a href="https://wa.me/5515992710295?text=Vim%20pelo%20site%20e%20gostaria%20de%20fazer%20um%20e-commerce" target="_blank" rel="noopener noreferrer" style="text-decoration:none;">
+                <div class="service-card bg-cardBg p-8 rounded-2xl border border-gray-800 transition duration-300 reveal">
+                    <div class="w-14 h-14 bg-blue-500/10 rounded-lg flex items-center justify-center text-primary text-2xl mb-6">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">E-commerce</h3>
+                    <p class="text-gray-400 text-sm mb-6 leading-relaxed">
+                        Sua loja aberta 24h. Desenvolvemos sistemas completos de venda online com gestão de estoque e pagamentos integrados.
+                    </p>
+                    <ul class="text-gray-300 text-sm space-y-2 mb-6">
+                        <li><i class="fas fa-check text-green-500 mr-2"></i> Painel Administrativo</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i> Integração de Pagamento</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i> Cálculo de Frete</li>
+                    </ul>
+                </div>
+                </a>
+            </div>
+        </div>
+    </section>
+    <!-- 3) QUIZ GRATUITO -->
+    <section class="py-16 bg-gradient-to-r from-blue-900 to-slate-900 relative overflow-hidden">
+        <!-- Elementos decorativos de fundo -->
+        <div class="absolute top-0 left-0 w-full h-full opacity-10" style="background-image: radial-gradient(#ffffff 1px, transparent 1px); background-size: 30px 30px;"></div>
+        
+        <div class="container mx-auto px-6 relative z-10 text-center reveal">
+            <span class="bg-white/10 text-white border border-white/20 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-4 inline-block">
+                100% Gratuito
+            </span>
+            <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Descubra seu plano ideal</h2>
+            <p class="text-blue-100 max-w-2xl mx-auto mb-8">
+                Não sabe qual site é melhor para o seu momento? Responda a apenas 6 perguntas rápidas e receba uma recomendação personalizada na hora.
+            </p>
+            
+            <div class="bg-white/5 backdrop-blur-sm p-8 rounded-2xl max-w-3xl mx-auto border border-white/10">
+                <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+                    <div class="text-left">
+                        <div class="flex items-center gap-3 mb-2">
+                            <i class="fas fa-list-check text-primary text-xl"></i>
+                            <span class="font-bold text-white">6 Perguntas Rápidas</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <i class="fas fa-bolt text-yellow-400 text-xl"></i>
+                            <span class="font-bold text-white">Resultado Imediato</span>
+                        </div>
+                    </div>
+                    <a href="Quiz/quiz.html" class="w-full md:w-auto px-8 py-3 bg-white text-blue-900 hover:bg-gray-100 font-bold rounded-lg transition transform hover:scale-105">
+                        Iniciar Quiz Agora
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- 4) PORTFÓLIO -->
+    <section id="portfolio" class="py-20 bg-darkBg">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-12 reveal">
+                <div>
+                    <h2 class="text-3xl md:text-4xl font-bold mb-2">Portfólio Selecionado</h2>
+                    <p class="text-gray-400">Exemplos de qualidade e design estratégico.</p>
+                </div>
+                <a href="portifolio.html" class="hidden md:inline-block text-primary hover:text-white transition mt-4 md:mt-0">Ver todos os projetos <i class="fas fa-arrow-right ml-1"></i></a>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- Card Projeto 1 -->
+                <a href="portifolio.html" style="text-decoration:none;">
+                <div class="group relative overflow-hidden rounded-2xl border border-gray-800 reveal">
+                    <div class="bg-slate-800 h-64 flex items-center justify-center overflow-hidden">
+                        <img src="imagens/fotopredio.png" alt="Landing Page Alta Conversão" class="object-cover w-full h-full">
+                    </div>
+                    <div class="p-6 bg-cardBg">
+                        <h3 class="text-xl font-bold text-white mb-1">Landing Page Alta Conversão</h3>
+                        <p class="text-gray-400 text-sm">Design focado em captura de leads para setor de serviços.</p>
+                    </div>
+                </div>
+                </a>
+
+                <!-- Card Projeto 2 -->
+                <a href="portifolio.html" style="text-decoration:none;">
+                <div class="group relative overflow-hidden rounded-2xl border border-gray-800 reveal">
+                    <div class="bg-slate-800 h-64 flex items-center justify-center overflow-hidden">
+                        <img src="imagens/viajarte.png" alt="Identidade Visual & Logos" class="object-cover w-full h-full">
+                    </div>
+                    <div class="p-6 bg-cardBg">
+                        <h3 class="text-xl font-bold text-white mb-1">Identidade Visual & Logos</h3>
+                        <p class="text-gray-400 text-sm">Criação de marcas fortes e memoráveis para empresas locais.</p>
+                    </div>
+                </div>
+                </a>
+            </div>
+
+            <!-- Botão "Ver mais" para mobile -->
+            <div class="text-center mt-8 md:hidden">
+                <a href="portifolio.html" class="inline-block text-primary hover:text-white transition">
+                    Ver todos os projetos <i class="fas fa-arrow-right ml-1"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+    <!-- 5) COMO DESENVOLVEMOS SEU SITE -->
+    <section id="processo" class="py-20 bg-slate-900 border-t border-slate-800">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16 reveal">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">Como Desenvolvemos Seu Site</h2>
+                <p class="text-gray-400 max-w-2xl mx-auto">
+                    Um processo claro e eficiente, pensado para entregar seu projeto com qualidade e velocidade.
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-5 gap-4 relative">
+                <!-- Linha conectora (Desktop) -->
+                <div class="hidden md:block absolute top-12 left-0 w-full h-1 bg-slate-800 -z-0"></div>
+
+                <!-- Passo 1 -->
+                <div class="relative z-10 text-center reveal" style="transition-delay: 100ms;">
+                    <div class="w-24 h-24 mx-auto bg-cardBg border-4 border-slate-900 rounded-full flex items-center justify-center text-3xl font-bold text-primary shadow-lg mb-6">
+                        1
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">Descoberta</h3>
+                    <p class="text-sm text-gray-400 px-2">Entendemos o negócio, público e objetivos.</p>
+                </div>
+
+                <!-- Passo 2 -->
+                <div class="relative z-10 text-center reveal" style="transition-delay: 200ms;">
+                    <div class="w-24 h-24 mx-auto bg-cardBg border-4 border-slate-900 rounded-full flex items-center justify-center text-3xl font-bold text-primary shadow-lg mb-6">
+                        2
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">Estratégia</h3>
+                    <p class="text-sm text-gray-400 px-2">Definimos estrutura, prazo e recursos.</p>
+                </div>
+
+                <!-- Passo 3 -->
+                <div class="relative z-10 text-center reveal" style="transition-delay: 300ms;">
+                    <div class="w-24 h-24 mx-auto bg-cardBg border-4 border-slate-900 rounded-full flex items-center justify-center text-3xl font-bold text-primary shadow-lg mb-6">
+                        3
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">Construção</h3>
+                    <p class="text-sm text-gray-400 px-2">Criamos o layout e desenvolvemos a estrutura.</p>
+                </div>
+
+                <!-- Passo 4 -->
+                <div class="relative z-10 text-center reveal" style="transition-delay: 400ms;">
+                    <div class="w-24 h-24 mx-auto bg-cardBg border-4 border-slate-900 rounded-full flex items-center justify-center text-3xl font-bold text-primary shadow-lg mb-6">
+                        4
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">Validação</h3>
+                    <p class="text-sm text-gray-400 px-2">Você revisa e solicitamos melhorias finais.</p>
+                </div>
+
+                <!-- Passo 5 -->
+                <div class="relative z-10 text-center reveal" style="transition-delay: 500ms;">
+                    <div class="w-24 h-24 mx-auto bg-primary border-4 border-slate-900 rounded-full flex items-center justify-center text-3xl font-bold text-white shadow-lg shadow-blue-500/50 mb-6">
+                        <i class="fas fa-check"></i>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">Publicação</h3>
+                    <p class="text-sm text-gray-400 px-2">Colocamos no ar e acompanhamos o início.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- 6) DEPOIMENTOS -->
+    <section id="depoimentos" class="py-20 bg-darkBg">
+        <div class="container mx-auto px-6">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-16 reveal">O que dizem nossos clientes</h2>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Cliente 1 -->
+                <a href="http://www.piauigas.com.br" target="_blank" rel="noopener noreferrer" class="testimonial-link block">
+                <div class="bg-cardBg p-8 rounded-2xl border border-gray-800 reveal transition hover:shadow-lg hover:border-primary">
+                    <div class="flex text-yellow-400 mb-4 text-sm">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                    </div>
+                    <p class="text-gray-300 italic mb-6">"Trabalho excepcional! A Dev Digital BR criou um site moderno e funcional para minha empresa. O atendimento foi impecável e o resultado superou minhas expectativas."</p>
+                    <div class="flex items-center gap-4">
+                        <img src="imagens/logo_piaui.png" alt="Logo Piauí Gás" class="w-12 h-12 object-contain rounded-full bg-white p-1">
+                        <div>
+                            <p class="font-bold text-white">Piauí Gás</p>
+                            <p class="text-xs text-gray-500">Teodoro Sampaio - SP</p>
+                        </div>
+                    </div>
+                </div>
+                </a>
+
+                <!-- Cliente 2 -->
+                <a href="http://www.assistenciatecnicavitoria.com.br" target="_blank" rel="noopener noreferrer" class="testimonial-link block">
+                <div class="bg-cardBg p-8 rounded-2xl border border-gray-800 reveal transition hover:shadow-lg hover:border-primary">
+                    <div class="flex text-yellow-400 mb-4 text-sm">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                    </div>
+                    <p class="text-gray-300 italic mb-6">"Profissionais extremamente competentes e criativos. Minha landing page ficou incrível e já está gerando ótimos resultados. Recomendo muito!"</p>
+                    <div class="flex items-center gap-4">
+                        <img src="imagens/logo_refrigeracaoVitoria.png" alt="Logo Assistência Técnica Vitória" class="w-12 h-12 object-contain rounded-full bg-white p-1">
+                        <div>
+                            <p class="font-bold text-white">Mauro - Assistência Técnica Vitória</p>
+                            <p class="text-xs text-gray-500">Carapicuíba - SP</p>
+                        </div>
+                    </div>
+                </div>
+                </a>
+
+                <!-- Cliente 3 -->
+                <a href="https://www.viajarteturismo.com.br/" target="_blank" rel="noopener noreferrer" class="testimonial-link block">
+                <div class="bg-cardBg p-8 rounded-2xl border border-gray-800 reveal transition hover:shadow-lg hover:border-primary">
+                    <div class="flex text-yellow-400 mb-4 text-sm">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                    </div>
+                    <p class="text-gray-300 italic mb-6">"Entrega rápida e design moderno. A Landing Page está incrível rodando super bem. Recomendo a todos."</p>
+                    <div class="flex items-center gap-4">
+                        <img src="imagens/logo_viajarte.png" alt="Logo Viajarte Turismo" class="w-12 h-12 object-contain rounded-full bg-white p-1">
+                        <div>
+                            <p class="font-bold text-white">Wallans - Viajarte</p>
+                            <p class="text-xs text-gray-500">Presidente Prudente - SP</p>
+                        </div>
+                    </div>
+                </div>
+                </a>
+            </div>
+        </div>
+    </section>
+    <!-- 7) FORMULÁRIO + CONTATO SOROCABA -->
+    <section id="contato" class="py-20 bg-gradient-to-br from-slate-900 to-blue-900/20">
+        <div class="container mx-auto px-6">
+            <div class="grid md:grid-cols-2 gap-12">
+                <!-- Info Lateral -->
+                <div class="reveal">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-6">Criação de Sites em Sorocaba e Região Metropolitana</h2>
+                    <p class="text-gray-300 mb-8 text-lg leading-relaxed">
+                        Atendemos Sorocaba, Votorantim, Itu, Salto, Alumínio e toda a região metropolitana. Preencha o formulário e receba sua proposta personalizada!
+                    </p>
+
+                    <div class="space-y-6">
+                        <div class="flex items-start gap-4">
+                            <div class="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center text-primary flex-shrink-0">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-white">Atendimento Local</h4>
+                                <p class="text-gray-400 text-sm">Sorocaba e Região - SP</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-4">
+                            <div class="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center text-primary flex-shrink-0">
+                                <i class="fab fa-whatsapp"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-white">WhatsApp</h4>
+                                <p class="text-gray-400 text-sm">(15) 9 9271-0295</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-4">
+                            <div class="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center text-primary flex-shrink-0">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-white">Email</h4>
+                                <p class="text-gray-400 text-sm">contato@devdigitalbr.com.br</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Ícones Sociais -->
+                    <div class="mt-10 flex gap-4">
+                        <a href="https://www.instagram.com/oficial_dev_digital/" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-gray-400 hover:bg-primary hover:text-white transition" aria-label="Instagram Dev Digital BR">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="https://www.facebook.com/profile.php?id=61580229984541" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-gray-400 hover:bg-primary hover:text-white transition" aria-label="Facebook Dev Digital BR">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+            
+                    </div>
+                </div>
+
+                <!-- Formulário -->
+                <div class="bg-cardBg p-8 rounded-2xl border border-gray-700 shadow-2xl reveal">
+                    <h3 class="text-2xl font-bold mb-6 text-white">Solicitar Minha Proposta</h3>
+                    <form id="contactForm" action="#" method="POST" class="space-y-4">
+                        <div>
+                            <label class="block text-sm text-gray-400 mb-1">Nome Completo</label>
+                            <input type="text" name="nome" id="nome" placeholder="Seu nome" required class="w-full bg-slate-900 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-primary transition">
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-400 mb-1">WhatsApp</label>
+                            <input type="tel" name="whatsapp" id="whatsapp" placeholder="(15) 99999-9999" required class="w-full bg-slate-900 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-primary transition">
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-400 mb-1">Email</label>
+                            <input type="email" name="email" id="email" placeholder="seu@email.com" required class="w-full bg-slate-900 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-primary transition">
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-400 mb-1">Serviço de Interesse</label>
+                            <select name="servico" id="servico" class="w-full bg-slate-900 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-primary transition">
+                                <option>Site Institucional</option>
+                                <option>Landing Page</option>
+                                <option>E-commerce</option>
+                                <option>Outro</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-400 mb-1">Detalhes do Projeto</label>
+                            <textarea name="projeto" id="projeto" rows="4" placeholder="Conte um pouco sobre sua ideia..." required class="w-full bg-slate-900 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-primary transition"></textarea>
+                        </div>
+                        <button type="submit" id="submitBtn" class="w-full bg-primary hover:bg-primaryDark text-white font-bold py-4 rounded-lg transition shadow-lg shadow-blue-600/20">
+                            Enviar Solicitação
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- RODAPÉ -->
+    <footer class="bg-slate-950 border-t border-slate-800 pt-16 pb-8">
+        <div class="container mx-auto px-6 text-center">
+            <a href="index.html" class="inline-block mb-6" aria-label="Dev Digital BR - Página inicial">
+                <img src="logo_semFundo.png" alt="Dev Digital BR" class="footer-logo-size mx-auto opacity-70 grayscale hover:grayscale-0 transition">
+            </a>
+            
+            <div class="flex justify-center space-x-6 mb-8 text-sm text-gray-400">
+                <a href="#servicos" class="hover:text-white transition">Serviços</a>
+                <a href="portifolio.html" class="hover:text-white transition">Portfólio</a>
+                <a href="blog.html" class="hover:text-white transition">Blog</a>
+                <a href="#contato" class="hover:text-white transition">Contato</a>
+            </div>
+
+            <!-- Redes Sociais no Rodapé -->
+            <div class="flex justify-center gap-4 mb-8">
+                <a href="https://www.instagram.com/oficial_dev_digital/" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-full bg-slate-900 flex items-center justify-center text-gray-400 hover:bg-primary hover:text-white transition" aria-label="Instagram">
+                    <i class="fab fa-instagram"></i>
+                </a>
+                <a href="https://www.facebook.com/profile.php?id=61580229984541" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-full bg-slate-900 flex items-center justify-center text-gray-400 hover:bg-primary hover:text-white transition" aria-label="Facebook">
+                    <i class="fab fa-facebook-f"></i>
+                </a>
+            </div>
+
+            <p class="text-gray-600 text-sm mb-2">
+                © 2025 Dev Digital BR — Transformando Negócios com Tecnologia.
+            </p>
+            <p class="text-gray-700 text-xs">
+                Sorocaba - SP | Atendimento em toda região metropolitana
+            </p>
+        </div>
+    </footer>
+
+    <!-- Botão WhatsApp Flutuante (AZUL conforme solicitado) -->
+    <a href="https://wa.me/5515992710295?text=Olá! Gostaria de saber mais sobre criação de sites em Sorocaba." 
+       target="_blank" 
+       rel="noopener noreferrer" 
+       class="whatsapp-float" 
+       aria-label="Fale conosco no WhatsApp">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+    <!-- Scripts de Funcionalidade -->
+    <script>
+        // Menu Mobile Toggle
+        const btn = document.getElementById('mobile-btn');
+        const menu = document.getElementById('mobile-menu');
+
+        btn.addEventListener('click', () => {
+            menu.classList.toggle('hidden');
+            const icon = btn.querySelector('i');
+            if (menu.classList.contains('hidden')) {
+                icon.classList.replace('fa-times', 'fa-bars');
+            } else {
+                icon.classList.replace('fa-bars', 'fa-times');
+            }
+        });
+
+        // Fechar menu ao clicar em um link
+        document.querySelectorAll('#mobile-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                menu.classList.add('hidden');
+                btn.querySelector('i').classList.replace('fa-times', 'fa-bars');
+            });
+        });
+
+        // Scroll Animation Logic
+        window.addEventListener('scroll', reveal);
+
+        function reveal() {
+            var reveals = document.querySelectorAll('.reveal');
+            for (var i = 0; i < reveals.length; i++) {
+                var windowHeight = window.innerHeight;
+                var elementTop = reveals[i].getBoundingClientRect().top;
+                var elementVisible = 150;
+                if (elementTop < windowHeight - elementVisible) {
+                    reveals[i].classList.add('active');
+                }
+            }
+        }
+        // Trigger once on load
+        reveal();
+
+        // Form Validation and WhatsApp Integration
+        const contactForm = document.getElementById('contactForm');
+        const submitBtn = document.getElementById('submitBtn');
+
+        if (contactForm) {
+            contactForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Desabilita botão para evitar envio duplo
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
+                
+                const nome = document.getElementById('nome').value.trim();
+                const whatsapp = document.getElementById('whatsapp').value.trim();
+                const email = document.getElementById('email').value.trim();
+                const servico = document.getElementById('servico').value;
+                const projeto = document.getElementById('projeto').value.trim();
+                
+                // Validação básica
+                if (!nome || !whatsapp || !email || !projeto) {
+                    alert('Por favor, preencha todos os campos obrigatórios.');
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = 'Enviar Solicitação';
+                    return;
+                }
+                
+                // Monta mensagem para WhatsApp
+                let message = `🚀 *NOVA SOLICITAÇÃO - SOROCABA*\n\n`;
+                message += `👤 *Nome:* ${nome}\n`;
+                message += `📱 *WhatsApp:* ${whatsapp}\n`;
+                message += `📧 *Email:* ${email}\n`;
+                message += `🎯 *Serviço:* ${servico}\n\n`;
+                message += `💼 *Detalhes do Projeto:*\n${projeto}\n\n`;
+                message += `📍 *Região:* Sorocaba - SP\n`;
+                message += `_Enviado através do site Dev Digital BR_`;
+                
+                const encodedMessage = encodeURIComponent(message);
+                const whatsappUrl = `https://wa.me/5515992710295?text=${encodedMessage}`;
+                
+                // Reset form
+                contactForm.reset();
+                
+                // Feedback de sucesso
+                submitBtn.innerHTML = '<i class="fas fa-check"></i> Enviado com Sucesso!';
+                submitBtn.style.background = '#25D366';
+                
+                // Abre WhatsApp
+                setTimeout(() => {
+                    window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+                }, 500);
+                
+                // Reset botão após 3 segundos
+                setTimeout(() => {
+                    submitBtn.innerHTML = 'Enviar Solicitação';
+                    submitBtn.style.background = '';
+                    submitBtn.disabled = false;
+                }, 3000);
+            });
+        }
+
+        // Header scroll effect
+        let lastScroll = 0;
+        const header = document.querySelector('nav');
+
+        window.addEventListener('scroll', () => {
+            const currentScroll = window.pageYOffset;
+            
+            if (currentScroll > 100) {
+                header.style.background = 'rgba(15, 23, 42, 0.98)';
+                header.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.3)';
+            } else {
+                header.style.background = 'rgba(15, 23, 42, 0.90)';
+                header.style.boxShadow = 'none';
+            }
+            
+            lastScroll = currentScroll;
+        });
+
+        // Smooth scroll para links internos
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                const href = this.getAttribute('href');
+                if (href !== '#' && href.length > 1) {
+                    const target = document.querySelector(href);
+                    if (target) {
+                        e.preventDefault();
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                }
+            });
+        });
+
+        // Remove loading class
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => {
+                document.body.classList.remove('loading');
+            }, 100);
+        });
+
+        // Console log
+        console.log('✅ Dev Digital BR - Site Sorocaba carregado com sucesso! 🚀');
+        console.log('📱 WhatsApp: (15) 9 9271-0295');
+        console.log('📧 Email: contato@devdigitalbr.com.br');
+    </script>
+</body>
+</html>
